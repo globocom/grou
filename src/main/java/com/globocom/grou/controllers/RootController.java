@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RootController {
 
-    @Value("${build.project")
+    @Value("${build.project}")
     private String buildProject;
 
     @Value("${build.version}")

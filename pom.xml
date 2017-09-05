@@ -6,7 +6,7 @@
 
     <groupId>com.globocom.grou</groupId>
     <artifactId>grou</artifactId>
-    <version>${version-defined}</version>
+    <version>${grou.version}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +24,7 @@
                 </property>
             </activation>
             <properties>
-                <taurina.version>${env.GROU_VERSION}</taurina.version>
+                <grou.version>${env.GROU_VERSION}</grou.version>
             </properties>
         </profile>
         <profile>
@@ -35,7 +35,7 @@
                 </property>
             </activation>
             <properties>
-                <taurina.version>0.0.1-SNAPSHOT</taurina.version>
+                <grou.version>0.0.1-SNAPSHOT</grou.version>
             </properties>
         </profile>
     </profiles>
