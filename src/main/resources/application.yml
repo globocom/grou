@@ -1,0 +1,4 @@
+build:
+    project: '@project.artifactId@'
+    timestamp: '@timestamp@'
+    version: '@project.version@'
