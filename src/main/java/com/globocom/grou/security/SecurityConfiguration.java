@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.globocom.grou;
+package com.globocom.grou.security;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+@Configuration
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class ApplicationTest {
-
-    @Test
-    public void contextLoads() {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/**").permitAll();
+        http.csrf().disable();
     }
-
 }

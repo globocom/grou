@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package com.globocom.grou;
+package com.globocom.grou.domain.repositories;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.globocom.grou.domain.Project;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class ApplicationTest {
-
-    @Test
-    public void contextLoads() {
-    }
-
+public interface ProjectRepository extends PagingAndSortingRepository<Project, String> {
 }
