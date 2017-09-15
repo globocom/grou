@@ -14,10 +14,22 @@
  * limitations under the License.
  */
 
-package com.globocom.grou.domain.repositories;
+package com.globocom.grou.entities.repositories;
 
-import com.globocom.grou.domain.Test;
+import com.globocom.grou.entities.Project;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 
-public interface TestRepository extends PagingAndSortingRepository<Test, String> {
+import java.util.stream.Stream;
+
+public interface ProjectRepository extends PagingAndSortingRepository<Project, String> {
+    Project findByName(String name);
+
+    @Override
+    @RestResource(exported = false)
+    Project save(Project project);
+
+    @Override
+    @RestResource(exported = false)
+    void delete(Project project);
 }

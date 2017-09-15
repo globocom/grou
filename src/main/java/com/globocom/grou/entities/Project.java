@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.globocom.grou.domain;
+package com.globocom.grou.entities;
 
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.apache.http.util.Asserts;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-@RequiredArgsConstructor
-@Getter
 @Document
-public class Test implements Serializable {
+public class Project implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,11 +38,20 @@ public class Test implements Serializable {
     @NonNull
     private String name;
 
-    @DBRef
-    @NonNull
-    private Project project;
+    public Project() {
+        this.name = "UNDEF";
+    }
 
-    @NonNull
-    private String jsonConfig;
+    public Project(String name) {
+        Asserts.notNull(name, "Name is NULL");
+        this.name = name;
+    }
 
+    public ObjectId getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
