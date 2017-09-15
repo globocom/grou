@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.globocom.grou.domain.events;
+package com.globocom.grou.entities.events;
 
-import com.globocom.grou.domain.Test;
+import com.globocom.grou.entities.Test;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
+import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,11 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     @Override
     public void onBeforeSave(BeforeSaveEvent<Test> event) {
-        log.info(event.toString());
+
+    }
+
+    @Override
+    public void onAfterSave(AfterSaveEvent<Test> event) {
+
     }
 }

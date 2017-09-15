@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.globocom.grou.domain.events;
+package com.globocom.grou.entities.events;
 
-import com.globocom.grou.domain.Project;
+import com.globocom.grou.entities.Loader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
@@ -24,12 +24,12 @@ import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProjectEventListener extends AbstractMongoEventListener<Project> {
+public class LoaderEventListener extends AbstractMongoEventListener<Loader> {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Override
-    public void onBeforeSave(BeforeSaveEvent<Project> event) {
-        log.info(event.toString());
+    public void onBeforeSave(BeforeSaveEvent<Loader> event) {
+
     }
 }
