@@ -24,7 +24,9 @@ public class AuditFilter extends OncePerRequestFilter {
         if (auth != null && auth.getPrincipal() instanceof User) {
             user = (User) auth.getPrincipal();
         }
-        log.info(request.getMethod() + " " + request.getRequestURI() + " (principal: " + (user != null ? user.getName() : "anonymous") + ")");
+        String principal = user != null ? user.getName() : "anonymous";
+        String accessMsg = "[" + request.getRemoteAddr() + "] " + request.getMethod() + " " + request.getRequestURI() + " (principal: " + principal + ")";
+        log.info(accessMsg);
         filterChain.doFilter(request, response);
     }
 }
