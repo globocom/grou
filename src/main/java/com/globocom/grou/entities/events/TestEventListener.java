@@ -17,25 +17,39 @@
 package com.globocom.grou.entities.events;
 
 import com.globocom.grou.entities.Test;
+import com.globocom.grou.entities.repositories.TestRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
-import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TestEventListener extends AbstractMongoEventListener<Test> {
 
+    private static final String TESTE_QUEUE = "grou:teste_queue";
+
     private final Log log = LogFactory.getLog(this.getClass());
 
-    @Override
-    public void onBeforeSave(BeforeSaveEvent<Test> event) {
+    private final JmsTemplate template;
+    private final TestRepository testRepository;
 
+    @Autowired
+    public TestEventListener(JmsTemplate template, TestRepository testRepository) {
+        this.template = template;
+        this.testRepository = testRepository;
     }
 
     @Override
     public void onAfterSave(AfterSaveEvent<Test> event) {
-
+        Test test = event.getSource();
+        if (test.getStatus() == Test.Status.SCHEDULED) {
+            template.convertAndSend(TESTE_QUEUE, test);
+            test.setStatus(Test.Status.ENQUEUED);
+            testRepository.save(test);
+            log.info("Test " + test.getName() + " sent to queue " + TESTE_QUEUE);
+        }
     }
 }
