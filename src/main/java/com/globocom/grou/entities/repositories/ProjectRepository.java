@@ -20,8 +20,6 @@ import com.globocom.grou.entities.Project;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import java.util.stream.Stream;
-
 public interface ProjectRepository extends PagingAndSortingRepository<Project, String> {
     Project findByName(String name);
 
