@@ -1,4 +1,4 @@
-package com.globocom.grou.services;
+package com.globocom.grou.entities.events.services;
 
 import com.globocom.grou.entities.Loader;
 import com.globocom.grou.entities.Test;
