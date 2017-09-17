@@ -27,10 +27,10 @@ import java.util.Optional;
 @Configuration
 public class MongoConfiguration {
 
-    private static final String MONGO_CONN = Optional.ofNullable(System.getenv("MONGO_CONN")).orElse("mongodb://@localhost:27017/grou");
+    private static final String MONGO_URL = Optional.ofNullable(System.getenv("MONGO_URL")).orElse("mongodb://@localhost:27017/grou");
 
     @Bean
     public Mongo mongo() throws UnknownHostException {
-        return Mongo.Holder.singleton().connect(new MongoClientURI(MONGO_CONN));
+        return Mongo.Holder.singleton().connect(new MongoClientURI(MONGO_URL));
     }
 }
