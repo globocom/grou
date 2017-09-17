@@ -6,7 +6,7 @@
 
 ### docker
 ### docker-compose
-### python-openstackclient
+### python-openstackclient (pip install -r openstackclient-requirements.txt)
 ### curl
 
 ## Build and start all
