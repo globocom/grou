@@ -1,0 +1,38 @@
+mongo:
+    image: mongo:3.4
+    ports:
+      - "27017:27017"
+
+keystone:
+    image: tuxmonteiro/keystone
+    ports:
+      - "5000:5000"
+      - "35357:35357"
+
+broker:
+    image: vromero/activemq-artemis:1.5.4
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+      - "5672:5672"
+    environment:
+      - ARTEMIS_USERNAME=guest
+      - ARTEMIS_PASSWORD=guest
+      - ARTEMIS_MIN_MEMORY=512M
+      - ARTEMIS_MAX_MEMORY=1024M
+      - ARTEMIS_PERF_JOURNAL=AUTO
+
+grou:
+    build: .
+    dockerfile: Dockerfile
+    environment:
+      - MONGO_HOST=mongo.local
+      - KEYSTONE_URL=http://keystone:5000/v3
+      - KEYSTONE_DOMAIN_CONTEXT=grou
+      - BROKER_CONN=tcp://broker.local:61616?blockOnDurableSend=false&consumerWindowSize=0&protocols=Core
+    ports:
+      - 8080:8080
+    links:
+      - mongo:mongo.local
+      - keystone:keystone
+      - broker:broker.local
