@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import static com.globocom.grou.security.KeystoneAuthFilter.AUTH_PROBLEM_ERRORMSG;
+
 @Component
 public class KeystoneAuthenticationProvider implements AuthenticationProvider {
 
@@ -13,7 +15,7 @@ public class KeystoneAuthenticationProvider implements AuthenticationProvider {
         KeystoneAuthenticationToken auth = (KeystoneAuthenticationToken) authentication;
 
         if (auth.getPrincipal() == null) {
-            throw new SecurityException("Auth problem. Check token or project scope");
+            throw new SecurityException(AUTH_PROBLEM_ERRORMSG);
         }
         return auth;
     }

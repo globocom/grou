@@ -8,11 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import java.util.Collections;
+import java.util.Optional;
 
 public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
 
-    public static final String KEYSTONE_URL = System.getProperty(KeystoneAuthFilter.class.getPackage().getName() + ".keystoneUrl" ,"http://controller:5000/v3");
-    public static final String KEYSTONE_DOMAIN_CONTEXT =  System.getProperty(KeystoneAuthFilter.class.getPackage().getName() +".domain","grou");
+    private static final String KEYSTONE_URL = Optional.ofNullable(System.getenv("KEYSTONE_URL")).orElse("http://controller:5000/v3");
+    private static final String KEYSTONE_DOMAIN_CONTEXT = Optional.ofNullable(System.getenv("KEYSTONE_DOMAIN_CONTEXT")).orElse("grou");
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final String token;
