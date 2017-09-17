@@ -95,7 +95,15 @@ public class Test implements Serializable {
         return status;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public String getStatus_detailed() {
         return status_detailed;
+    }
+
+    public void setStatus_detailed(String status_detailed) {
+        this.status_detailed = status_detailed;
     }
 }
