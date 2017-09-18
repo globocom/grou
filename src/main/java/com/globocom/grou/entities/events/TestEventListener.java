@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestEventListener extends AbstractMongoEventListener<Test> {
 
-    private static final String TESTE_QUEUE = "grou:teste_queue";
+    private static final String TEST_QUEUE = "grou:test_queue";
 
     private final Log log = LogFactory.getLog(this.getClass());
 
@@ -46,10 +46,10 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     public void onAfterSave(AfterSaveEvent<Test> event) {
         Test test = event.getSource();
         if (test.getStatus() == Test.Status.SCHEDULED) {
-            template.convertAndSend(TESTE_QUEUE, test);
+            template.convertAndSend(TEST_QUEUE, test);
             test.setStatus(Test.Status.ENQUEUED);
             testRepository.save(test);
-            log.info("Test " + test.getName() + " sent to queue " + TESTE_QUEUE);
+            log.info("Test " + test.getName() + " sent to queue " + TEST_QUEUE);
         }
     }
 }
