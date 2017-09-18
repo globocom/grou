@@ -56,6 +56,9 @@ public class Test implements Serializable {
     @NonNull
     private Project project;
 
+    @Indexed
+    private Loader loader;
+
     @NonNull
     private Map<String, Object> properties = new HashMap<>();
 
@@ -105,5 +108,13 @@ public class Test implements Serializable {
 
     public void setStatus_detailed(String status_detailed) {
         this.status_detailed = status_detailed;
+    }
+
+    public Loader getLoader() {
+        return loader;
+    }
+
+    public void setLoader(Loader loader) {
+        this.loader = loader;
     }
 }
