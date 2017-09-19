@@ -16,7 +16,6 @@
 
 package com.globocom.grou.security;
 
-import com.globocom.grou.entities.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -29,18 +28,16 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final ProjectRepository projectRepository;
     private final KeystoneAuthenticationProvider keystoneAuthenticationProvider;
 
     @Autowired
-    public SecurityConfiguration(ProjectRepository projectRepository, KeystoneAuthenticationProvider keystoneAuthenticationProvider) {
-        this.projectRepository = projectRepository;
+    public SecurityConfiguration(KeystoneAuthenticationProvider keystoneAuthenticationProvider) {
         this.keystoneAuthenticationProvider = keystoneAuthenticationProvider;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.addFilterBefore(new KeystoneAuthFilter(projectRepository), BasicAuthenticationFilter.class);
+        http.addFilterBefore(new KeystoneAuthFilter(), BasicAuthenticationFilter.class);
         http.addFilterBefore(new AuditFilter(), BasicAuthenticationFilter.class);
         http.authorizeRequests().anyRequest().fullyAuthenticated();
         http.csrf().disable();

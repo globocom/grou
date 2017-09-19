@@ -42,9 +42,8 @@ export TOKEN="$(openstack token issue -f value -c id)"
 
 ## Create new test
 
-curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'{"name":"test1", "project":{"name": "grou"}}' http://127.0.0.1:8080/tests
+curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'{"name":"test1", "project":"grou"}' http://127.0.0.1:8080/tests
 
 ## List projects and tests
 
-curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -H'x-project:grou' http://127.0.0.1:8080/projects
 curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -H'x-project:grou' http://127.0.0.1:8080/tests

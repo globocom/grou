@@ -1,9 +1,6 @@
 package com.globocom.grou.entities.events.services;
 
-import com.globocom.grou.entities.Loader;
 import com.globocom.grou.entities.Test;
-import com.globocom.grou.entities.events.CallbackEvent;
-import com.globocom.grou.entities.repositories.LoaderRepository;
 import com.globocom.grou.entities.repositories.TestRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,21 +16,15 @@ public class CallbackListenerService {
     private final Log log = LogFactory.getLog(this.getClass());
 
     private final TestRepository testRepository;
-    private final LoaderRepository loaderRepository;
 
     @Autowired
-    public CallbackListenerService(TestRepository testRepository, LoaderRepository loaderRepository) {
+    public CallbackListenerService(TestRepository testRepository) {
         this.testRepository = testRepository;
-        this.loaderRepository = loaderRepository;
     }
 
     @JmsListener(destination = CALLBACK_QUEUE)
-    public void callback(CallbackEvent event) {
-        Test test = event.getTest();
-        Loader loader = event.getLoader();
+    public void callback(Test test) {
         testRepository.save(test);
-        loaderRepository.save(loader);
-
-        log.info("Test " + test.getName() + " status: " + test.getStatus().toString() + " (from loader " + loader.getUrl() + ")");
+        log.info("Test " + test.getName() + " status: " + test.getStatus().toString() + " (from loader " + test.getLoader() + ")");
     }
 }

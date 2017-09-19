@@ -16,12 +16,9 @@
 
 package com.globocom.grou.entities;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -31,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-@RequiredArgsConstructor
 @Document
 public class Test implements Serializable {
 
@@ -49,17 +45,14 @@ public class Test implements Serializable {
     private ObjectId id;
 
     @Indexed(unique = true)
-    @NonNull
     private String name;
 
-    @DBRef
-    @NonNull
-    private Project project;
+    @Indexed
+    private String project;
 
     @Indexed
-    private Loader loader;
+    private String loader;
 
-    @NonNull
     private Map<String, Object> properties = new HashMap<>();
 
     private Set<String> tags = new HashSet<>();
@@ -76,7 +69,7 @@ public class Test implements Serializable {
         return name;
     }
 
-    public Project getProject() {
+    public String getProject() {
         return project;
     }
 
@@ -110,11 +103,11 @@ public class Test implements Serializable {
         this.status_detailed = status_detailed;
     }
 
-    public Loader getLoader() {
+    public String getLoader() {
         return loader;
     }
 
-    public void setLoader(Loader loader) {
+    public void setLoader(String loader) {
         this.loader = loader;
     }
 }

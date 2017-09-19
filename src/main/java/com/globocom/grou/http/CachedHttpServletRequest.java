@@ -43,10 +43,6 @@ public class CachedHttpServletRequest extends HttpServletRequestWrapper {
         return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
-    public void setCachedBytes(ByteArrayOutputStream cachedBytes) {
-        this.cachedBytes = cachedBytes;
-    }
-
     private void cacheInputStream() throws IOException {
         cachedBytes = new ByteArrayOutputStream();
         IOUtils.copy(super.getInputStream(), cachedBytes);

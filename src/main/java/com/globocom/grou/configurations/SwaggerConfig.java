@@ -31,7 +31,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.regex("/(projects|tests|loaders)(/.*)*"))
+                .paths(PathSelectors.regex("/(tests)(/.*)*"))
                 .build();
     }
 }

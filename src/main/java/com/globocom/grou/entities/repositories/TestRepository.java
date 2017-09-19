@@ -17,10 +17,10 @@
 package com.globocom.grou.entities.repositories;
 
 import com.globocom.grou.entities.Test;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-public interface TestRepository extends PagingAndSortingRepository<Test, String> {
+public interface TestRepository extends MongoRepository<Test, String> {
 
     @Override
     @RestResource(exported = false)
