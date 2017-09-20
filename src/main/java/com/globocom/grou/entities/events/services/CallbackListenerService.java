@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,13 +19,10 @@ public class CallbackListenerService {
     private final Log log = LogFactory.getLog(this.getClass());
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private final JmsTemplate template;
-
     private final TestRepository testRepository;
 
     @Autowired
-    public CallbackListenerService(JmsTemplate template, TestRepository testRepository) {
-        this.template = template;
+    public CallbackListenerService(TestRepository testRepository) {
         this.testRepository = testRepository;
     }
 
