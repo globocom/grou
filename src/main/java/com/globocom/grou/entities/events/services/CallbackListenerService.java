@@ -26,7 +26,7 @@ public class CallbackListenerService {
         this.testRepository = testRepository;
     }
 
-    @JmsListener(destination = CALLBACK_QUEUE)
+    @JmsListener(destination = CALLBACK_QUEUE, concurrency = "1-1")
     public void callback(String testStr) throws IOException {
         Test test = mapper.readValue(testStr, Test.class);
         testRepository.save(test);
