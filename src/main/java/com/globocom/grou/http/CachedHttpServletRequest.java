@@ -49,7 +49,7 @@ public class CachedHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     private class InternalCachedServletInputStream extends ServletInputStream {
-        private ByteArrayInputStream input;
+        private final ByteArrayInputStream input;
 
         InternalCachedServletInputStream() {
             input = new ByteArrayInputStream(cachedBytes.toByteArray());

@@ -42,7 +42,8 @@ public class KeystoneAuthFilter extends OncePerRequestFilter {
     public static final String AUTH_TOKEN_HEADER     = "X-Auth-Token";
     public static final String PROJECT_SCOPE_HEADER  = "X-Project";
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneAuthFilter.class);
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -73,7 +74,7 @@ public class KeystoneAuthFilter extends OncePerRequestFilter {
     private void auth(String xAuthToken, String projectName) throws SecurityException {
         Assert.notNull(projectName, "Project is NULL");
 
-        log.info("Using project: " + projectName);
+        LOGGER.info("Using project: {}", projectName);
 
         Authentication auth = new KeystoneAuthenticationToken(xAuthToken, projectName);
         SecurityContextHolder.getContext().setAuthentication(auth);

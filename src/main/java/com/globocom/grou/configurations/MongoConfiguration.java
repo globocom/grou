@@ -40,7 +40,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
     private static final String MONGO_USER = System.getenv("MONGO_USER");
     private static final String MONGO_PASS = System.getenv("MONGO_PASS");
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
 
     @Override
     protected String getDatabaseName() {
@@ -49,7 +49,7 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-        log.info(String.format("MONGO_HOST: %s, MONGO_PORT: %s, MONGO_DB: %s", MONGO_HOST, MONGO_PORT, MONGO_DB));
+        LOGGER.info("MONGO_HOST: {}, MONGO_PORT: {}, MONGO_DB: {}", MONGO_HOST, MONGO_PORT, MONGO_DB);
         final List<MongoCredential> credentialsList = MONGO_USER == null || MONGO_PASS == null ? Collections.emptyList() :
                 singletonList(MongoCredential.createCredential(MONGO_USER, MONGO_DB, MONGO_PASS.toCharArray()));
         return new MongoClient(singletonList(new ServerAddress(MONGO_HOST, Integer.valueOf(MONGO_PORT))), credentialsList);

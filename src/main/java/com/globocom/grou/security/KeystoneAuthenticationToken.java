@@ -15,7 +15,8 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
     private static final String KEYSTONE_URL = Optional.ofNullable(System.getenv("KEYSTONE_URL")).orElse("http://controller:5000/v3");
     private static final String KEYSTONE_DOMAIN_CONTEXT = Optional.ofNullable(System.getenv("KEYSTONE_DOMAIN_CONTEXT")).orElse("grou");
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneAuthenticationToken.class);
+
     private final String token;
     private final String project;
 
@@ -25,7 +26,7 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
         super(Collections.emptyList());
         this.token = token;
         this.project = project;
-        log.info("Openstack Keystone url: " + KEYSTONE_URL + " (domain scope: " + KEYSTONE_DOMAIN_CONTEXT + ")");
+        LOGGER.info("Openstack Keystone url: {}  (domain scope: {})", KEYSTONE_URL, KEYSTONE_DOMAIN_CONTEXT);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
 
                 this.principal = os.getToken().getUser();
             } catch (Exception e) {
-                log.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             }
         }
         return principal;

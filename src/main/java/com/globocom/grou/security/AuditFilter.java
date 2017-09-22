@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class AuditFilter extends OncePerRequestFilter {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -25,8 +25,7 @@ public class AuditFilter extends OncePerRequestFilter {
             user = (User) auth.getPrincipal();
         }
         String principal = user != null ? user.getName() : "anonymous";
-        String accessMsg = "[" + request.getRemoteAddr() + "] " + request.getMethod() + " " + request.getRequestURI() + " (principal: " + principal + ")";
-        log.info(accessMsg);
+        LOGGER.info("[{}] {} {} (principal: {})", request.getRemoteAddr(), request.getMethod(), request.getRequestURI(), principal);
         filterChain.doFilter(request, response);
     }
 }

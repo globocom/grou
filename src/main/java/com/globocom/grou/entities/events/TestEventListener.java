@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.repositories.TestRepository;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
@@ -33,7 +33,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     private static final String TEST_QUEUE = "grou:test_queue";
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestEventListener.class);
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -54,9 +54,9 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 test.setStatus(Test.Status.ENQUEUED);
                 testRepository.save(test);
                 template.convertAndSend(TEST_QUEUE, mapper.writeValueAsString(test));
-                log.info("Test " + test.getName() + " sent to queue " + TEST_QUEUE);
+                LOGGER.info("Test {} sent to queue {}", test.getName(), TEST_QUEUE);
             } catch (JsonProcessingException e) {
-                log.error(e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
