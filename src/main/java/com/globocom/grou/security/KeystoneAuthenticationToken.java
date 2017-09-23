@@ -12,8 +12,8 @@ import java.util.Optional;
 
 public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
 
-    private static final String KEYSTONE_URL = Optional.ofNullable(System.getenv("KEYSTONE_URL")).orElse("http://controller:5000/v3");
-    private static final String KEYSTONE_DOMAIN_CONTEXT = Optional.ofNullable(System.getenv("KEYSTONE_DOMAIN_CONTEXT")).orElse("grou");
+    private static final String KEYSTONE_URL = Optional.ofNullable(System.getenv("OS_AUTH_URL")).orElse("http://controller:5000/v3");
+    private static final String KEYSTONE_DOMAIN_CONTEXT = Optional.ofNullable(System.getenv("OS_PROJECT_DOMAIN_NAME")).orElse("grou");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneAuthenticationToken.class);
 
