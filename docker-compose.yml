@@ -38,13 +38,37 @@ services:
         - ARTEMIS_MAX_MEMORY=1024M
         - ARTEMIS_PERF_JOURNAL=AUTO
 
-  graphite:
-      image: tuxmonteiro/graphite-stack
+  statsd:
+      image: tuxmonteiro/statsite
       ports:
-        - "3000:3000"
+        - "8125:8125/udp"
+      depends_on:
+        - graphite
+      environment:
+        - STREAM_CMD=python /bin/sinks/graphite.py grafite.local 2003 statsite
+        - STATSITE_FLUSH_INTERVAL=1
+        - USE_TYPE_PREFIX=0
+      links:
+        - graphite:graphite.local
+
+
+  graphite:
+      #image: ennexa/graphite
+      image: tuxmonteiro/graphite-stack
+      container_name: graphite.local
+      hostname: graphite.local
+      ports:
         - "2003:2003"
         - "443:443"
-        - "8125:8125/udp"
+
+  grafana:
+      image: grafana/grafana
+      ports:
+        - "3000:3000"
+      environment:
+        - GF_SECURITY_ADMIN_PASSWORD=admin
+      depends_on:
+        - statsd
 
   grou:
       build: .
