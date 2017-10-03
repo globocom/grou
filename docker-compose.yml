@@ -72,7 +72,6 @@ services:
 
   grou:
       build: .
-      dockerfile: Dockerfile
       environment:
         - MONGO_HOST=mongo.local
         - KEYSTONE_URL=http://k1.local:5000/v3
