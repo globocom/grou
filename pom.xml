@@ -119,6 +119,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -server
+                        -Xmx2048m -Xms2048m
+                        -Dserver.port=8080
+                        -XX:+PerfDisableSharedMem
+                    </jvmArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
