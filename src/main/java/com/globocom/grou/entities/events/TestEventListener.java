@@ -68,18 +68,20 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     @Override
     public void onAfterSave(AfterSaveEvent<Test> event) {
-        if (redisTemplate.opsForValue().setIfAbsent(GROU_LOCK, UUID.randomUUID().toString())) {
-            redisTemplate.expire(GROU_LOCK, 10, TimeUnit.SECONDS);
-            Test test = event.getSource();
-            if (test.getStatus() == Test.Status.SCHEDULED) {
-                try {
+        Test test = event.getSource();
+        if (test.getStatus() == Test.Status.SCHEDULED) {
+            try {
+                if (redisTemplate.opsForValue().setIfAbsent(GROU_LOCK, UUID.randomUUID().toString())) {
+                    redisTemplate.expire(GROU_LOCK, 10, TimeUnit.SECONDS);
                     jmsTemplate.convertAndSend(TEST_QUEUE, mapper.writeValueAsString(test));
-                } catch (JsonProcessingException e) {
-                    LOGGER.error(e.getMessage(), e);
+                } else {
+                    LOGGER.warn(GROU_LOCK + " found. Ignoring event.");
                 }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            } finally {
+                redisTemplate.delete(GROU_LOCK);
             }
-        } else {
-            LOGGER.warn(GROU_LOCK + " found. Ignoring event.");
         }
     }
 
