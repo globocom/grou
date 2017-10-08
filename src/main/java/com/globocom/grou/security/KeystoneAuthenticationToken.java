@@ -8,12 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
 import java.util.Collections;
-import java.util.Optional;
+
+import static com.globocom.grou.SystemEnv.KEYSTONE_DOMAIN_CONTEXT;
+import static com.globocom.grou.SystemEnv.KEYSTONE_URL;
 
 public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
-
-    private static final String KEYSTONE_URL = Optional.ofNullable(System.getenv("OS_AUTH_URL")).orElse("http://controller:5000/v3");
-    private static final String KEYSTONE_DOMAIN_CONTEXT = Optional.ofNullable(System.getenv("OS_PROJECT_DOMAIN_NAME")).orElse("grou");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneAuthenticationToken.class);
 
@@ -26,7 +25,7 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
         super(Collections.emptyList());
         this.token = token;
         this.project = project;
-        LOGGER.info("Openstack Keystone url: {}  (domain scope: {})", KEYSTONE_URL, KEYSTONE_DOMAIN_CONTEXT);
+        LOGGER.info("Openstack Keystone url: {}  (domain scope: {})", KEYSTONE_URL.getValue(), KEYSTONE_DOMAIN_CONTEXT.getValue());
     }
 
     @Override
@@ -39,9 +38,9 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
         if (principal == null) {
             try {
                 OSClient.OSClientV3 os = OSFactory.builderV3()
-                        .endpoint(KEYSTONE_URL)
+                        .endpoint(KEYSTONE_URL.getValue())
                         .token(token)
-                        .scopeToProject(Identifier.byName(project), Identifier.byName(KEYSTONE_DOMAIN_CONTEXT))
+                        .scopeToProject(Identifier.byName(project), Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
                         .authenticate();
 
                 this.principal = os.getToken().getUser();

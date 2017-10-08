@@ -23,6 +23,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
+import java.nio.charset.Charset;
 
 public class CachedHttpServletRequest extends HttpServletRequestWrapper {
 
@@ -40,7 +41,7 @@ public class CachedHttpServletRequest extends HttpServletRequestWrapper {
 
     @Override
     public BufferedReader getReader() throws IOException{
-        return new BufferedReader(new InputStreamReader(getInputStream()));
+        return new BufferedReader(new InputStreamReader(getInputStream(), Charset.defaultCharset()));
     }
 
     private void cacheInputStream() throws IOException {

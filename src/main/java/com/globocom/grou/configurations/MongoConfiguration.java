@@ -27,32 +27,26 @@ import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
+import static com.globocom.grou.SystemEnv.*;
 import static java.util.Collections.singletonList;
 
 @Configuration
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
-    private static final String MONGO_HOST = Optional.ofNullable(System.getenv("MONGO_HOST")).orElse("localhost");
-    private static final String MONGO_PORT = Optional.ofNullable(System.getenv("MONGO_PORT")).orElse("27017");
-    private static final String MONGO_DB   = Optional.ofNullable(System.getenv("MONGO_DB")).orElse("grou");
-    private static final String MONGO_USER = System.getenv("MONGO_USER");
-    private static final String MONGO_PASS = System.getenv("MONGO_PASS");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
 
     @Override
     protected String getDatabaseName() {
-        return MONGO_DB;
+        return MONGO_DB.getValue();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        LOGGER.info("MONGO_HOST: {}, MONGO_PORT: {}, MONGO_DB: {}", MONGO_HOST, MONGO_PORT, MONGO_DB);
-        final List<MongoCredential> credentialsList = MONGO_USER == null || MONGO_PASS == null ? Collections.emptyList() :
-                singletonList(MongoCredential.createCredential(MONGO_USER, MONGO_DB, MONGO_PASS.toCharArray()));
-        return new MongoClient(singletonList(new ServerAddress(MONGO_HOST, Integer.valueOf(MONGO_PORT))), credentialsList);
+        LOGGER.info("MONGO_HOST: {}, MONGO_PORT: {}, MONGO_DB: {}", MONGO_HOST.getValue(), MONGO_PORT.getValue(), MONGO_DB.getValue());
+        final List<MongoCredential> credentialsList = "".equals(MONGO_USER.getValue()) || "".equals(MONGO_PASS.getValue()) ? Collections.emptyList() :
+                singletonList(MongoCredential.createCredential(MONGO_USER.getValue(), MONGO_DB.getValue(), MONGO_PASS.getValue().toCharArray()));
+        return new MongoClient(singletonList(new ServerAddress(MONGO_HOST.getValue(), Integer.parseInt(MONGO_PORT.getValue()))), credentialsList);
     }
 
 }

@@ -37,7 +37,8 @@ public class Test implements Serializable {
         ENQUEUED,
         RUNNING,
         OK,
-        ERROR
+        ERROR,
+        UNDEF
     }
 
     @Id
@@ -49,8 +50,7 @@ public class Test implements Serializable {
     @Indexed
     private String project;
 
-    @Indexed
-    private String loader;
+    private Set<Loader> loaders = new HashSet<>();
 
     private Map<String, Object> properties = new HashMap<>();
 
@@ -58,10 +58,12 @@ public class Test implements Serializable {
 
     private Status status = Status.SCHEDULED;
 
-    private String statusDetailed = "";
-
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -94,19 +96,13 @@ public class Test implements Serializable {
         this.status = status;
     }
 
-    public String getStatusDetailed() {
-        return statusDetailed;
+    public Set<Loader> getLoaders() {
+        return loaders;
     }
 
-    public void setStatusDetailed(String statusDetailed) {
-        this.statusDetailed = statusDetailed;
-    }
-
-    public String getLoader() {
-        return loader;
-    }
-
-    public void setLoader(String loader) {
-        this.loader = loader;
+    public void setLoaders(Set<Loader> loaders) {
+        if (loaders != null) {
+            this.loaders = loaders;
+        }
     }
 }
