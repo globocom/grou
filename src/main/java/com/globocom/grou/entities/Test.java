@@ -16,11 +16,13 @@
 
 package com.globocom.grou.entities;
 
+import com.globocom.grou.SystemEnv;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -81,6 +83,9 @@ public class Test implements Serializable {
 
     @Indexed
     private Status status = Status.SCHEDULED;
+
+    @Transient
+    private String dashboard;
 
     public String getId() {
         return id;
@@ -144,5 +149,9 @@ public class Test implements Serializable {
         if (loaders != null) {
             this.loaders = loaders;
         }
+    }
+
+    public String getDashboard() {
+        return SystemEnv.DASHBOARD_URL.getValue() + "/?project=" + project + "&test=" + name + "&domain=" + SystemEnv.KEYSTONE_DOMAIN_CONTEXT.getValue();
     }
 }

@@ -117,7 +117,12 @@ public enum SystemEnv {
     /**
      * Queue Consumer pause (ms).
      */
-    CONSUMER_PAUSE ("CONSUMER_PAUSE", 10000L);
+    CONSUMER_PAUSE ("CONSUMER_PAUSE", 10000L),
+
+    /**
+     * Dashboard URL
+     */
+    DASHBOARD_URL ("DASHBOARD_URL", "http://localhost:3000/mydashboard");
 
     /**
      * Gets SystemEnv value.
