@@ -16,6 +16,7 @@
 
 package com.globocom.grou.entities;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -26,8 +27,11 @@ public class Loader implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Indexed
     private String name = "UNDEF";
+
     private Test.Status status = Test.Status.UNDEF;
+
     private String statusDetailed = "";
 
     public String getName() {

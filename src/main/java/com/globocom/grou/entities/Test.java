@@ -59,8 +59,10 @@ public class Test implements Serializable {
 
     private Map<String, Object> properties = new HashMap<>();
 
+    @Indexed
     private Set<String> tags = new HashSet<>();
 
+    @Indexed
     private Status status = Status.SCHEDULED;
 
     public String getId() {
