@@ -17,6 +17,8 @@
 package com.globocom.grou.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,6 +30,9 @@ import java.util.Set;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Document
+@CompoundIndexes({
+    @CompoundIndex(name = "test_project", unique = true, def = "{'name': 1, 'project': 1}")
+})
 public class Test implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +49,7 @@ public class Test implements Serializable {
     @Id
     private String id;
 
-    @Indexed(unique = true)
+    @Indexed
     private String name;
 
     @Indexed

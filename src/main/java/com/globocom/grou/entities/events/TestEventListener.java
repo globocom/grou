@@ -16,7 +16,6 @@
 
 package com.globocom.grou.entities.events;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Loader;
@@ -34,6 +33,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +94,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
             testRepository.save(test);
             final AtomicInteger loadersRunning = new AtomicInteger(0);
             final AtomicInteger parallelLoaders = new AtomicInteger(1);
-            Integer parallelLoadersProperty = (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1));
+            Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
             Predicate<String> onlyLoadersUndef = loaderKey -> Test.Status.UNDEF.toString().equals(redisTemplate.opsForValue().get(loaderKey));
             List<String> loadersUndef = redisTemplate.keys("grou:loader:*").stream().filter(onlyLoadersUndef).collect(Collectors.toList());
 
@@ -110,7 +110,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
             } else {
                 final AtomicInteger retry = new AtomicInteger(Optional.ofNullable(jmsHeaders.get("retry")).orElse(1));
                 String uniqRef = test.getProject() + "." + test.getName();
-                String errorDetailed = "Insufficient loaders (only " + loadersUndef.size() + " available [" + parallelLoadersProperty + " required]).";
+                String errorDetailed = "Insufficient loaders (available=" + loadersUndef.size() + ", required=" + parallelLoadersProperty + ").";
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
                     LOGGER.warn("Test " + uniqRef + ": " + errorDetailed + " Re-queuing (retry " + retry.get() + "/" + maxRetry + ").");
@@ -135,6 +135,11 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
             redisTemplate.delete(GROU_LOCK);
         }
 
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        redisTemplate.delete(GROU_LOCK);
     }
 
 }
