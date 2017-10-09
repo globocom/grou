@@ -48,6 +48,11 @@ public class KeystoneAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI().startsWith("/version") || request.getRequestURI().startsWith("/token")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         boolean isPostMethod = HttpMethod.POST.toString().equals(request.getMethod());
 
         String token = request.getHeader(AUTH_TOKEN_HEADER);
