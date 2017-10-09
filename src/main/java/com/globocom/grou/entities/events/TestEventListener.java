@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
+import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
@@ -64,6 +65,11 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         this.testRepository = testRepository;
         this.redisTemplate = redisTemplate;
         this.jmsTemplate = jmsTemplate;
+    }
+
+    @Override
+    public void onBeforeSave(BeforeSaveEvent<Test> event) {
+
     }
 
     @Override

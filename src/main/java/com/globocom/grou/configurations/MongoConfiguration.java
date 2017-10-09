@@ -24,14 +24,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 
 import java.util.Collections;
 import java.util.List;
 
-import static com.globocom.grou.SystemEnv.*;
+import static com.globocom.grou.SystemEnv.MONGO_DB;
+import static com.globocom.grou.SystemEnv.MONGO_HOST;
+import static com.globocom.grou.SystemEnv.MONGO_PASS;
+import static com.globocom.grou.SystemEnv.MONGO_PORT;
+import static com.globocom.grou.SystemEnv.MONGO_USER;
 import static java.util.Collections.singletonList;
 
 @Configuration
+@EnableMongoAuditing
 public class MongoConfiguration extends AbstractMongoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);

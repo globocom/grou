@@ -20,8 +20,11 @@ import com.globocom.grou.entities.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
+
+import java.time.Instant;
 
 public interface TestRepository extends MongoRepository<Test, String> {
 
@@ -34,6 +37,13 @@ public interface TestRepository extends MongoRepository<Test, String> {
     Page<Test> findByTags(@Param("key") String key, Pageable pageable);
 
     Page<Test> findByLoadersName(@Param("name") String name, Pageable pageable);
+
+    Page<Test> findByCreatedBy(@Param("name") String name, Pageable pageable);
+
+    Page<Test> findByLastModifiedBy(@Param("name") String name, Pageable pageable);
+
+    @Query(value = "{'createdDate':{ $gte: ?0, $lte: ?1}}")
+    Page<Test> findByCreatedDateBetween(@Param("from") Instant from, @Param("to") Instant to, Pageable pageable);
 
     @Override
     @RestResource(exported = false)

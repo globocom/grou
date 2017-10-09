@@ -16,13 +16,18 @@
 
 package com.globocom.grou.entities;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,6 +54,18 @@ public class Test implements Serializable {
     @Id
     private String id;
 
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private Date createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private Date lastModifiedDate;
+
     @Indexed
     private String name;
 
@@ -71,6 +88,22 @@ public class Test implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
     public String getName() {
