@@ -34,7 +34,11 @@ public interface TestRepository extends MongoRepository<Test, String> {
 
     Page<Test> findByProject(@Param("name") String name, Pageable pageable);
 
+    Page<Test> findByProjectAndStatus(@Param("name") String name, @Param("status") Test.Status status, Pageable pageable);
+
     Page<Test> findByTags(@Param("key") String key, Pageable pageable);
+
+    Page<Test> findByTagsAndProject(@Param("key") String key, @Param("project") String project, Pageable pageable);
 
     Page<Test> findByLoadersName(@Param("name") String name, Pageable pageable);
 
@@ -44,6 +48,20 @@ public interface TestRepository extends MongoRepository<Test, String> {
 
     @Query(value = "{'createdDate':{ $gte: ?0, $lte: ?1}}")
     Page<Test> findByCreatedDateBetween(@Param("from") Instant from, @Param("to") Instant to, Pageable pageable);
+
+    Page<Test> findByNameAndProject(@Param("name") String name, @Param("project") String project, Pageable pageable);
+
+    @Query(value = "{'lastModifiedDate':{ $lte: ?0}}")
+    Page<Test> findByLastModifiedByBefore(@Param("instant") Instant instant, Pageable pageable);
+
+    @Query(value = "{'lastModifiedDate':{ $gte: ?0}}")
+    Page<Test> findByLastModifiedByAfter(@Param("instant") Instant instant, Pageable pageable);
+
+    @Query(value = "{'lastModifiedDate':{ $lte: ?0 }, 'status': ?1 }")
+    Page<Test> findByLastModifiedByBeforeAndStatus(@Param("instant") Instant instant, @Param("status") Test.Status status, Pageable pageable);
+
+    @Query(value = "{'lastModifiedDate':{ $gte: ?0 }, 'status': ?1 }")
+    Page<Test> findByLastModifiedByAfterAndStatus(@Param("instant") Instant instant, @Param("status") Test.Status status, Pageable pageable);
 
     @Override
     @RestResource(exported = false)
