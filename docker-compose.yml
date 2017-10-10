@@ -1,9 +1,16 @@
-version: "2"
+version: "3"
 services:
   mongo:
       image: mongo:3.4
+      container_name: mongo.local
+      hostname: mongo.local
       ports:
         - "27017:27017"
+
+  redis:
+      image: redis
+      ports:
+        - "6379:6379"
 
   keystone:
       image: tuxmonteiro/keystone
@@ -13,62 +20,16 @@ services:
         - "5000:5000"
         - "35357:35357"
 
-#  horizon:
-#      image: pataquets/openstack-dashboard
-#      container_name: horizon.local
-#      hostname: horizon.local
-#      ports:
-#        - "8800:80"
-#      environment:
-#        - OPENSTACK_HOST=k1.local
-#        - OPENSTACK_KEYSTONE_URL=http://k1.local:5000/v3
-#      links:
-#        - keystone:k1.local
-
-  broker:
-      image: vromero/activemq-artemis:1.5.4
-      ports:
-        - "61616:61616"
-        - "8161:8161"
-        - "5672:5672"
-      environment:
-        - ARTEMIS_USERNAME=guest
-        - ARTEMIS_PASSWORD=guest
-        - ARTEMIS_MIN_MEMORY=512M
-        - ARTEMIS_MAX_MEMORY=1024M
-        - ARTEMIS_PERF_JOURNAL=AUTO
-
   statsd:
       image: tuxmonteiro/statsite
       ports:
         - "8125:8125/udp"
-      depends_on:
-        - graphite
       environment:
-        - STREAM_CMD=python /bin/sinks/graphite.py grafite.local 2003 statsite
+        - STREAM_CMD=tee -a /tmp/out
         - STATSITE_FLUSH_INTERVAL=1
         - USE_TYPE_PREFIX=0
-      links:
-        - graphite:graphite.local
-
-
-  graphite:
-      #image: ennexa/graphite
-      image: tuxmonteiro/graphite-stack
-      container_name: graphite.local
-      hostname: graphite.local
-      ports:
-        - "2003:2003"
-        - "443:443"
-
-  grafana:
-      image: grafana/grafana
-      ports:
-        - "3000:3000"
-      environment:
-        - GF_SECURITY_ADMIN_PASSWORD=admin
-      depends_on:
-        - statsd
+      volumes:
+        - /tmp:/tmp
 
   grou:
       build: .
@@ -82,4 +43,4 @@ services:
       links:
         - mongo:mongo.local
         - keystone:k1.local
-        - broker:broker.local
+        - redis:redis
