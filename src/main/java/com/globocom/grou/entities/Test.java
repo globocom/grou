@@ -29,11 +29,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 @Document
@@ -152,6 +149,11 @@ public class Test implements Serializable {
     }
 
     public String getDashboard() {
-        return SystemEnv.DASHBOARD_URL.getValue() + "/?project=" + project + "&test=" + name + "&domain=" + SystemEnv.KEYSTONE_DOMAIN_CONTEXT.getValue();
+        String link = "%s/dashboard/db/grou?refresh=5s&orgId=1&var-project=%s&var-tags=%s";
+        return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project), sanitize(tags.stream().sorted().collect(Collectors.joining("_"))));
+    }
+
+    private String sanitize(String key) {
+        return key.replaceAll("[.:/\\s\\t/\\\\]", "_");
     }
 }
