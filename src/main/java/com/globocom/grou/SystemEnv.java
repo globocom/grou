@@ -122,7 +122,7 @@ public enum SystemEnv {
     /**
      * Dashboard URL
      */
-    DASHBOARD_URL ("DASHBOARD_URL", "http://localhost:3000/mydashboard");
+    DASHBOARD_URL ("DASHBOARD_URL", "http://localhost:3000/dashboard/db/grou");
 
     /**
      * Gets SystemEnv value.

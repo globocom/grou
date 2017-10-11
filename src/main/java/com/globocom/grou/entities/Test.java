@@ -149,8 +149,9 @@ public class Test implements Serializable {
     }
 
     public String getDashboard() {
-        String link = "%s/dashboard/db/grou?refresh=5s&orgId=1&var-project=%s&var-tags=%s";
-        return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project), sanitize(tags.stream().sorted().collect(Collectors.joining("_"))));
+        String link = "%s?refresh=5s&orgId=1&var-project=%s&var-alltags=%s";
+        String tagsCollection = sanitize(tags.stream().sorted().collect(Collectors.joining("_")));
+        return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project), ("".equals(tagsCollection) ? "UNDEF" : tagsCollection));
     }
 
     private String sanitize(String key) {
