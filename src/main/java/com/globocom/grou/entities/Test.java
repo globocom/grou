@@ -149,12 +149,13 @@ public class Test implements Serializable {
     }
 
     public String getDashboard() {
-        String link = "%s?refresh=5s&orgId=1&var-project=%s&var-alltags=%s";
-        String tagsCollection = sanitize(tags.stream().sorted().collect(Collectors.joining("_")));
-        return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project), ("".equals(tagsCollection) ? "UNDEF" : tagsCollection));
+        String link = "%s?refresh=5s&orgId=1&var-project=%s&var-alltags=%s&from=now-2m&to=now";
+        String tagsCollection = sanitize(tags.stream().sorted().collect(Collectors.joining()), "");
+        String allTags = "".equals(tagsCollection) ? "UNDEF" : tagsCollection;
+        return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project, "_"), allTags);
     }
 
-    private String sanitize(String key) {
-        return key.replaceAll("[.:/\\s\\t/\\\\]", "_");
+    private String sanitize(String key, String to) {
+        return key.replaceAll("[@.:/\\s\\t/\\\\]", to).toLowerCase();
     }
 }
