@@ -112,12 +112,12 @@ public enum SystemEnv {
     /**
      * Re-queue max retry.
      */
-    MAX_RETRY ("MAX_RETRY", 5),
+    MAX_RETRY ("MAX_RETRY", 10),
 
     /**
      * Queue Consumer pause (ms).
      */
-    CONSUMER_PAUSE ("CONSUMER_PAUSE", 10000L),
+    CONSUMER_PAUSE ("CONSUMER_PAUSE", 5000L),
 
     /**
      * Dashboard URL
