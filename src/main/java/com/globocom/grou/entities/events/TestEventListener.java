@@ -119,7 +119,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 String errorDetailed = "Insufficient loaders (available=" + loadersUndef.size() + ", required=" + parallelLoadersProperty + ").";
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
-                    LOGGER.warn("Test " + uniqRef + ": " + errorDetailed + " Re-queuing (retry " + retry.get() + "/" + maxRetry + ").");
+                    LOGGER.warn("Test " + uniqRef + ": " + errorDetailed + " Re-queued (retry " + retry.get() + "/" + maxRetry + ").");
 
                     jmsTemplate.convertAndSend(TEST_QUEUE, testStr, message -> {
                         message.setIntProperty("retry", retry.incrementAndGet());
