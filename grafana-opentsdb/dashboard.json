@@ -161,7 +161,7 @@
           "targets": [
             {
               "aggregator": "avg",
-              "alias": "$tag_test/mean",
+              "alias": "$tag_test",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -1421,5 +1421,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 59
+  "version": 60
 }
