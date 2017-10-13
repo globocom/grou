@@ -299,10 +299,10 @@
             {
               "aggregator": "avg",
               "alias": "$tag_test/mean",
-              "currentFilterGroupBy": true,
-              "currentFilterKey": "test",
-              "currentFilterType": "wildcard",
-              "currentFilterValue": "*",
+              "currentFilterGroupBy": false,
+              "currentFilterKey": "",
+              "currentFilterType": "literal_or",
+              "currentFilterValue": "",
               "downsampleAggregator": "avg",
               "downsampleFillPolicy": "none",
               "downsampleInterval": "",
@@ -318,6 +318,12 @@
                   "groupBy": true,
                   "tagk": "alltags",
                   "type": "literal_or"
+                },
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "test",
+                  "type": "wildcard"
                 }
               ],
               "hide": false,
@@ -1421,5 +1427,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 60
+  "version": 61
 }
