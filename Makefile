@@ -16,7 +16,7 @@ clean:
 	mvn clean
 
 run:
-	sleep 5; java -jar target/grou.jar
+	java -jar target/grou.jar
 
 dist: grou
 	type fpm > /dev/null 2>&1 && \
