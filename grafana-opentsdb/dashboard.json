@@ -1,4 +1,40 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_OTS",
+      "label": "ots",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "opentsdb",
+      "pluginName": "OpenTSDB"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "4.5.2"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "opentsdb",
+      "name": "OpenTSDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "singlestat",
+      "name": "Singlestat",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": []
   },
@@ -6,46 +42,49 @@
   "gnetId": null,
   "graphTooltip": 0,
   "hideControls": false,
-  "id": 1,
+  "id": null,
   "links": [],
   "refresh": "5s",
   "rows": [
     {
       "collapse": false,
-      "height": "185",
+      "height": 358,
       "panels": [
         {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
+          "datasource": "${DS_OTS}",
+          "fill": 5,
           "id": 1,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": false,
             "current": true,
             "hideEmpty": true,
             "hideZero": true,
             "max": true,
             "min": false,
-            "rightSide": false,
+            "rightSide": true,
             "show": true,
+            "sort": "max",
+            "sortDesc": true,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
-          "pointradius": 5,
-          "points": false,
+          "pointradius": 1,
+          "points": true,
           "renderer": "flot",
+          "repeat": null,
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 4,
+          "span": 9,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -93,7 +132,7 @@
           "timeShift": null,
           "title": "Project $project - req/s",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -125,49 +164,71 @@
           ]
         },
         {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
-          "id": 2,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": false,
-            "rightSide": false,
+          "cacheTimeout": null,
+          "colorBackground": false,
+          "colorValue": false,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "datasource": "${DS_OTS}",
+          "decimals": null,
+          "format": "short",
+          "gauge": {
+            "maxValue": 100000,
+            "minValue": 0,
             "show": true,
-            "total": false,
-            "values": true
+            "thresholdLabels": false,
+            "thresholdMarkers": true
           },
-          "lines": true,
-          "linewidth": 1,
+          "id": 11,
+          "interval": null,
           "links": [],
-          "nullPointMode": "null as zero",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 4,
-          "stack": false,
-          "steppedLine": false,
+          "mappingType": 1,
+          "mappingTypes": [
+            {
+              "name": "value to text",
+              "value": 1
+            },
+            {
+              "name": "range to text",
+              "value": 2
+            }
+          ],
+          "maxDataPoints": 100,
+          "nullPointMode": "connected",
+          "nullText": null,
+          "postfix": "",
+          "postfixFontSize": "50%",
+          "prefix": "",
+          "prefixFontSize": "50%",
+          "rangeMaps": [
+            {
+              "from": "null",
+              "text": "N/A",
+              "to": "null"
+            }
+          ],
+          "span": 3,
+          "sparkline": {
+            "fillColor": "rgba(31, 118, 189, 0.18)",
+            "full": false,
+            "lineColor": "rgb(31, 120, 193)",
+            "show": false
+          },
+          "tableColumn": "",
           "targets": [
             {
               "aggregator": "avg",
-              "alias": "$tag_test",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
               "currentFilterValue": "",
               "downsampleAggregator": "avg",
               "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "explicitTags": false,
               "filters": [
                 {
                   "filter": "$project",
@@ -182,82 +243,142 @@
                   "type": "literal_or"
                 },
                 {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
+                  "filter": "^[1-3].*",
+                  "groupBy": false,
+                  "tagk": "status",
+                  "type": "regexp"
                 }
               ],
-              "metric": "grou.response.size.sum",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Project $project - data rate",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "Bps",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
+              "hide": true,
+              "isCounter": false,
+              "metric": "grou.response.status.count",
+              "refId": "A",
+              "shouldComputeRate": false
             },
             {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
+              "aggregator": "avg",
+              "currentFilterGroupBy": false,
+              "currentFilterKey": "",
+              "currentFilterType": "literal_or",
+              "currentFilterValue": "",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "explicitTags": false,
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "^[^1-3].*",
+                  "groupBy": false,
+                  "tagk": "status",
+                  "type": "regexp"
+                }
+              ],
+              "hide": true,
+              "isCounter": false,
+              "metric": "grou.response.status.count",
+              "refId": "B",
+              "shouldComputeRate": false
+            },
+            {
+              "aggregator": "sum",
+              "currentFilterGroupBy": false,
+              "currentFilterKey": "",
+              "currentFilterType": "literal_or",
+              "currentFilterValue": "",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "explicitTags": false,
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                }
+              ],
+              "isCounter": false,
+              "metric": "grou.response.status.count",
+              "refId": "C",
+              "shouldComputeRate": false
             }
-          ]
-        },
+          ],
+          "thresholds": "",
+          "title": "req/s",
+          "transparent": false,
+          "type": "singlestat",
+          "valueFontSize": "80%",
+          "valueMaps": [
+            {
+              "op": "=",
+              "text": "0",
+              "value": "null"
+            }
+          ],
+          "valueName": "current"
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
         {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
+          "datasource": "${DS_OTS}",
+          "fill": 5,
           "id": 3,
           "legend": {
-            "avg": false,
+            "alignAsTable": false,
+            "avg": true,
             "current": false,
             "hideEmpty": true,
             "hideZero": true,
             "max": false,
             "min": false,
-            "show": true,
+            "rightSide": false,
+            "show": false,
             "total": false,
-            "values": false
+            "values": true
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
-          "pointradius": 5,
-          "points": false,
+          "pointradius": 1,
+          "points": true,
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
-          "span": 4,
+          "span": 6,
           "stack": false,
           "steppedLine": false,
           "targets": [
@@ -404,8 +525,8 @@
           "timeShift": null,
           "title": "Project $project - response time",
           "tooltip": {
-            "shared": true,
-            "sort": 0,
+            "shared": false,
+            "sort": 1,
             "value_type": "individual"
           },
           "type": "graph",
@@ -434,17 +555,123 @@
               "show": true
             }
           ]
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_OTS}",
+          "fill": 5,
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 0,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "aggregator": "avg",
+              "alias": "$tag_test",
+              "currentFilterGroupBy": false,
+              "currentFilterKey": "",
+              "currentFilterType": "literal_or",
+              "currentFilterValue": "",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "test",
+                  "type": "wildcard"
+                }
+              ],
+              "metric": "grou.response.size.sum",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Project $project - data rate",
+          "tooltip": {
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "Bps",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
         }
       ],
       "repeat": null,
       "repeatIteration": null,
       "repeatRowId": null,
-      "showTitle": false,
-      "title": "Dashboard Row",
+      "showTitle": true,
+      "title": "Response Time & Data Rate",
       "titleSize": "h6"
     },
     {
-      "collapse": false,
+      "collapse": true,
       "height": "185",
       "panels": [
         {
@@ -452,24 +679,24 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
+          "datasource": "${DS_OTS}",
+          "fill": 10,
           "id": 4,
           "legend": {
-            "alignAsTable": false,
+            "alignAsTable": true,
             "avg": false,
             "current": true,
             "hideEmpty": true,
             "hideZero": true,
             "max": true,
             "min": false,
-            "rightSide": false,
-            "show": true,
+            "rightSide": true,
+            "show": false,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
@@ -527,7 +754,7 @@
           "timeShift": null,
           "title": "Project $project - targets connections",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -560,12 +787,12 @@
         },
         {
           "aliasColors": {},
-          "bars": false,
+          "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
+          "datasource": "${DS_OTS}",
           "fill": 1,
-          "id": 6,
+          "id": 8,
           "legend": {
             "alignAsTable": false,
             "avg": false,
@@ -575,11 +802,128 @@
             "max": true,
             "min": false,
             "rightSide": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
-          "lines": true,
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "span": 6,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "aggregator": "none",
+              "alias": "$tag_test/$tag_target",
+              "currentFilterGroupBy": true,
+              "currentFilterKey": "target",
+              "currentFilterType": "wildcard",
+              "currentFilterValue": "*",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "test",
+                  "type": "wildcard"
+                }
+              ],
+              "metric": "grou.targets.memFree.mean",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Project $project - targets mem free",
+          "tooltip": {
+            "shared": false,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "decbytes",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "Targets connections & memFree",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": true,
+      "height": "185",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_OTS}",
+          "fill": 10,
+          "id": 6,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "rightSide": true,
+            "show": false,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
@@ -638,7 +982,7 @@
           "timeShift": null,
           "title": "Project $project - targets cpu used",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -668,131 +1012,14 @@
               "show": true
             }
           ]
-        }
-      ],
-      "repeat": null,
-      "repeatIteration": null,
-      "repeatRowId": null,
-      "showTitle": false,
-      "title": "Dashboard Row",
-      "titleSize": "h6"
-    },
-    {
-      "collapse": false,
-      "height": "185",
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
-          "id": 8,
-          "legend": {
-            "alignAsTable": false,
-            "avg": false,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": false,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "links": [],
-          "nullPointMode": "null as zero",
-          "percentage": false,
-          "pointradius": 5,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "span": 6,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "aggregator": "none",
-              "alias": "$tag_test/$tag_target",
-              "currentFilterGroupBy": true,
-              "currentFilterKey": "target",
-              "currentFilterType": "wildcard",
-              "currentFilterValue": "*",
-              "downsampleAggregator": "avg",
-              "downsampleFillPolicy": "none",
-              "downsampleInterval": "",
-              "filters": [
-                {
-                  "filter": "$project",
-                  "groupBy": false,
-                  "tagk": "project",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "$alltags",
-                  "groupBy": false,
-                  "tagk": "alltags",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
-                }
-              ],
-              "metric": "grou.targets.memFree.mean",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Project $project - targets mem free",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "decbytes",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            }
-          ]
         },
         {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
-          "fill": 1,
+          "datasource": "${DS_OTS}",
+          "fill": 10,
           "id": 9,
           "legend": {
             "alignAsTable": false,
@@ -803,16 +1030,16 @@
             "max": true,
             "min": false,
             "rightSide": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
           "lines": true,
-          "linewidth": 1,
+          "linewidth": 0,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
-          "pointradius": 5,
+          "pointradius": 1,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
@@ -823,7 +1050,7 @@
           "targets": [
             {
               "aggregator": "none",
-              "alias": "$tag_test/load1",
+              "alias": "$tag_test/$tag_target/1m",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -862,7 +1089,7 @@
             },
             {
               "aggregator": "none",
-              "alias": "$tag_test/load5",
+              "alias": "$tag_test/$tag_target/5m",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -901,7 +1128,7 @@
             },
             {
               "aggregator": "none",
-              "alias": "$tag_test/load5",
+              "alias": "$tag_test/$tag_target/15m",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -944,7 +1171,7 @@
           "timeShift": null,
           "title": "Project $project - targets cpu load",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -979,12 +1206,12 @@
       "repeat": null,
       "repeatIteration": null,
       "repeatRowId": null,
-      "showTitle": false,
-      "title": "Dashboard Row",
+      "showTitle": true,
+      "title": "Targets CPU",
       "titleSize": "h6"
     },
     {
-      "collapse": false,
+      "collapse": true,
       "height": "185",
       "panels": [
         {
@@ -992,7 +1219,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
+          "datasource": "${DS_OTS}",
           "fill": 1,
           "id": 7,
           "legend": {
@@ -1023,8 +1250,8 @@
           "steppedLine": false,
           "targets": [
             {
-              "aggregator": "none",
-              "alias": "$tag_test/$tag_loader",
+              "aggregator": "last",
+              "alias": "$tag_loader",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -1033,6 +1260,12 @@
               "downsampleFillPolicy": "none",
               "downsampleInterval": "",
               "filters": [
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "loader",
+                  "type": "wildcard"
+                },
                 {
                   "filter": "$project",
                   "groupBy": false,
@@ -1044,18 +1277,6 @@
                   "groupBy": false,
                   "tagk": "alltags",
                   "type": "literal_or"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "loader",
-                  "type": "wildcard"
                 }
               ],
               "metric": "grou.loaders.cpu.mean",
@@ -1103,7 +1324,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
+          "datasource": "${DS_OTS}",
           "fill": 1,
           "id": 5,
           "legend": {
@@ -1130,12 +1351,12 @@
           "seriesOverrides": [],
           "spaceLength": 10,
           "span": 4,
-          "stack": false,
+          "stack": true,
           "steppedLine": false,
           "targets": [
             {
-              "aggregator": "none",
-              "alias": "$tag_test/$tag_loader",
+              "aggregator": "last",
+              "alias": "$tag_loader",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -1144,6 +1365,12 @@
               "downsampleFillPolicy": "none",
               "downsampleInterval": "",
               "filters": [
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "loader",
+                  "type": "wildcard"
+                },
                 {
                   "filter": "$project",
                   "groupBy": false,
@@ -1155,18 +1382,6 @@
                   "groupBy": false,
                   "tagk": "alltags",
                   "type": "literal_or"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "loader",
-                  "type": "wildcard"
                 }
               ],
               "metric": "grou.loaders.conns.mean",
@@ -1178,7 +1393,7 @@
           "timeShift": null,
           "title": "Project $project - loaders connections",
           "tooltip": {
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -1214,7 +1429,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "ots",
+          "datasource": "${DS_OTS}",
           "fill": 1,
           "id": 10,
           "legend": {
@@ -1245,8 +1460,8 @@
           "steppedLine": false,
           "targets": [
             {
-              "aggregator": "none",
-              "alias": "$tag_test/$tag_loader",
+              "aggregator": "last",
+              "alias": "$tag_loader",
               "currentFilterGroupBy": false,
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
@@ -1270,12 +1485,6 @@
                 {
                   "filter": "*",
                   "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
                   "tagk": "loader",
                   "type": "wildcard"
                 }
@@ -1290,7 +1499,7 @@
           "title": "Project $project - loaders mem free",
           "tooltip": {
             "shared": true,
-            "sort": 0,
+            "sort": 1,
             "value_type": "individual"
           },
           "type": "graph",
@@ -1324,8 +1533,8 @@
       "repeat": null,
       "repeatIteration": null,
       "repeatRowId": null,
-      "showTitle": false,
-      "title": "Dashboard Row",
+      "showTitle": true,
+      "title": "Loaders",
       "titleSize": "h6"
     }
   ],
@@ -1336,26 +1545,16 @@
     "list": [
       {
         "allValue": null,
-        "current": {
-          "text": "grou",
-          "value": "grou"
-        },
-        "datasource": "ots",
+        "current": {},
+        "datasource": "${DS_OTS}",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "project",
-        "options": [
-          {
-            "isNone": true,
-            "selected": false,
-            "text": "None",
-            "value": ""
-          }
-        ],
+        "options": [],
         "query": "*",
-        "refresh": 0,
+        "refresh": 1,
         "regex": ".*",
         "sort": 0,
         "tagValuesQuery": "",
@@ -1366,26 +1565,16 @@
       },
       {
         "allValue": null,
-        "current": {
-          "text": "4116ateam",
-          "value": "4116ateam"
-        },
-        "datasource": "ots",
+        "current": {},
+        "datasource": "${DS_OTS}",
         "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "alltags",
-        "options": [
-          {
-            "isNone": true,
-            "selected": false,
-            "text": "None",
-            "value": ""
-          }
-        ],
+        "options": [],
         "query": "*",
-        "refresh": 0,
+        "refresh": 1,
         "regex": ".*",
         "sort": 0,
         "tagValuesQuery": "",
@@ -1397,7 +1586,7 @@
     ]
   },
   "time": {
-    "from": "now-2m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1427,5 +1616,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 61
+  "version": 106
 }
