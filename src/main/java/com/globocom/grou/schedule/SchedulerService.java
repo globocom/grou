@@ -35,7 +35,7 @@ public class SchedulerService {
         StreamSupport.stream(tests.spliterator(), false).forEach(t -> {
             Loader loaderUndef = new Loader();
             loaderUndef.setName("UNDEF");
-            loaderUndef.setStatus(Test.Status.UNDEF);
+            loaderUndef.setStatus(Loader.Status.ERROR);
             loaderUndef.setStatusDetailed("Forgotten in the queue");
             t.setStatus(Test.Status.ERROR);
             testRepository.save(t);
