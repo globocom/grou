@@ -48,7 +48,8 @@ public class KeystoneAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith("/version") || request.getRequestURI().startsWith("/token")) {
+        final String requestURI = request.getRequestURI();
+        if (requestURI.matches("^(/loaders[/]?|/version[/]?|/token/.+)")) {
             filterChain.doFilter(request, response);
             return;
         }
