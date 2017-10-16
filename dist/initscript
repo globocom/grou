@@ -33,7 +33,7 @@ APP_LONG_NAME="grou"
 WRAPPER_CMD="/opt/grou/lib/wrapper/bin/wrapper"
 WRAPPER_CONF="/opt/grou/conf/wrapper.conf"
 
-JAVA_MEM="$(free -k | head -2 | tail -1 | awk '{ print $2 }' | sed 's/$/ * 50 \/ 100 /' | bc | sed 's/$/k/')"
+JAVA_MEM="$(free -k | head -2 | tail -1 | awk '{ print $2 }' | sed 's/$/ * 50 \/ 100000 /' | bc)"
 
 # Priority at which to run the wrapper.  See "man nice" for valid priorities.
 #  nice is only used if a priority is specified.
