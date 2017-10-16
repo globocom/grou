@@ -24,6 +24,7 @@ import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.events.services.CallbackListenerService;
 import com.globocom.grou.entities.events.services.LockerService;
 import com.globocom.grou.entities.repositories.TestRepository;
+import com.globocom.grou.entities.services.LoaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,14 +67,16 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     private final StringRedisTemplate redisTemplate;
     private final JmsTemplate jmsTemplate;
     private final LockerService lockerService;
+    private final LoaderService loaderService;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    public TestEventListener(TestRepository testRepository, StringRedisTemplate redisTemplate, JmsTemplate jmsTemplate, LockerService lockerService) {
+    public TestEventListener(TestRepository testRepository, StringRedisTemplate redisTemplate, JmsTemplate jmsTemplate, LockerService lockerService, LoaderService loaderService) {
         this.testRepository = testRepository;
         this.redisTemplate = redisTemplate;
         this.jmsTemplate = jmsTemplate;
         this.lockerService = lockerService;
+        this.loaderService = loaderService;
     }
 
     @Override
@@ -121,7 +124,9 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
                     if (isAbort(testNameWithProject)) {
-                        redisTemplate.expire(ABORT_PREFIX + testNameWithProject, 10, TimeUnit.MILLISECONDS);
+                        loaderService.loaders().stream().map(Loader::getName).forEach(loaderName ->
+                            redisTemplate.expire(ABORT_PREFIX + testNameWithProject + "#" + loaderName, 10, TimeUnit.MILLISECONDS)
+                        );
                         callbackError(test, "Aborted.");
                     } else {
                         LOGGER.warn("Test {}: {} Re-queued (retry {}/{}).", testNameWithProject, errorDetailed, retry.get(), maxRetry);
@@ -144,7 +149,8 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     }
 
     private boolean isAbort(String testNameWithProject) {
-        return redisTemplate.opsForValue().get(ABORT_PREFIX + testNameWithProject) != null;
+        Set<String> keys = redisTemplate.keys(ABORT_PREFIX + testNameWithProject + "*");
+        return keys != null && !keys.isEmpty();
     }
 
     private void callbackError(Test test, String errorDetailed) throws JsonProcessingException {
