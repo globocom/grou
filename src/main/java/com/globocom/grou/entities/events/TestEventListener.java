@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
-import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.BrowserCallback;
@@ -46,6 +45,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,6 +57,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     private static final String GROU_LOCK  = "grou:lock";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestEventListener.class);
+    private static final String ABORT_PREFIX = "ABORT:";
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final BrowserCallback<Integer> browserCallback = TestEventListener::doInJms;
@@ -66,17 +67,13 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     private final JmsTemplate jmsTemplate;
     private final LockerService lockerService;
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     public TestEventListener(TestRepository testRepository, StringRedisTemplate redisTemplate, JmsTemplate jmsTemplate, LockerService lockerService) {
         this.testRepository = testRepository;
         this.redisTemplate = redisTemplate;
         this.jmsTemplate = jmsTemplate;
         this.lockerService = lockerService;
-    }
-
-    @Override
-    public void onBeforeSave(BeforeSaveEvent<Test> event) {
-
     }
 
     @Override
@@ -123,17 +120,19 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 String errorDetailed = "Insufficient loaders (available=" + loadersIdle.size() + ", required=" + parallelLoadersProperty + ").";
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
-                    LOGGER.warn("Test " + testNameWithProject + ": " + errorDetailed + " Re-queued (retry " + retry.get() + "/" + maxRetry + ").");
-                    jmsTemplate.convertAndSend(TEST_QUEUE, testStr, message -> {
-                        message.setIntProperty("retry", retry.incrementAndGet());
-                        return message;
-                    });
-                    LOGGER.warn(">> Tests waiting in queue: " + jmsTemplate.browseSelected(TEST_QUEUE, "retry IS NOT NULL", browserCallback));
+                    if (isAbort(testNameWithProject)) {
+                        redisTemplate.expire(ABORT_PREFIX + testNameWithProject, 10, TimeUnit.MILLISECONDS);
+                        callbackError(test, "Aborted.");
+                    } else {
+                        LOGGER.warn("Test {}: {} Re-queued (retry {}/{}).", testNameWithProject, errorDetailed, retry.get(), maxRetry);
+                        jmsTemplate.convertAndSend(TEST_QUEUE, testStr, message -> {
+                            message.setIntProperty("retry", retry.incrementAndGet());
+                            return message;
+                        });
+                        LOGGER.warn(">> Waiting in queue: " + jmsTemplate.browseSelected(TEST_QUEUE, "retry IS NOT NULL", browserCallback));
+                    }
                 } else {
-                    Loader undefLoader = newLoader("UNDEF", Loader.Status.ERROR, errorDetailed);
-                    test.setLoaders(Collections.singleton(undefLoader));
-                    redisTemplate.convertAndSend(CallbackListenerService.CALLBACK_QUEUE, mapper.writeValueAsString(test));
-                    LOGGER.error("Test " + testNameWithProject + ": " + errorDetailed + " Dropped.");
+                    callbackError(test, errorDetailed + " Dropped.");
                 }
             }
         } catch (Exception e) {
@@ -144,8 +143,20 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     }
 
+    private boolean isAbort(String testNameWithProject) {
+        return redisTemplate.opsForValue().get(ABORT_PREFIX + testNameWithProject) != null;
+    }
+
+    private void callbackError(Test test, String errorDetailed) throws JsonProcessingException {
+        Loader undefLoader = newLoader("UNDEF", Loader.Status.ERROR, errorDetailed);
+        test.setLoaders(Collections.singleton(undefLoader));
+        redisTemplate.convertAndSend(CallbackListenerService.CALLBACK_QUEUE, mapper.writeValueAsString(test));
+        LOGGER.error("Test {}.{}: {}", test.getProject(), test.getName(), errorDetailed);
+    }
+
     @PreDestroy
     public void shutdown() {
+        LOGGER.warn("Shutdown: Removing {} lock.", GROU_LOCK);
         redisTemplate.delete(GROU_LOCK);
     }
 
