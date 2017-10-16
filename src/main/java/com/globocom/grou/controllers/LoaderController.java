@@ -17,6 +17,7 @@
 package com.globocom.grou.controllers;
 
 import com.globocom.grou.entities.Loader;
+import com.globocom.grou.entities.services.LoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,29 +29,15 @@ import java.util.stream.Collectors;
 @RestController
 public class LoaderController {
 
-    private final StringRedisTemplate redisTemplate;
+    private final LoaderService loaderService;
 
     @Autowired
-    LoaderController(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    LoaderController(LoaderService loaderService) {
+        this.loaderService = loaderService;
     }
 
     @GetMapping("/loaders")
     public List<Loader> loaders() {
-        return redisTemplate.keys("grou:loader:*").stream().map(k -> {
-                    String loaderName = k.split(":")[2];
-                    String loaderStatusStr = redisTemplate.opsForValue().get(k);
-                    int idx;
-                    String statusDetailed = "";
-                    if ((idx = loaderStatusStr.indexOf(":")) > -1) {
-                        statusDetailed = "Running test " + loaderStatusStr.substring(idx + 1);
-                        loaderStatusStr = loaderStatusStr.substring(0, idx);
-                    }
-                    Loader loader = new Loader();
-                    loader.setName(loaderName);
-                    loader.setStatus(Enum.valueOf(Loader.Status.class, loaderStatusStr));
-                    loader.setStatusDetailed(statusDetailed);
-                    return loader;
-                }).collect(Collectors.toList());
+        return loaderService.loaders();
     }
 }
