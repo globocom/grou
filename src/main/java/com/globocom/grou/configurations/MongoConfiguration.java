@@ -35,22 +35,32 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoConfiguration.class);
 
+    private MongoClientURI mongoClientUri = null;
+
     @Override
     protected String getDatabaseName() {
+        if (getMongoClientUri() != null) return mongoClientUri.getDatabase();
+
         return MONGO_DB.getValue();
     }
 
     @Override
     public Mongo mongo() throws Exception {
-        LOGGER.info("MONGO_HOST: {}, MONGO_PORT: {}, MONGO_DB: {}", MONGO_HOST.getValue(), MONGO_PORT.getValue(), MONGO_DB.getValue());
-        final List<MongoCredential> credentialsList = "".equals(MONGO_USER.getValue()) || "".equals(MONGO_PASS.getValue()) ? Collections.emptyList() :
-                singletonList(MongoCredential.createCredential(MONGO_USER.getValue(), MONGO_DB.getValue(), MONGO_PASS.getValue().toCharArray()));
-
         if ("".equals(MONGO_URI.getValue())) {
+            LOGGER.info("MONGO_HOST: {}, MONGO_PORT: {}, MONGO_DB: {}", MONGO_HOST.getValue(), MONGO_PORT.getValue(), MONGO_DB.getValue());
+            final List<MongoCredential> credentialsList = "".equals(MONGO_USER.getValue()) || "".equals(MONGO_PASS.getValue()) ? Collections.emptyList() :
+                    singletonList(MongoCredential.createCredential(MONGO_USER.getValue(), MONGO_DB.getValue(), MONGO_PASS.getValue().toCharArray()));
             return new MongoClient(singletonList(new ServerAddress(MONGO_HOST.getValue(), Integer.parseInt(MONGO_PORT.getValue()))), credentialsList);
         } else {
-            return new MongoClient(new MongoClientURI(MONGO_URI.getValue()));
+            LOGGER.info("MONGO_URI: {}", MONGO_URI.getValue().replaceAll("([/,]).*@", "$1xxxx:xxxx@"));
+            return new MongoClient(getMongoClientUri());
         }
     }
 
+    private synchronized MongoClientURI getMongoClientUri() {
+        if (mongoClientUri == null && !"".equals(MONGO_URI.getValue())) {
+            mongoClientUri = new MongoClientURI(MONGO_URI.getValue());
+        }
+        return mongoClientUri;
+    }
 }
