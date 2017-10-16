@@ -3,9 +3,7 @@
         <syslogHost>${SYSLOG_HOST}</syslogHost>
         <port>${SYSLOG_PORT}</port>
         <facility>SYSLOG</facility>
-        <encoder>
-            <pattern>%msg %exception\ttags: GROU,APP%n</pattern>
-        </encoder>
+        <suffixPattern>[%thread] %logger %msg\ttags: GROU,APP</suffixPattern>
     </appender>
    <root level="info">
        <appender-ref ref="syslog" />
