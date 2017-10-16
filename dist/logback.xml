@@ -2,7 +2,7 @@
     <appender name="syslog" class="ch.qos.logback.classic.net.SyslogAppender">
         <syslogHost>${SYSLOG_HOST}</syslogHost>
         <port>${SYSLOG_PORT}</port>
-        <facility>SYSLOG</facility>
+        <facility>LOCAL6</facility>
         <suffixPattern>[%thread] %logger %msg\ttags: GROU,APP</suffixPattern>
     </appender>
    <root level="info">
