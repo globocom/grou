@@ -85,6 +85,8 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         if (test.getStatus() == Test.Status.SCHEDULED) {
             try {
                 if (lockerService.lockJms()) {
+                    test.setStatus(Test.Status.ENQUEUED);
+                    testRepository.save(test);
                     jmsTemplate.convertAndSend(TEST_QUEUE, mapper.writeValueAsString(test));
                 }
             } catch (Exception e) {
@@ -100,8 +102,6 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         Thread.sleep(Long.parseLong(SystemEnv.CONSUMER_PAUSE.getValue()));
         final Test test = mapper.readValue(testStr, Test.class);
         try {
-            test.setStatus(Test.Status.ENQUEUED);
-            testRepository.save(test);
             Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
             Predicate<String> onlyLoadersIdle = loaderKey -> Loader.Status.IDLE.toString().equals(redisTemplate.opsForValue().get(loaderKey));
             Set<String> loadersIdle = redisTemplate.keys("grou:loader:*").stream().filter(onlyLoadersIdle).limit(parallelLoadersProperty).collect(Collectors.toSet());
