@@ -35,9 +35,9 @@ public enum SystemEnv {
     KEYSTONE_DOMAIN_CONTEXT ("OS_PROJECT_DOMAIN_NAME","grou"),
 
     /**
-     * Mongo servers (ip:port format, comma separator)
+     * Mongo URI client (URI format)
      */
-    MONGO_SERVERS ("MONGO_SERVERS", ""),
+    MONGO_URI ("MONGO_URI", ""),
 
     /**
      * Mongo host.
