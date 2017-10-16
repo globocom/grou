@@ -26,7 +26,7 @@ dist: grou
     git show --summary >> lib/VERSION && \
     cp -av ../dist/wrapper lib/ && \
     cp -v ../dist/wrapper.conf conf/ && \
-    [ -f ../dist/log4j.xml ] && cp -v ../dist/log4j.xml conf/ || true && \
+    [ -f ../dist/logback.xml ] && cp -v ../dist/logback.xml conf/ || true && \
     cp -av ../dist/scripts . || true  && \
     cp -v grou.jar lib/ && \
     cp -av ../dist/initscript lib/wrapper/bin/ && \
