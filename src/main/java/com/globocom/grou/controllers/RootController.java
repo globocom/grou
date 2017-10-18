@@ -38,4 +38,9 @@ public class RootController {
         return String.format("{\"name\":\"%s\", \"version\":\"%s\", \"build\":\"%s\"}", buildProject, buildVersion, buildTimestamp);
     }
 
+    @GetMapping("/healthcheck")
+    public String getHealthcheck() {
+        return String.format("WORKING");
+    }
+
 }
