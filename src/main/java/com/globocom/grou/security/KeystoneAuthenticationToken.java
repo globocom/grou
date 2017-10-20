@@ -7,6 +7,7 @@ import org.openstack4j.openstack.OSFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -19,7 +20,7 @@ import static com.globocom.grou.SystemEnv.KEYSTONE_URL;
 public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneAuthenticationToken.class);
-    public static final SimpleGrantedAuthority ADMIN = new SimpleGrantedAuthority("ADMIN");
+    private static final SimpleGrantedAuthority ADMIN = new SimpleGrantedAuthority("ROLE_ADMIN");
 
     private final String token;
     private final String project;
@@ -35,6 +36,11 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
         return project.equals(SystemEnv.PROJECT_ADMIN.getValue()) ? Collections.singleton(ADMIN) : AuthorityUtils.NO_AUTHORITIES;
     }
 
@@ -56,7 +62,4 @@ public class KeystoneAuthenticationToken extends AbstractAuthenticationToken {
         return principal;
     }
 
-    public boolean isAdmin() {
-        return ((Collection<?>)getCredentials()).contains(KeystoneAuthenticationToken.ADMIN);
-    }
 }
