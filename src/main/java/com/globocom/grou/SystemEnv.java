@@ -127,7 +127,12 @@ public enum SystemEnv {
     /**
      * Dashboard URL
      */
-    DASHBOARD_URL ("DASHBOARD_URL", "http://localhost:3000/dashboard/db/grou");
+    DASHBOARD_URL ("DASHBOARD_URL", "http://localhost:3000/dashboard/db/grou"),
+
+    /**
+     * Project admins scope
+     */
+    PROJECT_ADMIN("PROJECT_ADMIN", "grouadmins");
 
     /**
      * Gets SystemEnv value.
