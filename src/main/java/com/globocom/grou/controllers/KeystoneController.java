@@ -16,12 +16,15 @@
 
 package com.globocom.grou.controllers;
 
+import com.globocom.grou.SystemEnv;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,26 +42,31 @@ public class KeystoneController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeystoneController.class);
 
-    @GetMapping("/token/{project:.+}")
-    public ResponseEntity<String> token(@PathVariable String project, @RequestHeader("Authorization") String auth) {
-        if (auth.startsWith("Basic")) {
-            Pair<String, String> credentials = getCredentials(auth);
+    @GetMapping(value = "/token/{project:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Token> token(@PathVariable String project, @RequestHeader("Authorization") String authorization) {
+        if (authorization.startsWith("Basic")) {
+            Pair<String, String> credentials = getCredentials(authorization);
             String username = credentials.getFirst();
             String password = credentials.getSecond();
 
             try {
-                String body = OSFactory.builderV3()
+                String tokenId = OSFactory.builderV3()
                                     .endpoint(KEYSTONE_URL.getValue())
                                     .credentials(username, password, Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
                                     .scopeToProject(Identifier.byName(project), Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
                                     .authenticate().getToken().getId();
-                return ResponseEntity.ok(body);
+
+                final HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set("x-auth-token", tokenId);
+
+                boolean isAdmin = project.equals(SystemEnv.PROJECT_ADMIN.getValue());
+                return new ResponseEntity<>(new Token(tokenId, isAdmin), responseHeaders, HttpStatus.OK);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
-                return new ResponseEntity<>("", HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>((Token) null, HttpStatus.UNAUTHORIZED);
             }
         }
-        return new ResponseEntity<>("", HttpStatus.PRECONDITION_REQUIRED);
+        return new ResponseEntity<>((Token) null, HttpStatus.PRECONDITION_REQUIRED);
     }
 
     private Pair<String, String> getCredentials(String auth) {
@@ -69,5 +77,16 @@ public class KeystoneController {
             return Pair.of(values[0], values[1]);
         }
         return Pair.of("", "");
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class Token {
+        public final String token;
+        public final boolean isAdmin;
+
+        public Token(String token, boolean isAdmin) {
+            this.token = token;
+            this.isAdmin = isAdmin;
+        }
     }
 }
