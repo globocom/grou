@@ -146,14 +146,16 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
-              "label": null,
+              "label": "",
               "logBase": 1,
               "max": null,
               "min": null,
               "show": true
             },
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -168,19 +170,19 @@
           "colorBackground": false,
           "colorValue": false,
           "colors": [
-            "rgba(245, 54, 54, 0.9)",
+            "rgba(50, 172, 45, 0.97)",
             "rgba(237, 129, 40, 0.89)",
-            "rgba(50, 172, 45, 0.97)"
+            "rgba(245, 54, 54, 0.9)"
           ],
           "datasource": "${DS_OTS}",
-          "decimals": null,
+          "decimals": 0,
           "format": "short",
           "gauge": {
-            "maxValue": 100000,
+            "maxValue": null,
             "minValue": 0,
             "show": true,
             "thresholdLabels": false,
-            "thresholdMarkers": true
+            "thresholdMarkers": false
           },
           "id": 11,
           "interval": null,
@@ -215,82 +217,10 @@
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
             "lineColor": "rgb(31, 120, 193)",
-            "show": false
+            "show": true
           },
           "tableColumn": "",
           "targets": [
-            {
-              "aggregator": "avg",
-              "currentFilterGroupBy": false,
-              "currentFilterKey": "",
-              "currentFilterType": "literal_or",
-              "currentFilterValue": "",
-              "downsampleAggregator": "avg",
-              "downsampleFillPolicy": "none",
-              "downsampleInterval": "",
-              "explicitTags": false,
-              "filters": [
-                {
-                  "filter": "$project",
-                  "groupBy": false,
-                  "tagk": "project",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "$alltags",
-                  "groupBy": false,
-                  "tagk": "alltags",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "^[1-3].*",
-                  "groupBy": false,
-                  "tagk": "status",
-                  "type": "regexp"
-                }
-              ],
-              "hide": true,
-              "isCounter": false,
-              "metric": "grou.response.status.count",
-              "refId": "A",
-              "shouldComputeRate": false
-            },
-            {
-              "aggregator": "avg",
-              "currentFilterGroupBy": false,
-              "currentFilterKey": "",
-              "currentFilterType": "literal_or",
-              "currentFilterValue": "",
-              "downsampleAggregator": "avg",
-              "downsampleFillPolicy": "none",
-              "downsampleInterval": "",
-              "explicitTags": false,
-              "filters": [
-                {
-                  "filter": "$project",
-                  "groupBy": false,
-                  "tagk": "project",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "$alltags",
-                  "groupBy": false,
-                  "tagk": "alltags",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "^[^1-3].*",
-                  "groupBy": false,
-                  "tagk": "status",
-                  "type": "regexp"
-                }
-              ],
-              "hide": true,
-              "isCounter": false,
-              "metric": "grou.response.status.count",
-              "refId": "B",
-              "shouldComputeRate": false
-            },
             {
               "aggregator": "sum",
               "currentFilterGroupBy": false,
@@ -321,7 +251,7 @@
               "shouldComputeRate": false
             }
           ],
-          "thresholds": "",
+          "thresholds": "100,200,500",
           "title": "req/s",
           "transparent": false,
           "type": "singlestat",
@@ -413,43 +343,8 @@
                   "type": "wildcard"
                 }
               ],
-              "metric": "grou.response.status.median",
+              "metric": "grou.response.completed.median",
               "refId": "D",
-              "shouldComputeRate": false
-            },
-            {
-              "aggregator": "avg",
-              "alias": "$tag_test/mean",
-              "currentFilterGroupBy": false,
-              "currentFilterKey": "",
-              "currentFilterType": "literal_or",
-              "currentFilterValue": "",
-              "downsampleAggregator": "avg",
-              "downsampleFillPolicy": "none",
-              "downsampleInterval": "",
-              "filters": [
-                {
-                  "filter": "$project",
-                  "groupBy": false,
-                  "tagk": "project",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "$alltags",
-                  "groupBy": true,
-                  "tagk": "alltags",
-                  "type": "literal_or"
-                },
-                {
-                  "filter": "*",
-                  "groupBy": true,
-                  "tagk": "test",
-                  "type": "wildcard"
-                }
-              ],
-              "hide": false,
-              "metric": "grou.response.status.mean",
-              "refId": "B",
               "shouldComputeRate": false
             },
             {
@@ -482,7 +377,7 @@
                 }
               ],
               "hide": false,
-              "metric": "grou.response.status.upper",
+              "metric": "grou.response.completed.upper",
               "refId": "C"
             },
             {
@@ -516,7 +411,7 @@
                 }
               ],
               "hide": false,
-              "metric": "grou.response.status.p95",
+              "metric": "grou.response.completed.p95",
               "refId": "A"
             }
           ],
@@ -540,9 +435,9 @@
           "yaxes": [
             {
               "format": "ms",
-              "label": null,
+              "label": "",
               "logBase": 2,
-              "max": null,
+              "max": "10000",
               "min": null,
               "show": true
             },
@@ -646,10 +541,10 @@
           "yaxes": [
             {
               "format": "Bps",
-              "label": null,
+              "label": "",
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -999,8 +894,8 @@
               "format": "percent",
               "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
+              "max": "100",
+              "min": "0",
               "show": true
             },
             {
@@ -1211,7 +1106,7 @@
       "titleSize": "h6"
     },
     {
-      "collapse": true,
+      "collapse": false,
       "height": "185",
       "panels": [
         {
@@ -1303,10 +1198,10 @@
           "yaxes": [
             {
               "format": "percent",
-              "label": null,
+              "label": "",
               "logBase": 1,
-              "max": null,
-              "min": null,
+              "max": "100",
+              "min": "0",
               "show": true
             },
             {
@@ -1351,7 +1246,7 @@
           "seriesOverrides": [],
           "spaceLength": 10,
           "span": 4,
-          "stack": true,
+          "stack": false,
           "steppedLine": false,
           "targets": [
             {
@@ -1586,7 +1481,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-2m",
     "to": "now"
   },
   "timepicker": {
@@ -1616,5 +1511,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 106
+  "version": 19
 }
