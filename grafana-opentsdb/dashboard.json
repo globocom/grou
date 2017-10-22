@@ -68,8 +68,8 @@
             "min": false,
             "rightSide": true,
             "show": true,
-            "sort": "max",
-            "sortDesc": true,
+            "sort": null,
+            "sortDesc": null,
             "total": false,
             "values": true
           },
@@ -95,6 +95,7 @@
               "currentFilterKey": "",
               "currentFilterType": "literal_or",
               "currentFilterValue": "",
+              "disableDownsampling": false,
               "downsampleAggregator": "avg",
               "downsampleFillPolicy": "none",
               "filters": [
@@ -437,7 +438,7 @@
               "format": "ms",
               "label": "",
               "logBase": 2,
-              "max": "10000",
+              "max": null,
               "min": null,
               "show": true
             },
@@ -682,7 +683,7 @@
         },
         {
           "aliasColors": {},
-          "bars": true,
+          "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_OTS}",
@@ -701,23 +702,23 @@
             "total": false,
             "values": true
           },
-          "lines": false,
+          "lines": true,
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
           "percentage": false,
-          "pointradius": 5,
+          "pointradius": 1,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
           "span": 6,
-          "stack": false,
+          "stack": true,
           "steppedLine": false,
           "targets": [
             {
               "aggregator": "none",
-              "alias": "$tag_test/$tag_target",
+              "alias": "$tag_test/$tag_target free",
               "currentFilterGroupBy": true,
               "currentFilterKey": "target",
               "currentFilterType": "wildcard",
@@ -745,14 +746,81 @@
                   "type": "wildcard"
                 }
               ],
-              "metric": "grou.targets.memFree.mean",
+              "metric": "grou.targets.memFree.p95",
               "refId": "A"
+            },
+            {
+              "aggregator": "none",
+              "alias": "$tag_test/$tag_target buffers",
+              "currentFilterGroupBy": true,
+              "currentFilterKey": "target",
+              "currentFilterType": "wildcard",
+              "currentFilterValue": "*",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "test",
+                  "type": "wildcard"
+                }
+              ],
+              "metric": "grou.targets.memBuffers.p95",
+              "refId": "B"
+            },
+            {
+              "aggregator": "none",
+              "alias": "$tag_test/$tag_target cached",
+              "currentFilterGroupBy": true,
+              "currentFilterKey": "target",
+              "currentFilterType": "wildcard",
+              "currentFilterValue": "*",
+              "downsampleAggregator": "avg",
+              "downsampleFillPolicy": "none",
+              "downsampleInterval": "",
+              "filters": [
+                {
+                  "filter": "$project",
+                  "groupBy": false,
+                  "tagk": "project",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "$alltags",
+                  "groupBy": false,
+                  "tagk": "alltags",
+                  "type": "literal_or"
+                },
+                {
+                  "filter": "*",
+                  "groupBy": true,
+                  "tagk": "test",
+                  "type": "wildcard"
+                }
+              ],
+              "hide": false,
+              "metric": "grou.targets.memCached.p95",
+              "refId": "C"
             }
           ],
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Project $project - targets mem free",
+          "title": "Project $project - targets mem avaliable (stacked)",
           "tooltip": {
             "shared": false,
             "sort": 0,
@@ -790,7 +858,7 @@
       "repeatIteration": null,
       "repeatRowId": null,
       "showTitle": true,
-      "title": "Targets connections & memFree",
+      "title": "Targets connections & mem avaliable",
       "titleSize": "h6"
     },
     {
@@ -799,11 +867,11 @@
       "panels": [
         {
           "aliasColors": {},
-          "bars": true,
+          "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_OTS}",
-          "fill": 10,
+          "fill": 5,
           "id": 6,
           "legend": {
             "alignAsTable": true,
@@ -818,7 +886,7 @@
             "total": false,
             "values": true
           },
-          "lines": false,
+          "lines": true,
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null as zero",
@@ -914,7 +982,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "${DS_OTS}",
-          "fill": 10,
+          "fill": 5,
           "id": 9,
           "legend": {
             "alignAsTable": false,
@@ -1106,7 +1174,7 @@
       "titleSize": "h6"
     },
     {
-      "collapse": false,
+      "collapse": true,
       "height": "185",
       "panels": [
         {
@@ -1511,5 +1579,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 19
+  "version": 35
 }
