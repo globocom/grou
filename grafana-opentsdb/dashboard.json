@@ -179,11 +179,11 @@
           "decimals": 0,
           "format": "short",
           "gauge": {
-            "maxValue": null,
+            "maxValue": 300000,
             "minValue": 0,
             "show": true,
             "thresholdLabels": false,
-            "thresholdMarkers": false
+            "thresholdMarkers": true
           },
           "id": 11,
           "interval": null,
@@ -218,7 +218,7 @@
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": false,
             "lineColor": "rgb(31, 120, 193)",
-            "show": true
+            "show": false
           },
           "tableColumn": "",
           "targets": [
@@ -252,7 +252,7 @@
               "shouldComputeRate": false
             }
           ],
-          "thresholds": "100,200,500",
+          "thresholds": "100000,200000",
           "title": "req/s",
           "transparent": false,
           "type": "singlestat",
@@ -713,7 +713,7 @@
           "seriesOverrides": [],
           "spaceLength": 10,
           "span": 6,
-          "stack": true,
+          "stack": false,
           "steppedLine": false,
           "targets": [
             {
@@ -820,7 +820,7 @@
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Project $project - targets mem avaliable (stacked)",
+          "title": "Project $project - targets mem avaliable",
           "tooltip": {
             "shared": false,
             "sort": 0,
@@ -1549,7 +1549,7 @@
     ]
   },
   "time": {
-    "from": "now-2m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -1579,5 +1579,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 35
+  "version": 43
 }
