@@ -1,7 +1,7 @@
------------------------------------------------------------------------------
-Java Service Wrapper Community Edition 3.5.32
+﻿-----------------------------------------------------------------------------
+Java Service Wrapper Community Edition 3.5.34
 Copyright (C) 1999-2017 Tanuki Software, Ltd. All Rights Reserved.
-http://wrapper.tanukisoftware.com
+https://wrapper.tanukisoftware.com
 -----------------------------------------------------------------------------
 
 概要:
@@ -33,13 +33,13 @@ Java Service Wrapperは、多くのJavaアプリケーションによくある�
   * クロスプラットフォームに対応した柔軟なコンフィギュレーション
   * アプリケーションの簡単インストール
   * ログ
-  * もっと詳しく...
+  * その他色々…
 
 さらに詳しい特徴などはダウンロード・ページをご覧ください。
-  => http://wrapper.tanukisoftware.com/doc/japanese/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/download.jsp
 
 さらに詳しくはこちらもご覧ください。 
-  => http://wrapper.tanukisoftware.com/doc/japanese/introduction.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/introduction.html
 
 
 
@@ -50,17 +50,18 @@ Java Service Wrapperは、多くのJavaアプリケーションによくある�
 「始めるには？」を簡単にご紹介します。
 
  * オンラインで完全なドキュメンテーションをご覧になれます：
-     => http://wrapper.tanukisoftware.com/doc/japanese/
+     => https://wrapper.tanukisoftware.com/doc/japanese/
  * JavaアプリケーションをJava Service Wrapperとインテグレーションする方法：
-     => http://wrapper.tanukisoftware.com/doc/japanese/integrate.html
+     => https://wrapper.tanukisoftware.com/doc/japanese/integrate.html
  * コンフィギュレーション・プロパティ一覧：
-     => http://wrapper.tanukisoftware.com/doc/japanese/properties.html
+     => https://wrapper.tanukisoftware.com/doc/japanese/properties.html
  * HOWTO（ハウツー）：
-     => http://wrapper.tanukisoftware.com/doc/japanese/howto.html
+     => https://wrapper.tanukisoftware.com/doc/japanese/howto.html
  * Javadocs（上級レベルのユーザー向け）：
-     => http://wrapper.tanukisoftware.com/doc/japanese/javadocs.html
+     => https://wrapper.tanukisoftware.com/doc/japanese/javadocs.html
+　　　　（英語のみ）
  * タヌキソフトウェア有限会社サイト：
-     => http://www.tanukisoftware.com/ja/
+     => https://www.tanukisoftware.com/ja/
 
 
 
@@ -78,24 +79,24 @@ Java Service Wrapperのスタンダード版やプロフェッショナル版に
 さらに長時間の利用を希望であれば、１台のサーバー上で使える１カ月の無料トライアル
 ライセンスもご用意しています。
 １カ月トライアル・ライセンスは次のページからリクエストすることができます：
-  => http://wrapper.tanukisoftware.com/doc/japanese/requestTrial.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/requestTrial.jsp
 
 永久ライセンスを購入されるには：
-  => http://wrapper.tanukisoftware.com/doc/japanese/accountLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/accountLicenses.jsp
 
-Java Service Wrapperコミュニティー版にはライセンスキーは不要です。
+Java Service Wrapperコミュニティー版にはライセンス・キーは不要です。
 
 既にライセンスを購入済みの方は、サイトにログインして、ライセンス管理ページで
-ライセンスキーを生成することができます。
+ライセンス・キーを生成することができます。
 
-ライセンス管理（サーバーライセンス）ページ：
-  => http://wrapper.tanukisoftware.com/doc/japanese/accountServerLicenses.jsp
+ライセンス管理（サーバー・ライセンス）ページ：
+  => https://wrapper.tanukisoftware.com/doc/japanese/accountServerLicenses.jsp
 ライセンス管理（開発ライセンス）ページ：
-  => http://wrapper.tanukisoftware.com/doc/japanese/accountDevLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/accountDevLicenses.jsp
 
 Java Service Wrapperで動かすJavaアプリケーションの種類により、
 いくつかインテグレーション方法があります：
-  => http://wrapper.tanukisoftware.com/doc/japanese/integrate.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/integrate.html
 
 
 
@@ -105,11 +106,11 @@ Java Service Wrapperで動かすJavaアプリケーションの種類により�
 Java Service Wrapperの利用には３つのライセンスがあります。
 
   * 開発ライセンス契約 (商用ライセンス)
-  * サーバーライセンス契約 (商用ライセンス)
-  * コミュニティーライセンス契約 (GPL2ライセンス)
+  * サーバー・ライセンス契約 (商用ライセンス)
+  * コミュニティー・ライセンス契約 (GPL2ライセンス)
 
 さらに詳しくは、ライセンス概要をご覧ください:
-  => http://wrapper.tanukisoftware.com/doc/japanese/licenseOverview.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/licenseOverview.html
 
 
 
@@ -118,25 +119,23 @@ Java Service Wrapperの利用には３つのライセンスがあります。
 
 Java Service Wrapperスタンダード版あるいはプロフェッショナル版の機能を
 ご利用になるには、オンラインでライセンスを購入することが可能です。
+  => https://wrapper.tanukisoftware.com/doc/japanese/accountLicenses.jsp
 
-  => http://wrapper.tanukisoftware.com/doc/japanese/accountLicenses.jsp
-
-銀行振り込みを希望される場合は sales@tanukisoftware　までお問い合わせ願います。
+銀行振り込みを希望される場合は sales@tanukisoftware までお問い合わせ願います。
 銀行情報をご連絡いたします。
 
 
 代理店、ディストリビューター経由からの購入も可能です。
-
-　 =>　http://www.tanukisoftware.com/ja/distributors.php
+　 =>　https://www.tanukisoftware.com/ja/distributors.php
 
 
 6. アップデート方法
 -----------------------------------------------------------------------------
 
 最新のJava Service Wrapperリリースはいつでもダウンロード・ページで入手できます:
-  => http://wrapper.tanukisoftware.com/doc/japanese/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/download.jsp
 最新版へのアップデート手順ガイド：
-  => http://wrapper.tanukisoftware.com/doc/japanese/howto-upgrade.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/howto-upgrade.html
 
 
 
@@ -144,12 +143,12 @@ Java Service Wrapperスタンダード版あるいはプロフェッショナル
 -----------------------------------------------------------------------------
 
 よくある質問FAQページも便利に活用いただけることと思います：
-  => http://wrapper.tanukisoftware.com/doc/japanese/faq.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/faq.html
 
 その他、トラブルシューティング、HOWTO, 質問と回答など各ページもご活用ください：
-  => http://wrapper.tanukisoftware.com/doc/japanese/troubleshooting.html
-  => http://wrapper.tanukisoftware.com/doc/japanese/howto.html
-  => http://wrapper.tanukisoftware.com/doc/japanese/qna.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/troubleshooting.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/howto.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/qna.html
 
 
 
@@ -158,7 +157,7 @@ Java Service Wrapperスタンダード版あるいはプロフェッショナル
 
 皆様が快適にユーザーサポートを受けられるよう、いくつかオプションをご用意して
 います。サポートの詳細については弊社のサポートページをご覧ください：
-  => http://wrapper.tanukisoftware.com/doc/japanese/support.jsp
+  => https://wrapper.tanukisoftware.com/doc/japanese/support.jsp
 
 
 
@@ -167,7 +166,7 @@ Java Service Wrapperスタンダード版あるいはプロフェッショナル
 
 サポートされているプラットフォームやシステム要件など完全なリストを
 オンラインでご用意していますのでご参照ください：
-  => http://wrapper.tanukisoftware.com/doc/japanese/supported-platforms.html
+  => https://wrapper.tanukisoftware.com/doc/japanese/supported-platforms.html
 
 
 

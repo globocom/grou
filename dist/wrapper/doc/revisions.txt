@@ -1,5 +1,87 @@
 Java Service Wrapper Revision History.
 --------------------------------------
+3.5.34
+* Fix a memory access violation when the Wrapper uses localization files.
+* Fix minor memory leaks (after validating the certificate and when launching
+  child processes).
+* Improve logging when establishing connection to an SMTP server and when
+  sending emails.
+* Dual sign the Wrapper binaries with SHA-1 and SHA-2 hash algorithms and
+  timestamping to allow stronger verification at the OS level while keeping
+  compatibility with older versions of Windows that don't support SHA-2.
+* Add parameter "--silent" to never show the log dialog when customizing 
+  wrapperw.exe.
+* Return an exit code of 1 whenever the customization of wrapper.exe failed. 
+  Previous versions were always returning 0.
+* Improve the detection of the location of several commands used by the shell
+  script when performing actions like detecting the service management tool.
+* Remove the ID_BIN variable defined on the top of the script file, as it was
+  ignored on most platforms. The location of the id command is now
+  automatically resolved.
+* Fix methods of the shell script to restart a daemon installed with launchd
+  or upstart. They behaved like 'condrestart', which means they exited with an
+  error code of 1 if the service was not running.
+* Fix the condrestart command of the shell script to use built-in restart
+  methods of upstart, systemd, launchd and src, instead of performing a stop
+  followed by a start.
+* Improve messages when starting/stopping/restarting the Wrapper daemon with
+  the different service management tools available on Unix systems.
+* Fix errors when querying the status of a service on AIX without being root.
+* Add a new property, SYSTEMD_KILLMODE, in the shell script to control how
+  systemd should kill the Wrapper child processes on shutdown. When using the
+  Professional edition, it may be useful to set this property to 'process'.
+  This will prevent systemd from killing detached child processes that should
+  normally be left running on shutdown.
+* Many improvements in the Japanese and German translations.
+
+3.5.33
+* Fix a false positive when detecting Upstart on Linux.
+* Fix a bug where it was required to register the Wrapper to the Event Log on
+  Windows in order to send messages to a remote syslog server via UDP.
+* Fix a memory leak when sending messages to a remote syslog server. Since
+  3.5.27.
+* Fix wrong exit code when the Wrapper was configured to shutdown on a ping
+  timeout. The exit code was always 1 whereas it should be the value of the
+  wrapper.exit_code.error property.
+* Check that the configured service management tool is available before
+  installing a daemon on Linux and return an exit code of 1 whenever the
+  installation fails.
+* Add new properties wrapper.ulimit.data.{soft|hard} to limit the size of the
+  data segment of any process started by the Wrapper. It is similar to running
+  the command "ulimit -d X" in a terminal.
+* Improve the processing of the command file by ignoring blank lines and any
+  spaces before the command.
+* Correct invalid exit code that may be written in the command file along with
+  a STOP command. If the exit code is out of the range 0-255, it will be
+  resolved to the value of the wrapper.exit_code.error property.
+* Improve messages when the Wrapper is paused or resumed.
+* Fix a bug where, on certain UNIX platforms, the locale was not correctly set
+  from the environment at startup.
+* Fix a bug on FreeBSD where conversions of JVM outputs to a different encoding
+  (specified with wrapper.lang.encoding) systematically failed because the
+  iconv library was not loaded by the native library.
+* On FreeBSD, it has been observed that certain versions of iconv fail to
+  convert some characters like backslashes when the SJIS encoding is specified.
+  In such case the Wrapper will consider SJIS as unsupported and fall back
+  using the encoding of the console which launched the Wrapper.
+* Fix garbled question marks that appeared in messages logged while performing
+  actions (install, start, pause, etc.) on a Windows service when the Wrapper
+  language was different than the system language.
+* On Windows, instead of printing system errors in the language of the UI, the
+  Wrapper will now first try to use the language specified in the configuration
+  (English for the community edition).
+* Enhance security by adding a linker option to enable ASLR (Address Space
+  Layout Randomization) on Windows Vista and above (Windows Itanium not
+  supported), and by attempting to enable DEP (Data Execution Prevention) right
+  after the Wrapper is launched (Windows XP SP3 and above). DEP enforcement
+  will only affect 32-bit versions as Windows automatically enables DEP for
+  64-bit binaries.
+* Fix double thread dump issue when pressing CTRL-\ while the Wrapper is 
+  running as a console on Linux. The problem remains on other UNIX platforms.
+* Fix a problem where backslashes in the path of the log file, configured with
+  the wrapper.logfile property, were not being handled correctly resulting in
+  the Wrapper being unable to create the log file (Unix only).
+
 3.5.32
 * Fix a bug introduced in 3.5.31 where the Wrapper did not clean up child
   processes when shutting down.
@@ -234,7 +316,7 @@ Java Service Wrapper Revision History.
 
 3.5.28
 * Fix a memory leak on Red Hat Enterprise Linux, CentOS and Amazon Linux AMI.
-  It occured when activating log rolling in size mode. This memory leak came
+  It occurred when activating log rolling in size mode. This memory leak came
   from an issue in the GNU C Library (glibc) which was fixed on version 2.21.
   However, a workaround was added so that the Wrapper can run without issues
   on any version of glibc.
@@ -2089,7 +2171,7 @@ Java Service Wrapper Revision History.
   failing at certain times of the day for servers with timezones east of
   Japan.  Development license keys which have their update times obfuscated
   were not affected.  This was a problem introduced in 3.3.7.
-* Fixed a bug in the wrapper shell script which occured when running the script
+* Fixed a bug in the wrapper shell script which occurred when running the script
   on a Solaris within a non singlebyte locale. Bug #2910327
 * Fixed a potential bug in the wrapper script where requesting a Thread Dump,
   the shell is sending the wrapper console to the background and returning 
@@ -2103,7 +2185,7 @@ Java Service Wrapper Revision History.
   located on a Mapped Network Drive is used in the configuration file on
   Windows versions.
 * (Standard, Professional) Fix a bug in the wrapper binary customization,
-  which occured when the source binary file was set to read only. 
+  which occurred when the source binary file was set to read only. 
 * Fixed a null string problem in the error message if a classpath value 
   wasn't found.
 * (Professional) Added the option to include a logfile into the wrapper's 

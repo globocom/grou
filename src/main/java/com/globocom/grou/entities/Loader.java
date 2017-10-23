@@ -16,10 +16,14 @@
 
 package com.globocom.grou.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.Date;
 
 @SuppressWarnings("unused")
 @Document
@@ -40,6 +44,11 @@ public class Loader implements Serializable {
     private Status status = Status.IDLE;
 
     private String statusDetailed = "";
+
+    private String version = "";
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
+    private Date lastExecAt = Date.from(Instant.now());
 
     public String getName() {
         return name;
@@ -63,6 +72,22 @@ public class Loader implements Serializable {
 
     public void setStatusDetailed(String statusDetailed) {
         this.statusDetailed = statusDetailed;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Date getLastExecAt() {
+        return lastExecAt;
+    }
+
+    public void setLastExecAt(Date lastExecAt) {
+        this.lastExecAt = lastExecAt;
     }
 
     @Override

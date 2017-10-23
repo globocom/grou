@@ -1,7 +1,7 @@
 ﻿-----------------------------------------------------------------------------
-Java Service Wrapper Community Edition 3.5.32
+Java Service Wrapper Community Edition 3.5.34
 Copyright (C) 1999-2017 Tanuki Software, Ltd. All Rights Reserved.
-http://wrapper.tanukisoftware.com
+https://wrapper.tanukisoftware.com
 -----------------------------------------------------------------------------
 
 Zusammenfassung:
@@ -38,10 +38,10 @@ Einige der Möglichkeiten des Wrappers sind:
 
 
 Bitte gehen Sie auf unsere Downloadseite für mehr Details:
-  => http://wrapper.tanukisoftware.com/doc/german/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/download.jsp
 
 Für weitere Informationen gehen Sie bitte auf:
-  => http://wrapper.tanukisoftware.com/doc/german/introduction.html
+  => https://wrapper.tanukisoftware.com/doc/german/introduction.html
 
 
 
@@ -52,17 +52,17 @@ Bitte besuchen Sie die vollständige Dokumentation auf unserer Webseite.
 Hier sind ein paar Wege zum Anfangen.
 
  * Komplette Dokumentation finden sie online:
-     => http://wrapper.tanukisoftware.com/doc/german/
+     => https://wrapper.tanukisoftware.com/doc/german/
  * Wie Sie Ihrer Anwendung mit dem Java Service Wrapper integrieren
-     => http://wrapper.tanukisoftware.com/doc/german/integrate.html
+     => https://wrapper.tanukisoftware.com/doc/german/integrate.html
  * Konfigurationseigenschaften
-     => http://wrapper.tanukisoftware.com/doc/german/properties.html
+     => https://wrapper.tanukisoftware.com/doc/german/properties.html
  * HOWTOs
-     => http://wrapper.tanukisoftware.com/doc/german/howto.html
+     => https://wrapper.tanukisoftware.com/doc/german/howto.html
  * Javadocs, für fortgeschrittene Benutzer
-     => http://wrapper.tanukisoftware.com/doc/german/javadocs.html
+     => https://wrapper.tanukisoftware.com/doc/german/javadocs.html
  * Tanuki Software, Ltd. Firmenseite:
-     => http://www.tanukisoftware.com/
+     => https://www.tanukisoftware.com/
 
 
 3. Installation
@@ -80,11 +80,11 @@ zu laufen. Dies ist für einfache, ungezwungene erste Tests gedacht.
 Sie können ebenfalls kostenlos eine 1monatige Triallizenz beantragen, die wie 
 eine Serverlizenz funktioniert und auf einem Server Ihrer Wahl verwendet werden
 kann. Triallizenzen können auf folgender Seite beantragt werden:
-  => http://wrapper.tanukisoftware.com/doc/german/requestTrial.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/requestTrial.jsp
 
 
 Dauerhafte Lizenzen können desweiteren auf der folgenden Seite erworben werden:
-  => http://wrapper.tanukisoftware.com/doc/german/accountLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/accountLicenses.jsp
 
 
 The Community Edition benötigt keinerlei Lizenz!
@@ -92,14 +92,14 @@ The Community Edition benötigt keinerlei Lizenz!
 Sollten Sie bereits eine Lizenz erworben haben, können Sie den Lizenzschlüssel
 auf der folgendenen Seiten erstellen und herunterladen:
 Für Serverlizenzen:
-  => http://wrapper.tanukisoftware.com/doc/german/accountServerLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/accountServerLicenses.jsp
 Für Entwicklerlizenzen:
-  => http://wrapper.tanukisoftware.com/doc/german/accountDevLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/accountDevLicenses.jsp
 
 Abhängig von der Art der Javaanwendung, bedarf es verschiedene Arten, wie Sie 
 die Anwendung mit dem Wrapper zu integrieren. Die Integrationsschritte finden
 Sie auf folgender Seite:
-  => http://wrapper.tanukisoftware.com/doc/german/integrate.html
+  => https://wrapper.tanukisoftware.com/doc/german/integrate.html
 
 
 
@@ -115,7 +115,7 @@ Der Java Service Wrapper ist verfügbar unter 3 verschiedenen Lizenzen:
 
 Für mehr Informationen besuchen Sie bitte die Lizenzübersicht auf unserer
 Seite:
-  => http://wrapper.tanukisoftware.com/doc/german/licenseOverview.html
+  => https://wrapper.tanukisoftware.com/doc/german/licenseOverview.html
 
 
 
@@ -124,7 +124,7 @@ Seite:
 
 Sollten Sie interessiert sein and den Features der Standard bzw. Professional
 Edition, so können Sie diese hier online erwerben:
-  => http://wrapper.tanukisoftware.com/doc/german/accountLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/accountLicenses.jsp
 
 
 
@@ -132,9 +132,9 @@ Edition, so können Sie diese hier online erwerben:
 -----------------------------------------------------------------------------
 
 Sie finden die aktuellste version des Wrappers auf unserer Downloadseite:
-  => http://wrapper.tanukisoftware.com/doc/german/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/download.jsp
 Für die Anleitung gehen Sie bitte auf diese Seite:
-  => http://wrapper.tanukisoftware.com/doc/german/howto-upgrade.html
+  => https://wrapper.tanukisoftware.com/doc/german/howto-upgrade.html
 
 
 
@@ -142,14 +142,14 @@ Für die Anleitung gehen Sie bitte auf diese Seite:
 -----------------------------------------------------------------------------
 
 Bitte gehen Sie auf den FAQ-bereich unserer Seite:
-  => http://wrapper.tanukisoftware.com/doc/german/faq.html
+  => https://wrapper.tanukisoftware.com/doc/german/faq.html
 
 
 Desweiteren haben wir auch eine Troubleshooting, HOWTOs und
 Fragen & Antwortenseite:
-  => http://wrapper.tanukisoftware.com/doc/german/troubleshooting.html
-  => http://wrapper.tanukisoftware.com/doc/german/howto.html
-  => http://wrapper.tanukisoftware.com/doc/german/qna.html
+  => https://wrapper.tanukisoftware.com/doc/german/troubleshooting.html
+  => https://wrapper.tanukisoftware.com/doc/german/howto.html
+  => https://wrapper.tanukisoftware.com/doc/german/qna.html
 
 
 
@@ -157,7 +157,7 @@ Fragen & Antwortenseite:
 -----------------------------------------------------------------------------
 
 Bitte gehen Sie auf unsere Supportseite:
-  => http://wrapper.tanukisoftware.com/doc/german/support.jsp
+  => https://wrapper.tanukisoftware.com/doc/german/support.jsp
 
 
 
@@ -166,7 +166,7 @@ Bitte gehen Sie auf unsere Supportseite:
 
 Eine vollständige Liste der unterstützten Plattformen und Systemvoraussetzungen
 können Sie auf der folgenden Seite finden:
-  => http://wrapper.tanukisoftware.com/doc/german/supported-platforms.html
+  => https://wrapper.tanukisoftware.com/doc/german/supported-platforms.html
 
 
 -----------------------------------------------------------------------------

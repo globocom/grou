@@ -16,7 +16,7 @@ rem
 
 rem -----------------------------------------------------------------------------
 rem These settings can be modified to fit the needs of your application
-rem Optimized for use with version 3.5.32 of the Wrapper.
+rem Optimized for use with version 3.5.34 of the Wrapper.
 
 rem The base name for the Wrapper binary.
 set _WRAPPER_BASE=wrapper
@@ -120,9 +120,9 @@ rem Start the Wrapper
 rem
 :startup
 if not [%_PASS_THROUGH%]==[true] (
-	if not [%1]==[] (
-		echo WARNING: Extra arguments will be ignored. Please check usage in the batch file.
-	)
+    if not [%1]==[] (
+        echo WARNING: Extra arguments will be ignored. Please check usage in the batch file.
+    )
 )
 
 rem Collect the application parameters

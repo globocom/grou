@@ -46,7 +46,8 @@ public class Test implements Serializable {
         ENQUEUED,
         RUNNING,
         OK,
-        ERROR
+        ERROR,
+        ABORTED
     }
 
     @Id

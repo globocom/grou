@@ -43,12 +43,13 @@ import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -103,10 +104,9 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         final Test test = mapper.readValue(testStr, Test.class);
         try {
             Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
-            Predicate<String> onlyLoadersIdle = loaderKey -> Loader.Status.IDLE.toString().equals(redisTemplate.opsForValue().get(loaderKey));
-            Set<String> loadersIdle = redisTemplate.keys("grou:loader:*").stream().filter(onlyLoadersIdle).limit(parallelLoadersProperty).collect(Collectors.toSet());
+            Set<Loader> loadersIdle = getLoadersIdle(parallelLoadersProperty);
             if (loadersIdle.size() == parallelLoadersProperty) {
-                test.setLoaders(loadersIdle.stream().map(k -> k.split(":")[2]).map(this::newLoader).collect(Collectors.toSet()));
+                test.setLoaders(new HashSet<>(loadersIdle));
                 testRepository.save(test);
                 test.getLoaders().forEach(loader -> {
                     try {
@@ -124,10 +124,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
                     if (isAbort(testNameWithProject)) {
-                        loaderService.loaders().stream().map(Loader::getName).forEach(loaderName ->
-                            redisTemplate.expire(ABORT_PREFIX + testNameWithProject + "#" + loaderName, 10, TimeUnit.MILLISECONDS)
-                        );
-                        callbackError(test, "Aborted.");
+                        callbackError(test, Test.Status.ABORTED.toString());
                     } else {
                         LOGGER.warn("Test {}: {} Re-queued (retry {}/{}).", testNameWithProject, errorDetailed, retry.get(), maxRetry);
                         jmsTemplate.convertAndSend(TEST_QUEUE, testStr, message -> {
@@ -148,13 +145,34 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     }
 
+    private Set<Loader> getLoadersIdle(int parallelLoadersProperty) {
+        return redisTemplate.keys("grou:loader:*").stream()
+                .map(redisKey -> {
+                    try {
+                        String jsonStr = redisTemplate.opsForValue().get(redisKey);
+                        return mapper.readValue(jsonStr, Loader.class);
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage(), e);
+                        return null;
+                    }
+                })
+                .filter(loader -> loader != null && Loader.Status.IDLE.equals(loader.getStatus()))
+                .sorted(Comparator.comparingLong(l -> l.getLastExecAt().getTime()))
+                .limit(parallelLoadersProperty)
+                .collect(Collectors.toSet());
+    }
+
     private boolean isAbort(String testNameWithProject) {
         Set<String> keys = redisTemplate.keys(ABORT_PREFIX + testNameWithProject + "*");
-        return keys != null && !keys.isEmpty();
+        keys.forEach(key -> redisTemplate.expire(key, 10000, TimeUnit.MILLISECONDS));
+        return !keys.isEmpty();
     }
 
     private void callbackError(Test test, String errorDetailed) throws JsonProcessingException {
-        Loader undefLoader = newLoader("UNDEF", Loader.Status.ERROR, errorDetailed);
+        Loader undefLoader = new Loader();
+        undefLoader.setName("UNDEF");
+        undefLoader.setStatus(Loader.Status.ERROR);
+        undefLoader.setStatusDetailed(errorDetailed);
         test.setLoaders(Collections.singleton(undefLoader));
         redisTemplate.convertAndSend(CallbackListenerService.CALLBACK_QUEUE, mapper.writeValueAsString(test));
         LOGGER.error("Test {}.{}: {}", test.getProject(), test.getName(), errorDetailed);
@@ -169,17 +187,5 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     @SuppressWarnings({"unchecked", "unused"})
     private static Integer doInJms(Session s, QueueBrowser qb) throws JMSException {
         return Collections.list(qb.getEnumeration()).size();
-    }
-
-    private Loader newLoader(String name) {
-        return newLoader(name, null, null);
-    }
-
-    private Loader newLoader(String name, Loader.Status status, String statusDetailed) {
-        Loader loader = new Loader();
-        loader.setName(name);
-        loader.setStatus(status != null ? status : Loader.Status.IDLE);
-        loader.setStatusDetailed(statusDetailed != null ? statusDetailed : "");
-        return loader;
     }
 }
