@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
-Java Service Wrapper Community Edition 3.5.32
+Java Service Wrapper Community Edition 3.5.34
 Copyright (C) 1999-2017 Tanuki Software, Ltd. All Rights Reserved.
-http://wrapper.tanukisoftware.com
+https://wrapper.tanukisoftware.com
 -----------------------------------------------------------------------------
 
 Summary:
@@ -28,7 +28,7 @@ Some of the Wrapper's features are:
   * Run a Java application as a Windows Service or Unix Daemon
   * Java Application Reliability
   * Automatic Crash, Freeze, and Deadlock Detection and Recovery
-  * On Demand Restarts
+  * On-Demand Restarts
   * Standard, Out of the Box Scripting
   * Flexible Cross Platform Configuration
   * Ease Application Installations
@@ -36,10 +36,10 @@ Some of the Wrapper's features are:
   * Many more...
 
 See our download page for a more detailed feature list.
-  => http://wrapper.tanukisoftware.com/doc/english/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/download.jsp
 
-For more information please visit 
-  => http://wrapper.tanukisoftware.com/doc/english/introduction.html
+For more information please visit:
+  => https://wrapper.tanukisoftware.com/doc/english/introduction.html
 
 
 
@@ -50,24 +50,24 @@ Please visit our website for full documentation.
 Here are some ways to get you started.
 
  * Complete documentation can be found online:
-     => http://wrapper.tanukisoftware.com/
+     => https://wrapper.tanukisoftware.com/
  * How to integrate the Java Service Wrapper with an Application
-     => http://wrapper.tanukisoftware.com/doc/english/integrate.html
+     => https://wrapper.tanukisoftware.com/doc/english/integrate.html
  * Configuration Properties
-     => http://wrapper.tanukisoftware.com/doc/english/properties.html
+     => https://wrapper.tanukisoftware.com/doc/english/properties.html
  * HOWTOs
-     => http://wrapper.tanukisoftware.com/doc/english/howto.html
+     => https://wrapper.tanukisoftware.com/doc/english/howto.html
  * Javadocs, for advanced users
-     => http://wrapper.tanukisoftware.com/doc/english/javadocs.html
+     => https://wrapper.tanukisoftware.com/doc/english/javadocs.html
  * Tanuki Software, Ltd. Corporate site:
-     => http://www.tanukisoftware.com/
+     => https://www.tanukisoftware.com/
 
 
 
 3. Installation
 -----------------------------------------------------------------------------
 
-If you are reading this it means you successfully unpacked this software.
+If you are reading this, it means you successfully unpacked this software.
 
 The Standard and Professional Editions of the Java Service Wrapper ship with
 a time limited, but full featured, trial license key which allows you to run
@@ -77,37 +77,37 @@ for quick no hassle testing.
 You can also request a FREE 1 month trial license which allows you to run the
 Wrapper for a full month on a single server.  Trial licenes can be obtained
 at the following URL:
-  => http://wrapper.tanukisoftware.com/doc/english/requestTrial.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/requestTrial.jsp
 
 Permantent licenses can also be purchased at the following URL:
-  => http://wrapper.tanukisoftware.com/doc/english/accountLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/accountLicenses.jsp
 
 The Community Edition does not require a license key.
 
 If you have already purchased a license, you can generate and download your
 license key by logging on and viewing your License Management Page.
 For Server Licenses:
-  => http://wrapper.tanukisoftware.com/doc/english/accountServerLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/accountServerLicenses.jsp
 For Development Licenses:
-  => http://wrapper.tanukisoftware.com/doc/english/accountDevLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/accountDevLicenses.jsp
 
 Depending on the specific type of Java application that will be run with the
 Wrapper, there are a few integration options available:
-  => http://wrapper.tanukisoftware.com/doc/english/integrate.html
+  => https://wrapper.tanukisoftware.com/doc/english/integrate.html
 
 
 
 4. License Options
 -----------------------------------------------------------------------------
 
-The Java Service Wrapper is made available in under three licenses.
+The Java Service Wrapper is made available in under three types of licenses.
 
   * Development License Agreement (Commercial)
   * Server License Agreement (Commercial)
   * Community License Agreement (GPL2)
 
 For more information, please browse our license overview:
-  => http://wrapper.tanukisoftware.com/doc/english/licenseOverview.html
+  => https://wrapper.tanukisoftware.com/doc/english/licenseOverview.html
 
 
 
@@ -116,7 +116,7 @@ For more information, please browse our license overview:
 
 If you are interested in the features available with our Standard or
 Professional Editions, licenses can be purchased online:
-  => http://wrapper.tanukisoftware.com/doc/english/accountLicenses.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/accountLicenses.jsp
 
 
 
@@ -124,9 +124,10 @@ Professional Editions, licenses can be purchased online:
 -----------------------------------------------------------------------------
 
 You can always find the latest Wrapper release on our download page:
-  => http://wrapper.tanukisoftware.com/doc/english/download.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/download.jsp
+
 We also offer an upgrade guide:
-  => http://wrapper.tanukisoftware.com/doc/english/howto-upgrade.html
+  => https://wrapper.tanukisoftware.com/doc/english/howto-upgrade.html
 
 
 
@@ -134,7 +135,7 @@ We also offer an upgrade guide:
 -----------------------------------------------------------------------------
 
 Please see our general FAQ page:
-  => http://wrapper.tanukisoftware.com/doc/english/faq.html
+  => https://wrapper.tanukisoftware.com/doc/english/faq.html
 
 We also offer Troubleshooting, HOWTOs, and a Question & Answers page:
   => http://wrapper.tanukisoftware.com/doc/english/troubleshooting.html
@@ -147,7 +148,7 @@ We also offer Troubleshooting, HOWTOs, and a Question & Answers page:
 -----------------------------------------------------------------------------
 
 Please see the following page for support options:
-  => http://wrapper.tanukisoftware.com/doc/english/support.jsp
+  => https://wrapper.tanukisoftware.com/doc/english/support.jsp
 
 
 
@@ -156,7 +157,7 @@ Please see the following page for support options:
 
 A full list of supported platforms and system requirements can be found
 online:
-  => http://wrapper.tanukisoftware.com/doc/english/supported-platforms.html
+  => https://wrapper.tanukisoftware.com/doc/english/supported-platforms.html
 
 
 
