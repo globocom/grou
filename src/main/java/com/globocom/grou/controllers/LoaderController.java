@@ -19,12 +19,10 @@ package com.globocom.grou.controllers;
 import com.globocom.grou.entities.Loader;
 import com.globocom.grou.entities.services.LoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class LoaderController {
