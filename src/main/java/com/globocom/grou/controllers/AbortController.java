@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -45,12 +46,19 @@ public class AbortController {
 
     @PostMapping(value = "/abort", consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
     public ResponseEntity<Void> receiveAbort(@RequestBody Test test) {
-        loaderService.loaders().stream().map(Loader::getName).forEach(loaderId -> {
-            String testName = test.getName();
-            String projectName = test.getProject();
-            String abortKey = "ABORT:" + projectName + "." + testName + "#" + loaderId;
-            redisTemplate.opsForValue().set(abortKey, UUID.randomUUID().toString(), 60000, TimeUnit.MILLISECONDS);
-        });
+        String testName = test.getName();
+        String projectName = test.getProject();
+        final List<Loader> loaders = loaderService.loaders();
+        if (loaders.isEmpty()) {
+            registerAbortKey(testName, projectName, "UNDEF");
+        } else {
+            loaders.stream().map(Loader::getName).forEach(loaderId -> registerAbortKey(testName, projectName, loaderId));
+        }
         return ResponseEntity.accepted().build();
+    }
+
+    private void registerAbortKey(String testName, String projectName, String loaderId) {
+        String abortKey = "ABORT:" + projectName + "." + testName + "#" + loaderId;
+        redisTemplate.opsForValue().set(abortKey, UUID.randomUUID().toString(), 60000, TimeUnit.MILLISECONDS);
     }
 }

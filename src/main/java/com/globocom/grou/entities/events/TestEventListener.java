@@ -124,10 +124,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                 int maxRetry = Integer.parseInt(SystemEnv.MAX_RETRY.getValue());
                 if (retry.get() <= maxRetry) {
                     if (isAbort(testNameWithProject)) {
-                        loaderService.loaders().stream().map(Loader::getName).forEach(loaderName ->
-                            redisTemplate.expire(ABORT_PREFIX + testNameWithProject + "#" + loaderName, 10, TimeUnit.MILLISECONDS)
-                        );
-                        callbackError(test, "Aborted.");
+                        callbackError(test, Test.Status.ABORTED.toString());
                     } else {
                         LOGGER.warn("Test {}: {} Re-queued (retry {}/{}).", testNameWithProject, errorDetailed, retry.get(), maxRetry);
                         jmsTemplate.convertAndSend(TEST_QUEUE, testStr, message -> {
@@ -167,7 +164,8 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     private boolean isAbort(String testNameWithProject) {
         Set<String> keys = redisTemplate.keys(ABORT_PREFIX + testNameWithProject + "*");
-        return keys != null && !keys.isEmpty();
+        keys.forEach(key -> redisTemplate.expire(key, 10000, TimeUnit.MILLISECONDS));
+        return !keys.isEmpty();
     }
 
     private void callbackError(Test test, String errorDetailed) throws JsonProcessingException {

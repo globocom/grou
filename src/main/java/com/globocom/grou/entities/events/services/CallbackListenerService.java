@@ -16,10 +16,9 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.Charset;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class CallbackListenerService {
@@ -69,7 +68,7 @@ public class CallbackListenerService {
                 status = checkConsensusOrError(testLoaders);
             } else {
                 test.setLoaders(testFromLoader.getLoaders());
-                status = Test.Status.ERROR;
+                status = loader.getStatusDetailed().equals(Test.Status.ABORTED.toString()) ? Test.Status.ABORTED : Test.Status.ERROR;
             }
             test.setStatus(status);
             testRepository.save(test);
@@ -105,13 +104,20 @@ public class CallbackListenerService {
         return pageTestPersisted != null && pageTestPersisted.getTotalElements() > 0 ? pageTestPersisted.iterator().next() : null;
     }
 
+    @SuppressWarnings("ConstantConditions")
     private Test.Status checkConsensusOrError(Set<Loader> testLoaders) {
-        Test.Status status;List<Loader.Status> statuses = testLoaders.stream().map(Loader::getStatus).distinct().collect(Collectors.toList());
-        status = Test.Status.RUNNING;
+        Set<Loader.Status> statuses = new HashSet<>();
+        Set<String> statusDetailed = new HashSet<>();
+        Test.Status status = Test.Status.RUNNING;
+
+        testLoaders.forEach(loader -> {
+            statuses.add(loader.getStatus());
+            statusDetailed.add(loader.getStatusDetailed());
+        });
         if (statuses.contains(Loader.Status.ERROR)) {
-            status = Test.Status.ERROR;
+            status = statusDetailed.contains(Test.Status.ABORTED.toString()) ? Test.Status.ABORTED : Test.Status.ERROR;
         } else if (thereIsConsensus(statuses)) {
-            String statusStr = statuses.get(0).toString();
+            String statusStr = statuses.stream().findAny().get().toString();
             if (!Loader.Status.IDLE.toString().equals(statusStr)) {
                 status = Enum.valueOf(Test.Status.class, statusStr);
             }
@@ -129,7 +135,7 @@ public class CallbackListenerService {
         });
     }
 
-    private boolean thereIsConsensus(List<Loader.Status> statuses) {
+    private boolean thereIsConsensus(Set<Loader.Status> statuses) {
         return statuses.size() == 1;
     }
 
