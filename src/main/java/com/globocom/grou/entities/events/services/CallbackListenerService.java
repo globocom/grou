@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,38 +58,18 @@ public class CallbackListenerService {
             }
 
             Loader loader = testFromLoader.getLoaders().stream().findAny().get();
-            Page<Test> pageTestPersisted = testRepository.findByNameAndProject(testFromLoader.getName(), testFromLoader.getProject(), ALL_PAGES);
-            Test test = pageTestPersisted != null && pageTestPersisted.getTotalElements() > 0 ? pageTestPersisted.iterator().next() : null;
+            Test test = getTestFromDB(testFromLoader);
+            if (testNotExist(testFromLoader, test)) return;
 
-            if (test == null) {
-                LOGGER.error("Test {}.{} NOT FOUND", testFromLoader.getProject(), testFromLoader.getName());
-                return;
-            }
-
-            Loader loaderFromDb = test.getLoaders().stream().filter(l -> l.equals(loader)).findAny().get();
-            if (loaderFromDb.getStatus() == loader.getStatus() && loaderFromDb.getStatusDetailed().equals(loader.getStatusDetailed())) {
-                LOGGER.warn("Test {}.{} status: {} (from loader {} [{}])", test.getProject(), test.getName(), test.getStatus().toString(), loader.getName(), loader.getStatus());
-                lockerService.releaseLockDb();
-                return;
-            }
-
-            test.getLoaders().forEach(l -> {
-                if (l.getStatus() == Loader.Status.IDLE) l.setStatus(Loader.Status.RUNNING);
-                if (l.getName().equals(loader.getName())) {
-                    l.setStatus(loader.getStatus());
-                    l.setStatusDetailed(loader.getStatusDetailed());
-                }
-            });
+            Test.Status status;
             final Set<Loader> testLoaders = test.getLoaders();
-            List<Loader.Status> statuses = testLoaders.stream().map(Loader::getStatus).distinct().collect(Collectors.toList());
-            Test.Status status = Test.Status.RUNNING;
-            if (statuses.contains(Loader.Status.ERROR)) {
+            if (!test.getLoaders().isEmpty()) {
+                if (hasNoChanges(loader, test, testLoaders)) return;
+                syncStatus(loader, testLoaders);
+                status = checkConsensusOrError(testLoaders);
+            } else {
+                test.setLoaders(testFromLoader.getLoaders());
                 status = Test.Status.ERROR;
-            } else if (statuses.size() == 1) {
-                String statusStr = statuses.get(0).toString();
-                if (!Loader.Status.IDLE.toString().equals(statusStr)) {
-                    status = Enum.valueOf(Test.Status.class, statusStr);
-                }
             }
             test.setStatus(status);
             testRepository.save(test);
@@ -99,6 +80,57 @@ public class CallbackListenerService {
         } finally {
             lockerService.releaseLockDb();
         }
+    }
+
+    private boolean testNotExist(Test testFromLoader, Test test) {
+        if (test == null) {
+            LOGGER.error("Test {}.{} NOT FOUND", testFromLoader.getProject(), testFromLoader.getName());
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasNoChanges(Loader loader, Test test, Set<Loader> testLoaders) {
+        Optional<Loader> loaderFromDb = testLoaders.stream().filter(l -> l.equals(loader)).findAny();
+        if (loaderFromDb.isPresent() && loaderFromDb.get().getStatus() == loader.getStatus() && loaderFromDb.get().getStatusDetailed().equals(loader.getStatusDetailed())) {
+            LOGGER.warn("Test {}.{} status: {} (from loader {} [{}])", test.getProject(), test.getName(), test.getStatus().toString(), loader.getName(), loader.getStatus());
+            lockerService.releaseLockDb();
+            return true;
+        }
+        return false;
+    }
+
+    private Test getTestFromDB(Test testFromLoader) {
+        Page<Test> pageTestPersisted = testRepository.findByNameAndProject(testFromLoader.getName(), testFromLoader.getProject(), ALL_PAGES);
+        return pageTestPersisted != null && pageTestPersisted.getTotalElements() > 0 ? pageTestPersisted.iterator().next() : null;
+    }
+
+    private Test.Status checkConsensusOrError(Set<Loader> testLoaders) {
+        Test.Status status;List<Loader.Status> statuses = testLoaders.stream().map(Loader::getStatus).distinct().collect(Collectors.toList());
+        status = Test.Status.RUNNING;
+        if (statuses.contains(Loader.Status.ERROR)) {
+            status = Test.Status.ERROR;
+        } else if (thereIsConsensus(statuses)) {
+            String statusStr = statuses.get(0).toString();
+            if (!Loader.Status.IDLE.toString().equals(statusStr)) {
+                status = Enum.valueOf(Test.Status.class, statusStr);
+            }
+        }
+        return status;
+    }
+
+    private void syncStatus(Loader loader, Set<Loader> testLoaders) {
+        testLoaders.forEach(l -> {
+            if (l.getStatus() == Loader.Status.IDLE) l.setStatus(Loader.Status.RUNNING);
+            if (l.getName().equals(loader.getName())) {
+                l.setStatus(loader.getStatus());
+                l.setStatusDetailed(loader.getStatusDetailed());
+            }
+        });
+    }
+
+    private boolean thereIsConsensus(List<Loader.Status> statuses) {
+        return statuses.size() == 1;
     }
 
 }
