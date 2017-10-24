@@ -40,8 +40,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(new KeystoneAuthFilter(), BasicAuthenticationFilter.class);
         http.addFilterBefore(new AuditFilter(), BasicAuthenticationFilter.class);
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/loaders", "/version", "/token/*", "/healthcheck").permitAll();
-        http.authorizeRequests().anyRequest().fullyAuthenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.GET).permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.HEAD).permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.POST).fullyAuthenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE).fullyAuthenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.PUT).fullyAuthenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.PATCH).fullyAuthenticated();
         http.csrf().disable();
     }
 

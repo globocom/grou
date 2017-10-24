@@ -48,13 +48,15 @@ public class KeystoneAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String requestURI = request.getRequestURI();
-        if (requestURI.matches("^(/loaders[/]?|/version[/]?|/token/.+|/healthcheck[/]?)")) {
+        boolean isPostMethod = HttpMethod.POST.toString().equals(request.getMethod());
+        boolean isDeletePMethod = HttpMethod.DELETE.toString().equals(request.getMethod());
+        boolean isPutMethod = HttpMethod.PUT.toString().equals(request.getMethod());
+        boolean isPatchMethod = HttpMethod.PATCH.toString().equals(request.getMethod());
+
+        if (!(isPostMethod || isDeletePMethod || isPutMethod || isPatchMethod)) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        boolean isPostMethod = HttpMethod.POST.toString().equals(request.getMethod());
 
         String token = request.getHeader(AUTH_TOKEN_HEADER);
         if (token == null) {
