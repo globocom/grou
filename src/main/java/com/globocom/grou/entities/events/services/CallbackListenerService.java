@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.globocom.grou.entities.Loader;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.repositories.TestRepository;
+import com.globocom.grou.report.ReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,13 @@ public class CallbackListenerService {
 
     private final TestRepository testRepository;
     private final LockerService lockerService;
+    private final ReportService reportService;
 
     @Autowired
-    public CallbackListenerService(TestRepository testRepository, LockerService lockerService) {
+    public CallbackListenerService(TestRepository testRepository, LockerService lockerService, ReportService reportService) {
         this.testRepository = testRepository;
         this.lockerService = lockerService;
+        this.reportService = reportService;
     }
 
     @Bean
@@ -74,6 +77,7 @@ public class CallbackListenerService {
             testRepository.save(test);
             LOGGER.info("Test {}.{} status: {} (from loader {} [{}])", test.getProject(), test.getName(), test.getStatus().toString(), loader.getName(), loader.getStatus());
 
+            reportService.send(test);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {

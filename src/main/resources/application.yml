@@ -2,3 +2,6 @@ build:
     project: '@project.artifactId@'
     timestamp: '@timestamp@'
     version: '@project.version@'
+
+spring:
+    mail: [ host: localhost ]
