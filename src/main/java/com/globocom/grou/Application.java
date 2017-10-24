@@ -24,10 +24,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
-@EnableSwagger2
 @EnableAutoConfiguration
 @EnableScheduling
-@Import({springfox.documentation.spring.data.rest.configuration.SpringDataRestConfiguration.class})
 public class Application {
 
     public static void main(String... args) {
