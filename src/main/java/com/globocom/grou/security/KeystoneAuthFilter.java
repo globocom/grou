@@ -18,7 +18,7 @@ package com.globocom.grou.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.globocom.grou.http.CachedHttpServletRequest;
+import com.globocom.grou.security.util.CachedHttpServletRequest;
 import com.google.common.io.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

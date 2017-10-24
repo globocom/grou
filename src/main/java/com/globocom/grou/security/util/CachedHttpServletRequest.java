@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.globocom.grou.http;
+package com.globocom.grou.security.util;
 
 import org.apache.commons.io.IOUtils;
 
