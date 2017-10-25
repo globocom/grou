@@ -16,8 +16,10 @@
 
 package com.globocom.grou.report;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
+import com.globocom.grou.entities.repositories.TestRepository;
 import com.globocom.grou.report.ts.TSClient;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -53,15 +55,17 @@ public class ReportService {
     private static final Header[] HEADERS = { new BasicHeader("Accept", "application/json"),
                                               new BasicHeader("Content-type", "application/json") };
 
-    public static final String    MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
+    private static final String   MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
 
     private final TSClient tsClient = TSClient.Type.valueOf("OPENTSDB").INSTANCE;
 
     private final JavaMailSender emailSender;
+    private final TestRepository testRepository;
 
     @Autowired
-    public ReportService(JavaMailSender emailSender) {
+    public ReportService(JavaMailSender emailSender, TestRepository testRepository) {
         this.emailSender = emailSender;
+        this.testRepository = testRepository;
     }
 
     public void send(Test test) throws Exception {
@@ -79,7 +83,13 @@ public class ReportService {
     }
 
     private String getReport(Test test) {
-        return tsClient.makeReport(test);
+        JsonNode result = tsClient.makeReport(test);
+        if (result != null) {
+            test.setResult(result);
+            testRepository.save(test);
+            return result.toString();
+        }
+        return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
     }
 
     private void notifyByHttp(Test test, String url, String report) throws IOException {
