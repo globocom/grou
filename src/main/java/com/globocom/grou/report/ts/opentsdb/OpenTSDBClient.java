@@ -56,7 +56,7 @@ public class OpenTSDBClient implements TSClient {
         HTTP_CLIENT = new AsyncHttpClient(config);
     }
 
-    private static final String URL = Envs.URL.getValue();
+    private static final String OPENTSDB_URL = ResourceEnv.OPENTSDB_URL.getValue();
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final TypeReference<ArrayList<HashMap<String,Object>>> typeRef = new TypeReference<ArrayList<HashMap<String,Object>>>() {};
@@ -75,7 +75,7 @@ public class OpenTSDBClient implements TSClient {
         jBody.put("end", testLastModified);
 
         String bodyRequest = jBody.toString();
-        Request requestQuery = HTTP_CLIENT.preparePost(URL + "/api/query")
+        Request requestQuery = HTTP_CLIENT.preparePost(OPENTSDB_URL + "/api/query")
                 .setBody(bodyRequest)
                 .setHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
                 .build();
@@ -86,7 +86,7 @@ public class OpenTSDBClient implements TSClient {
             result = response.getResponseBody();
         } catch (InterruptedException | ExecutionException | IOException e) {
             LOGGER.error(e.getMessage(), e);
-            result = "{error:" + e.getMessage() + "}";
+            result = "[{error:" + e.getMessage() + "}]";
         }
 
         try {

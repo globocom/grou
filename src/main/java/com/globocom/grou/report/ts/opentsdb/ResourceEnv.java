@@ -18,12 +18,12 @@ package com.globocom.grou.report.ts.opentsdb;
 
 import java.util.Optional;
 
-public enum Envs {
+public enum ResourceEnv {
 
     /**
      * OpenTSDB URL
      */
-    URL("URL", "http://localhost:4242");
+    OPENTSDB_URL("OPENTSDB_URL", "http://localhost:4242");
 
     /**
      * Gets Env value.
@@ -36,7 +36,7 @@ public enum Envs {
 
     private final String value;
 
-    Envs(String env, Object def) {
+    ResourceEnv(String env, Object def) {
         this.value = Optional.ofNullable(System.getenv(env)).orElse(String.valueOf(def));
     }
 }
