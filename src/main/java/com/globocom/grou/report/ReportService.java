@@ -16,13 +16,16 @@
 
 package com.globocom.grou.report;
 
+import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.TSClient;
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +34,26 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Service
 public class ReportService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReportService.class);
+    private static final Logger   LOGGER = LoggerFactory.getLogger(ReportService.class);
+
+    private static final Pattern  VALID_EMAIL_ADDRESS_REGEX =
+                                                Pattern.compile("^mailto:[/]{0,2}[A-Z0-9._%+-]+@[A-Z0-9.-]+$",
+                                                Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern  VALID_HTTP_ADDRESS_REGEX =
+                                                Pattern.compile("^http[s]?://.+$",
+                                                Pattern.CASE_INSENSITIVE);
+
+    private static final Header[] HEADERS = { new BasicHeader("Accept", "application/json"),
+                                              new BasicHeader("Content-type", "application/json") };
+
+    public static final String    MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
 
     private final TSClient tsClient = TSClient.Type.valueOf("OPENTSDB").INSTANCE;
 
@@ -50,9 +68,9 @@ public class ReportService {
         String notify = (String) test.getProperties().get("notify");
         if (notify != null) {
             String report = getReport(test);
-            if (notify.matches("^mailto:[\\w.+-]+@[\\w.]+$")) {
-                notifyByMail(test, notify, report);
-            } else if (notify.matches("^http[s]?://.+$")) {
+            if (VALID_EMAIL_ADDRESS_REGEX.matcher(notify).matches()) {
+                notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""), report);
+            } else if (VALID_HTTP_ADDRESS_REGEX.matcher(notify).matches()) {
                 notifyByHttp(test, notify, report);
             } else {
                 throw new UnsupportedOperationException("notify destination unsupported: " + notify);
@@ -68,18 +86,23 @@ public class ReportService {
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new StringEntity(report));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
+            Arrays.stream(HEADERS).forEach(httpPost::setHeader);
             CloseableHttpResponse response = httpClient.execute(httpPost);
-            LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to " + url + " with status " + response.getStatusLine().getStatusCode());
+            LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to " + url + " [response status=" + response.getStatusLine().getStatusCode() + "]");
         }
     }
 
-    private void notifyByMail(Test test, String email, String report) {
+    private void notifyByMail(Test test, String email, String report) throws Exception {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        message.setSubject("GROU Report - Test " + test.getProject() + "." + test.getName());
+        message.setFrom(MAIL_FROM);
+        message.setSubject(getSubject(test));
         message.setText(report);
         emailSender.send(message);
+        LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to email " + email);
+    }
+
+    private String getSubject(Test test) {
+        return "Test " + test.getProject() + "." + test.getName() + " finished with status " + test.getStatus();
     }
 }

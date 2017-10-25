@@ -132,7 +132,12 @@ public enum SystemEnv {
     /**
      * Project admins scope
      */
-    PROJECT_ADMIN("PROJECT_ADMIN", "grouadmins");
+    PROJECT_ADMIN("PROJECT_ADMIN", "grouadmins"),
+
+    /**
+     * Mail From (when using ReportService)
+     */
+    REPORT_MAIL_FROM("REPORT_MAIL_FROM", "mailto:root@localhost");
 
     /**
      * Gets SystemEnv value.

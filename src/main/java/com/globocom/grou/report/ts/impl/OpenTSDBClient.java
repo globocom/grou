@@ -16,14 +16,68 @@
 
 package com.globocom.grou.report.ts.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.TSClient;
 
 public class OpenTSDBClient implements TSClient {
 
+    private ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
     @Override
     public String makeReport(Test test) {
-        // TODO
-        return "BLANK";
+
+        // TODO: get metrics from TSDB and summarize
+        /**
+         * DS='30s-p95';
+         * curl -H'content-type: application/json' -d \
+         * '{
+         *      "queries": [
+         *          {
+         *              "metric": "grou.response.status.count",
+         *              "aggregator": "avg",
+         *              "downsample": "$DS",
+         *              "filters":[
+         *                  {
+         *                      "filter": "$TEST",
+         *                      "groupBy": false,
+         *                      "tagk": "test",
+         *                      "type": "literal_or"
+         *                  }]
+         *           }],
+         *      "start": 1508879952000,
+         *      "end": 1508879997000
+         * }' \
+         * http://metrics.grou.globoi.com:4242/api/query
+         *
+         * # response
+         *
+         *  [
+         *  {
+         *    "metric": "grou.response.status.count",
+         *    "tags": {
+         *      "project": "$PROJECT",
+         *      "source": "statsd",
+         *      "test": "$TEST",
+         *      "alltags": "UNDEF"
+         *    },
+         *    "aggregateTags": [
+         *      "loader",
+         *      "status"
+         *    ],
+         *    "dps": {
+         *      "1508879970": 71801.6
+         *    }
+         *  }
+         * ]
+         *
+         */
+        try {
+            return mapper.writeValueAsString(test);
+        } catch (JsonProcessingException e) {
+            return "{error:" + e.getMessage() + "}";
+        }
     }
 }

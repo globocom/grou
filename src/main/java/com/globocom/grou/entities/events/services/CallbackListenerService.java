@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.globocom.grou.entities.Test.Status.*;
+
 @Service
 public class CallbackListenerService {
 
@@ -71,13 +73,15 @@ public class CallbackListenerService {
                 status = checkConsensusOrError(testLoaders);
             } else {
                 test.setLoaders(testFromLoader.getLoaders());
-                status = loader.getStatusDetailed().equals(Test.Status.ABORTED.toString()) ? Test.Status.ABORTED : Test.Status.ERROR;
+                status = loader.getStatusDetailed().equals(ABORTED.toString()) ? ABORTED : ERROR;
             }
             test.setStatus(status);
             testRepository.save(test);
             LOGGER.info("Test {}.{} status: {} (from loader {} [{}])", test.getProject(), test.getName(), test.getStatus().toString(), loader.getName(), loader.getStatus());
 
-            reportService.send(test);
+            if (status != SCHEDULED && status != ENQUEUED && status != RUNNING) {
+                reportService.send(test);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -112,14 +116,14 @@ public class CallbackListenerService {
     private Test.Status checkConsensusOrError(Set<Loader> testLoaders) {
         Set<Loader.Status> statuses = new HashSet<>();
         Set<String> statusDetailed = new HashSet<>();
-        Test.Status status = Test.Status.RUNNING;
+        Test.Status status = RUNNING;
 
         testLoaders.forEach(loader -> {
             statuses.add(loader.getStatus());
             statusDetailed.add(loader.getStatusDetailed());
         });
         if (statuses.contains(Loader.Status.ERROR)) {
-            status = statusDetailed.contains(Test.Status.ABORTED.toString()) ? Test.Status.ABORTED : Test.Status.ERROR;
+            status = statusDetailed.contains(ABORTED.toString()) ? ABORTED : ERROR;
         } else if (thereIsConsensus(statuses)) {
             String statusStr = statuses.stream().findAny().get().toString();
             if (!Loader.Status.IDLE.toString().equals(statusStr)) {
