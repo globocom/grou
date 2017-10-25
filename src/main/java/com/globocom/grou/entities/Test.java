@@ -16,6 +16,7 @@
 
 package com.globocom.grou.entities;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.globocom.grou.SystemEnv;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,7 +30,11 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
@@ -80,6 +85,8 @@ public class Test implements Serializable {
 
     @Indexed
     private Status status = Status.SCHEDULED;
+
+    private JsonNode result = null;
 
     @Transient
     private String dashboard;
@@ -146,6 +153,14 @@ public class Test implements Serializable {
         if (loaders != null) {
             this.loaders = loaders;
         }
+    }
+
+    public JsonNode getResult() {
+        return result;
+    }
+
+    public void setResult(JsonNode result) {
+        this.result = result;
     }
 
     public String getDashboard() {
