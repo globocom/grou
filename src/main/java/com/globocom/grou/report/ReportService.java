@@ -16,7 +16,9 @@
 
 package com.globocom.grou.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.repositories.TestRepository;
@@ -37,6 +39,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -58,6 +62,7 @@ public class ReportService {
     private static final String   MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
 
     private final TSClient tsClient = TSClient.Type.valueOf("OPENTSDB").INSTANCE;
+    private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
     private final JavaMailSender emailSender;
     private final TestRepository testRepository;
@@ -83,12 +88,18 @@ public class ReportService {
     }
 
     private String getReport(Test test) {
-        JsonNode result = tsClient.makeReport(test);
+        List<Map<String, Object>> result = tsClient.makeReport(test);
         if (result != null) {
             test.setResult(result);
             testRepository.save(test);
-            return result.toString();
+            try {
+                return mapper.writeValueAsString(result);
+            } catch (JsonProcessingException e) {
+                LOGGER.error(e.getMessage(), e);
+                return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
+            }
         }
+        LOGGER.error("Test {}.{}: makeReport return NULL", test.getProject(), test.getName());
         return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
     }
 

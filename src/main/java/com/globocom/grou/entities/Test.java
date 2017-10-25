@@ -16,7 +16,6 @@
 
 package com.globocom.grou.entities;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.globocom.grou.SystemEnv;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -33,6 +32,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,7 +86,7 @@ public class Test implements Serializable {
     @Indexed
     private Status status = Status.SCHEDULED;
 
-    private JsonNode result = null;
+    private List<Map<String, Object>> result = null;
 
     @Transient
     private String dashboard;
@@ -155,11 +155,11 @@ public class Test implements Serializable {
         }
     }
 
-    public JsonNode getResult() {
+    public List<Map<String, Object>> getResult() {
         return result;
     }
 
-    public void setResult(JsonNode result) {
+    public void setResult(List<Map<String, Object>> result) {
         this.result = result;
     }
 

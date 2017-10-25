@@ -16,9 +16,11 @@
 
 package com.globocom.grou.report.ts;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.opentsdb.OpenTSDBClient;
+
+import java.util.List;
+import java.util.Map;
 
 public interface TSClient {
 
@@ -32,5 +34,5 @@ public interface TSClient {
         }
     }
 
-    JsonNode makeReport(Test test);
+    List<Map<String, Object>> makeReport(Test test);
 }

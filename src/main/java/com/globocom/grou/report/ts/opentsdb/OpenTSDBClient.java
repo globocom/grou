@@ -16,9 +16,8 @@
 
 package com.globocom.grou.report.ts.opentsdb;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.globocom.grou.entities.Test;
@@ -33,6 +32,9 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
@@ -57,10 +59,11 @@ public class OpenTSDBClient implements TSClient {
 
     private static final String URL = Envs.URL.getValue();
 
-    private ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final TypeReference<List<HashMap<String,Object>>> typeRef = new TypeReference<List<HashMap<String,Object>>>() {};
 
     @Override
-    public JsonNode makeReport(Test test) {
+    public List<Map<String, Object>> makeReport(Test test) {
 
         // TODO: Add more metrics requests
 
@@ -88,7 +91,7 @@ public class OpenTSDBClient implements TSClient {
         }
 
         try {
-            return mapper.readTree(result);
+            return mapper.readValue(result, typeRef);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             return null;
