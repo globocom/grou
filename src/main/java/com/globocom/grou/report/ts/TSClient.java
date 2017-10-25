@@ -19,8 +19,8 @@ package com.globocom.grou.report.ts;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.opentsdb.OpenTSDBClient;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface TSClient {
 
@@ -34,5 +34,5 @@ public interface TSClient {
         }
     }
 
-    List<Map<String, Object>> makeReport(Test test);
+    ArrayList<HashMap<String, Object>> makeReport(Test test);
 }

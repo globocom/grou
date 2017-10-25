@@ -31,10 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
@@ -60,10 +59,10 @@ public class OpenTSDBClient implements TSClient {
     private static final String URL = Envs.URL.getValue();
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private final TypeReference<List<HashMap<String,Object>>> typeRef = new TypeReference<List<HashMap<String,Object>>>() {};
+    private final TypeReference<ArrayList<HashMap<String,Object>>> typeRef = new TypeReference<ArrayList<HashMap<String,Object>>>() {};
 
     @Override
-    public List<Map<String, Object>> makeReport(Test test) {
+    public ArrayList<HashMap<String, Object>> makeReport(Test test) {
 
         // TODO: Add more metrics requests
 

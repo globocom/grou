@@ -29,10 +29,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,7 +86,7 @@ public class Test implements Serializable {
     @Indexed
     private Status status = Status.SCHEDULED;
 
-    private List<Map<String, Object>> result = null;
+    private ArrayList<HashMap<String, Object>> result = null;
 
     @Transient
     private String dashboard;
@@ -155,11 +155,11 @@ public class Test implements Serializable {
         }
     }
 
-    public List<Map<String, Object>> getResult() {
+    public ArrayList<HashMap<String, Object>> getResult() {
         return result;
     }
 
-    public void setResult(List<Map<String, Object>> result) {
+    public void setResult(ArrayList<HashMap<String, Object>> result) {
         this.result = result;
     }
 

@@ -38,9 +38,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 @Service
@@ -88,7 +88,7 @@ public class ReportService {
     }
 
     private String getReport(Test test) {
-        List<Map<String, Object>> result = tsClient.makeReport(test);
+        ArrayList<HashMap<String, Object>> result = tsClient.makeReport(test);
         if (result != null) {
             test.setResult(result);
             testRepository.save(test);
