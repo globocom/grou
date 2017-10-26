@@ -1,0 +1,124 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Grou Docs\n\n\nGROU is a manager platform for automated testing. It provides an API and a management mechanism of resources and the load generator GROOT.\n\n\nArchitecture", 
+            "title": "Grou Docs"
+        }, 
+        {
+            "location": "/#grou-docs", 
+            "text": "GROU is a manager platform for automated testing. It provides an API and a management mechanism of resources and the load generator GROOT.", 
+            "title": "Grou Docs"
+        }, 
+        {
+            "location": "/#architecture", 
+            "text": "", 
+            "title": "Architecture"
+        }, 
+        {
+            "location": "/gettingstarted/", 
+            "text": "Getting Started\n\n\nRequirements\n\n\n\n\ndocker\n\n\ndocker-compose\n\n\npython-openstackclient (pip install -r openstackclient-requirements.txt)\n\n\ncurl\n\n\n\n\nBuild and start all\n\n\n$ docker-compose up -d --build; sleep 5\n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080 \n /dev/null 2\n /dev/null; \\\n  do echo \nWaiting 8080/tcp... (press CTRL+C to cancel)\n; sleep 5; done\n\n\n\n\nOpenStack Keystone: Create domain, project and user\n\n\n$ while ! curl --connect-timeout 1 http://127.0.0.1:5000 \n /dev/null 2\n /dev/null; \\\n  do echo \nWaiting 5000/tcp... (press CTRL+C to cancel)\n; sleep 5; done\n$ cat \nEOF | docker exec -i k1.local bash -\nsource ~/openrc\nopenstack domain create grou \n /dev/null\nopenstack project create grou --domain grou \n /dev/null\nopenstack user create --domain grou --project grou --password grou grouadmin \n /dev/null\nopenstack role add --domain grou --project-domain grou-grou --user grouadmin admin \n /dev/null\nopenstack role add --project grou --project-domain grou --user grouadmin admin \n /dev/null\nopenstack role assignment list \n /dev/null\nEOF\n\n\n\n\nGet Keystone Token\n\n\n$ export OS_USER_DOMAIN_NAME=grou\n$ export OS_IMAGE_API_VERSION=2\n$ export OS_PROJECT_NAME=grou\n$ export OS_IDENTITY_API_VERSION=3\n$ export OS_PASSWORD=grou\n$ export OS_AUTH_URL=http://k1:5000/v3\n$ export OS_USERNAME=grouadmin\n$ export OS_PROJECT_DOMAIN_NAME=grou\n\n$ export TOKEN=\n$(openstack token issue -f value -c id)\n\n\n\n\n\n\nCreate new test\n\n\n$ curl -v -H'content-type:application/json' -H\nx-auth-token:${TOKEN}\n \\\n -d'{\nname\n:\ntest1\n, \nproject\n:\ngrou\n}' http://127.0.0.1:8080/tests\n\n\n\n\nList projects and tests\n\n\n$curl -v -H'content-type:application/json' -H\nx-auth-token:${TOKEN}\n \\\n -H'x-project:grou' http://127.0.0.1:8080/tests", 
+            "title": "Getting Started"
+        }, 
+        {
+            "location": "/gettingstarted/#getting-started", 
+            "text": "", 
+            "title": "Getting Started"
+        }, 
+        {
+            "location": "/gettingstarted/#requirements", 
+            "text": "docker  docker-compose  python-openstackclient (pip install -r openstackclient-requirements.txt)  curl", 
+            "title": "Requirements"
+        }, 
+        {
+            "location": "/gettingstarted/#build-and-start-all", 
+            "text": "$ docker-compose up -d --build; sleep 5\n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080   /dev/null 2  /dev/null; \\\n  do echo  Waiting 8080/tcp... (press CTRL+C to cancel) ; sleep 5; done", 
+            "title": "Build and start all"
+        }, 
+        {
+            "location": "/gettingstarted/#openstack-keystone-create-domain-project-and-user", 
+            "text": "$ while ! curl --connect-timeout 1 http://127.0.0.1:5000   /dev/null 2  /dev/null; \\\n  do echo  Waiting 5000/tcp... (press CTRL+C to cancel) ; sleep 5; done\n$ cat  EOF | docker exec -i k1.local bash -\nsource ~/openrc\nopenstack domain create grou   /dev/null\nopenstack project create grou --domain grou   /dev/null\nopenstack user create --domain grou --project grou --password grou grouadmin   /dev/null\nopenstack role add --domain grou --project-domain grou-grou --user grouadmin admin   /dev/null\nopenstack role add --project grou --project-domain grou --user grouadmin admin   /dev/null\nopenstack role assignment list   /dev/null\nEOF", 
+            "title": "OpenStack Keystone: Create domain, project and user"
+        }, 
+        {
+            "location": "/gettingstarted/#get-keystone-token", 
+            "text": "$ export OS_USER_DOMAIN_NAME=grou\n$ export OS_IMAGE_API_VERSION=2\n$ export OS_PROJECT_NAME=grou\n$ export OS_IDENTITY_API_VERSION=3\n$ export OS_PASSWORD=grou\n$ export OS_AUTH_URL=http://k1:5000/v3\n$ export OS_USERNAME=grouadmin\n$ export OS_PROJECT_DOMAIN_NAME=grou\n\n$ export TOKEN= $(openstack token issue -f value -c id)", 
+            "title": "Get Keystone Token"
+        }, 
+        {
+            "location": "/gettingstarted/#create-new-test", 
+            "text": "$ curl -v -H'content-type:application/json' -H x-auth-token:${TOKEN}  \\\n -d'{ name : test1 ,  project : grou }' http://127.0.0.1:8080/tests", 
+            "title": "Create new test"
+        }, 
+        {
+            "location": "/gettingstarted/#list-projects-and-tests", 
+            "text": "$curl -v -H'content-type:application/json' -H x-auth-token:${TOKEN}  \\\n -H'x-project:grou' http://127.0.0.1:8080/tests", 
+            "title": "List projects and tests"
+        }, 
+        {
+            "location": "/authentication/", 
+            "text": "Authentication\n\n\nAn OpenStack Keystone access token is needed for the routes that need authentication. In order to generate this token, a Keystone user and a project associated to this user are necessary.\n\n\n\n\nCreate a project on Keystone.\n\n\nAssociate project to a user or group.\n\n\nThe token can be obtained in two ways:\n\n\n\n\n$ TOKEN=$(curl --silent -I -XGET -u ${login}:${pass} grou.local:8080/token/${PROJECT} |\\\n   grep '^x-auth-token:' | awk '{ print $2 }')\n\n\n\n\nor\n\n\n$ TOKEN=$(curl --silent -u ${login}:${pass} grou.local:8080/token/${PROJECT} | jq -r .token)\n\n\n\n\n\n\n${PROJECT} is the previously registered project on OpenStack Keystone.\n ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.\n\n\n\n\nAlternative way of getting access token (using openstack-client)\n\n\nIn the following example, the access token is obtained through the \nopenstack-client\n.\n\n\n$ TOKEN=$(openstack --os-auth-url http://mykeystone.local:5000/v3 \\\n  --os-username ${login} \\\n  --os-password ${pass} \\\n  --os-domain-name grou \\\n  --os-project-name ${PROJECT} \\\n  token issue -f value -c id)", 
+            "title": "Authentication"
+        }, 
+        {
+            "location": "/authentication/#authentication", 
+            "text": "An OpenStack Keystone access token is needed for the routes that need authentication. In order to generate this token, a Keystone user and a project associated to this user are necessary.   Create a project on Keystone.  Associate project to a user or group.  The token can be obtained in two ways:   $ TOKEN=$(curl --silent -I -XGET -u ${login}:${pass} grou.local:8080/token/${PROJECT} |\\\n   grep '^x-auth-token:' | awk '{ print $2 }')  or  $ TOKEN=$(curl --silent -u ${login}:${pass} grou.local:8080/token/${PROJECT} | jq -r .token)   ${PROJECT} is the previously registered project on OpenStack Keystone.\n ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.", 
+            "title": "Authentication"
+        }, 
+        {
+            "location": "/authentication/#alternative-way-of-getting-access-token-using-openstack-client", 
+            "text": "In the following example, the access token is obtained through the  openstack-client .  $ TOKEN=$(openstack --os-auth-url http://mykeystone.local:5000/v3 \\\n  --os-username ${login} \\\n  --os-password ${pass} \\\n  --os-domain-name grou \\\n  --os-project-name ${PROJECT} \\\n  token issue -f value -c id)", 
+            "title": "Alternative way of getting access token (using openstack-client)"
+        }, 
+        {
+            "location": "/testing/", 
+            "text": "Testing\n\n\nTesting Lifecycle\n\n\n\n\nRequesting a test\n\n\nA test can be requested though curl.\n\n\n$ curl -H'content-type:application/json' \\\n -H\nx-auth-token:${TOKEN}\n \\\n -d'{\nname\n: \nmytest\n, \nproject\n: \nmyproject\n, \nproperties\n:{}}' \\\n http://grou.local/tests\n\n\n\n\nRequesting with a JSON files\n\n\nA JSON file can also be used for requesting a test.\n\n\nRequest\n\n\n$ curl -H'content-type:application/json' \\\n -H\nx-auth-token:${TOKEN}\n \\\n -d @file.json \\\n http://grou.local/tests\n\n\n\n\nfile.json\n\n{\n  \nname\n:\nmytest\n,\n  \nproject\n:\nzip\n,\n  \ntags\n: [\na-team\n, \nqa03\n, \ncenario01\n],\n  \nproperties\n:\n  {\n    \nuri\n:\nhttp://localhost:8090/version\n,\n    \nparallelLoaders\n : 1,\n    \nnumConn\n: 1000,\n    \ndurationTimeMillis\n :60000,\n    \nmonitTargets\n:\nzero://s1.local?key=s1\n\n  }\n}\n\n\n\n\nResponse\n\n\n{\n  \ncreatedBy\n : \nmylogin\n,\n  \ncreatedDate\n : \n2017-09-09T11:26:23.902+0000\n,\n  \nlastModifiedBy\n : \nmylogin\n,\n  \nlastModifiedDate\n : \n2017-09-09T11:26:23.902+0000\n,\n  \nname\n:\nmytest\n,\n  \nproject\n:\nzip\n,\n  \nloaders\n : [ ],\n  \ntags\n: [\na-team\n, \nqa03\n, \ncenario01\n],\n  \nstatus\n : \nSCHEDULED\n,\n  \ndashboard\n : \nhttp://localhost:3000/mydashboard/?project=zip\nalltags=UNDEF\n,\n  \nproperties\n:\n  {\n      \nuri\n:\nhttp://localhost:8090/version\n,\n      \nparallelLoaders\n : 1,\n      \nnumConn\n: 1000,\n      \ndurationTimeMillis\n :60000,\n      \nmonitTargets\n:\nzero://s1.local?key=s1\n\n  }\n}", 
+            "title": "Testing"
+        }, 
+        {
+            "location": "/testing/#testing", 
+            "text": "", 
+            "title": "Testing"
+        }, 
+        {
+            "location": "/testing/#testing-lifecycle", 
+            "text": "", 
+            "title": "Testing Lifecycle"
+        }, 
+        {
+            "location": "/testing/#requesting-a-test", 
+            "text": "A test can be requested though curl.  $ curl -H'content-type:application/json' \\\n -H x-auth-token:${TOKEN}  \\\n -d'{ name :  mytest ,  project :  myproject ,  properties :{}}' \\\n http://grou.local/tests", 
+            "title": "Requesting a test"
+        }, 
+        {
+            "location": "/testing/#requesting-with-a-json-files", 
+            "text": "A JSON file can also be used for requesting a test.", 
+            "title": "Requesting with a JSON files"
+        }, 
+        {
+            "location": "/testing/#request", 
+            "text": "$ curl -H'content-type:application/json' \\\n -H x-auth-token:${TOKEN}  \\\n -d @file.json \\\n http://grou.local/tests  file.json\n\n{\n   name : mytest ,\n   project : zip ,\n   tags : [ a-team ,  qa03 ,  cenario01 ],\n   properties :\n  {\n     uri : http://localhost:8090/version ,\n     parallelLoaders  : 1,\n     numConn : 1000,\n     durationTimeMillis  :60000,\n     monitTargets : zero://s1.local?key=s1 \n  }\n}", 
+            "title": "Request"
+        }, 
+        {
+            "location": "/testing/#response", 
+            "text": "{\n   createdBy  :  mylogin ,\n   createdDate  :  2017-09-09T11:26:23.902+0000 ,\n   lastModifiedBy  :  mylogin ,\n   lastModifiedDate  :  2017-09-09T11:26:23.902+0000 ,\n   name : mytest ,\n   project : zip ,\n   loaders  : [ ],\n   tags : [ a-team ,  qa03 ,  cenario01 ],\n   status  :  SCHEDULED ,\n   dashboard  :  http://localhost:3000/mydashboard/?project=zip alltags=UNDEF ,\n   properties :\n  {\n       uri : http://localhost:8090/version ,\n       parallelLoaders  : 1,\n       numConn : 1000,\n       durationTimeMillis  :60000,\n       monitTargets : zero://s1.local?key=s1 \n  }\n}", 
+            "title": "Response"
+        }, 
+        {
+            "location": "/results/", 
+            "text": "Test Results\n\n\nResults with Grafana", 
+            "title": "Test Results"
+        }, 
+        {
+            "location": "/results/#test-results", 
+            "text": "", 
+            "title": "Test Results"
+        }, 
+        {
+            "location": "/results/#results-with-grafana", 
+            "text": "", 
+            "title": "Results with Grafana"
+        }
+    ]
+}
