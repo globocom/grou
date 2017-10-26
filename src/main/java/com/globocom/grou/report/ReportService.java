@@ -94,10 +94,12 @@ public class ReportService {
         if (result != null) {
             try {
                 final HashMap<String, Double> mapOfResult = new HashMap<>();
-                result.forEach(m -> {
-                    mapOfResult.put((String) m.get("metric"), ((Map<String, Double>) m.get("dps")).entrySet()
-                            .stream().mapToDouble(Map.Entry::getValue).average().orElse(-1.0));
-                });
+                result.forEach(m ->
+                    mapOfResult.put(
+                            ((String) m.get("metric")).replaceAll("[.]", "_"),
+                            ((Map<String, Double>) m.get("dps")).entrySet().stream()
+                                    .mapToDouble(Map.Entry::getValue).average().orElse(-1.0))
+                );
                 test.setResult(mapOfResult);
                 testRepository.save(test);
                 return mapper.writeValueAsString(mapOfResult);
