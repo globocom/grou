@@ -32,9 +32,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -64,13 +66,32 @@ public class OpenTSDBClient implements TSClient {
     @Override
     public ArrayList<HashMap<String, Object>> makeReport(Test test) {
 
-        // TODO: Add more metrics requests
+        String[] metrics = {
+                "grou.response.status.count",
+                "grou.response.completed.median",
+                "grou.response.completed.upper",
+                "grou.response.completed.p95",
+                "grou.response.size.sum",
+                "grou.loaders.cpu.mean",
+                "grou.loaders.conns.mean",
+                "grou.loaders.memFree.mean",
+                "grou.targets.conns.mean",
+                "grou.targets.memFree.p95",
+                "grou.targets.memBuffers.p95",
+                "grou.targets.memCached.p95",
+                "grou.targets.cpu.median",
+                "grou.targets.load1m",
+                "grou.targets.load5m",
+                "grou.targets.load15m",
+        };
 
         long testCreated = test.getCreatedDate().getTime();
         long testLastModified = test.getLastModifiedDate().getTime();
         ObjectNode jBody = JsonNodeFactory.instance.objectNode();
-        jBody.set("queries", mapper.valueToTree(Collections.singleton(
-                new Query(test, "grou.response.status.count", "avg", ((testLastModified - testCreated) / 2000) + "s-p95"))));
+        List<Query> queries = Arrays.stream(metrics)
+                .map(m -> new Query(test, m, "avg", ((testLastModified - testCreated) / 2000) + "s-p95"))
+                .collect(Collectors.toList());
+        jBody.set("queries", mapper.valueToTree(queries));
         jBody.put("start", testCreated);
         jBody.put("end", testLastModified);
 
@@ -86,7 +107,7 @@ public class OpenTSDBClient implements TSClient {
             result = response.getResponseBody();
         } catch (InterruptedException | ExecutionException | IOException e) {
             LOGGER.error(e.getMessage(), e);
-            result = "[{error:" + e.getMessage() + "}]";
+            result = "[{\"error\":\"" + e.getMessage() + "\"}]";
         }
 
         try {

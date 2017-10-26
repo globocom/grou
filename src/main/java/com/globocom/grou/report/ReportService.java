@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -87,13 +88,19 @@ public class ReportService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private String getReport(Test test) {
         ArrayList<HashMap<String, Object>> result = tsClient.makeReport(test);
         if (result != null) {
-            test.setResult(result);
-            testRepository.save(test);
             try {
-                return mapper.writeValueAsString(result);
+                final HashMap<String, Double> mapOfResult = new HashMap<>();
+                result.forEach(m -> {
+                    mapOfResult.put((String) m.get("metric"), ((Map<String, Double>) m.get("dps")).entrySet()
+                            .stream().mapToDouble(Map.Entry::getValue).average().orElse(-1.0));
+                });
+                test.setResult(mapOfResult);
+                testRepository.save(test);
+                return mapper.writeValueAsString(mapOfResult);
             } catch (JsonProcessingException e) {
                 LOGGER.error(e.getMessage(), e);
                 return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
