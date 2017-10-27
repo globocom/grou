@@ -137,7 +137,12 @@ public enum SystemEnv {
     /**
      * Mail From (when using ReportService)
      */
-    REPORT_MAIL_FROM("REPORT_MAIL_FROM", "mailto:root@localhost");
+    REPORT_MAIL_FROM("REPORT_MAIL_FROM", "mailto:root@localhost"),
+
+    /**
+     * DDOS protection. API requests limit (interval mandatory minimum between requests per project).
+     */
+    REQUESTS_LIMIT("REQUESTS_LIMIT", -1);
 
     /**
      * Gets SystemEnv value.
