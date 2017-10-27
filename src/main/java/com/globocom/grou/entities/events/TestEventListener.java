@@ -24,12 +24,15 @@ import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.events.services.CallbackListenerService;
 import com.globocom.grou.entities.events.services.LockerService;
 import com.globocom.grou.entities.repositories.TestRepository;
-import com.globocom.grou.entities.services.LoaderService;
+import com.globocom.grou.exceptions.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
+import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.BrowserCallback;
@@ -42,6 +45,7 @@ import javax.jms.JMSException;
 import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -51,6 +55,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Component
 public class TestEventListener extends AbstractMongoEventListener<Test> {
@@ -68,16 +74,27 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     private final StringRedisTemplate redisTemplate;
     private final JmsTemplate jmsTemplate;
     private final LockerService lockerService;
-    private final LoaderService loaderService;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    public TestEventListener(TestRepository testRepository, StringRedisTemplate redisTemplate, JmsTemplate jmsTemplate, LockerService lockerService, LoaderService loaderService) {
+    public TestEventListener(TestRepository testRepository, StringRedisTemplate redisTemplate, JmsTemplate jmsTemplate, LockerService lockerService) {
         this.testRepository = testRepository;
         this.redisTemplate = redisTemplate;
         this.jmsTemplate = jmsTemplate;
         this.lockerService = lockerService;
-        this.loaderService = loaderService;
+    }
+
+    @Override
+    public void onBeforeSave(BeforeSaveEvent<Test> event) {
+        int limitRateSeconds;
+        if ((limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue())) > 0) {
+            String project = event.getSource().getProject();
+            Page<Test> pageTest = testRepository.findByProjectAndCreatedDateAfter(project,
+                    Instant.now().minus(limitRateSeconds, SECONDS), new PageRequest(0, 99999));
+            if (pageTest.hasContent()) {
+                throw new ForbiddenException("Project " + project + ": requests limit exceeded. Try again in " + limitRateSeconds + " seconds.");
+            }
+        }
     }
 
     @Override
