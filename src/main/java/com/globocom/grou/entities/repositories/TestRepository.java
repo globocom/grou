@@ -46,6 +46,12 @@ public interface TestRepository extends MongoRepository<Test, String> {
 
     Page<Test> findByLastModifiedBy(@Param("name") String name, Pageable pageable);
 
+    @Query(value = "{'createdDate':{ $lte: ?0 }}")
+    Page<Test> findByCreatedDateBefore(@Param("instante") Instant instant, Pageable pageable);
+
+    @Query(value = "{'project': ?0, 'createdDate':{ $gte: ?1 }}")
+    Page<Test> findByProjectAndCreatedDateAfter(@Param("project") String project, @Param("instante") Instant instant, Pageable pageable);
+
     @Query(value = "{'createdDate':{ $gte: ?0, $lte: ?1}}")
     Page<Test> findByCreatedDateBetween(@Param("from") Instant from, @Param("to") Instant to, Pageable pageable);
 
