@@ -82,7 +82,7 @@ public class OpenTSDBClient implements TSClient {
                 "grou.targets.cpu.median",
                 "grou.targets.load1m",
                 "grou.targets.load5m",
-                "grou.targets.load15m",
+                "grou.targets.load15m"
         };
 
         long testCreated = test.getCreatedDate().getTime();

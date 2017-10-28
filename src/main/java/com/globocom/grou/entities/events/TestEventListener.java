@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;
 import org.springframework.data.mongodb.core.mapping.event.AfterSaveEvent;
 import org.springframework.data.mongodb.core.mapping.event.BeforeSaveEvent;
@@ -69,6 +70,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final BrowserCallback<Integer> browserCallback = TestEventListener::doInJms;
+    private final Pageable allPages = new PageRequest(0, 99999);
 
     private final TestRepository testRepository;
     private final StringRedisTemplate redisTemplate;
@@ -90,7 +92,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         if ((limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue())) > 0) {
             String project = event.getSource().getProject();
             Page<Test> pageTest = testRepository.findByProjectAndCreatedDateAfter(project,
-                    Instant.now().minus(limitRateSeconds, SECONDS), new PageRequest(0, 99999));
+                    Instant.now().minus(limitRateSeconds, SECONDS), allPages);
             if (pageTest.hasContent()) {
                 throw new ForbiddenException("Project " + project + ": requests limit exceeded. Try again in " + limitRateSeconds + " seconds.");
             }
