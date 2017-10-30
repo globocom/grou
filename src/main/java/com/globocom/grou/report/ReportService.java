@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -70,7 +71,8 @@ public class ReportService {
 
     private static final String   MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
 
-    private final TSClient tsClient = TSClient.Type.valueOf("OPENTSDB").INSTANCE;
+    private final TSClient tsClient = TSClient.Type.valueOf(SystemEnv.TS_TYPE.getValue()).INSTANCE;
+
     private final ObjectMapper mapper = new ObjectMapper()
                                         .registerModule(new SimpleModule().addSerializer(Double.class, new DoubleSerializer()))
                                         .enable(SerializationFeature.INDENT_OUTPUT);
@@ -111,14 +113,16 @@ public class ReportService {
         ArrayList<HashMap<String, Object>> result = tsClient.makeReport(test);
         if (result != null) {
             try {
-                final HashMap<String, Double> mapOfResult = new HashMap<>();
-                result.forEach(m ->
-                    mapOfResult.put(
-                            ((String) m.get("metric")).replaceAll("[.]", "_"),
-                            ((Map<String, Double>) m.get("dps")).entrySet().stream()
-                                    .mapToDouble(Map.Entry::getValue).average().orElse(-1.0))
-                );
-                test.setResult(mapOfResult);
+                final TreeMap<String, Double> mapOfResult = new TreeMap<>();
+                result.forEach(m -> {
+                    String metric = (String) m.get("metric");
+                    String key = tsClient.metricsNameConverted().get(metric);
+                    if (key != null) {
+                        double value = ((Map<String, Double>) m.get("dps")).entrySet().stream().mapToDouble(Map.Entry::getValue).average().orElse(-1.0);
+                        mapOfResult.put(key, value);
+                    }
+                });
+                test.setResult(new HashMap<>(mapOfResult));
                 testRepository.save(test);
                 return mapper.writeValueAsString(mapOfResult);
             } catch (JsonProcessingException e) {

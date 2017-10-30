@@ -21,8 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.TSClient;
+import com.google.common.collect.ImmutableMap;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Request;
@@ -33,10 +35,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -63,34 +65,40 @@ public class OpenTSDBClient implements TSClient {
 
     private static final String OPENTSDB_URL = ResourceEnv.OPENTSDB_URL.getValue();
 
+    private static final String METRICS_PREFIX = SystemEnv.TS_METRIC_PREFIX.getValue();
+
+    private final Map<String, String> metricsNameConvertedMap = ImmutableMap.<String, String>builder()
+            .put(METRICS_PREFIX + ".response.status.count",     "response_status_count")
+            .put(METRICS_PREFIX + ".response.completed.median", "response_completed_median")
+            .put(METRICS_PREFIX + ".response.completed.upper",  "response_completed_upper")
+            .put(METRICS_PREFIX + ".response.completed.p95",    "response_completed_p95")
+            .put(METRICS_PREFIX + ".response.size.sum",         "response_size_sum")
+            .put(METRICS_PREFIX + ".loaders.cpu.mean",          "loaders_cpu_mean")
+            .put(METRICS_PREFIX + ".loaders.conns.mean",        "loaders_conns_mean")
+            .put(METRICS_PREFIX + ".loaders.memFree.mean",      "loaders_memFree_mean")
+            .put(METRICS_PREFIX + ".targets.conns.mean",        "targets_conns_mean")
+            .put(METRICS_PREFIX + ".targets.memFree.p95",       "targets_memFree_p95")
+            .put(METRICS_PREFIX + ".targets.memBuffers.p95",    "targets_memBuffers_p95")
+            .put(METRICS_PREFIX + ".targets.memCached.p95",     "targets_memCached_p95")
+            .put(METRICS_PREFIX + ".targets.cpu.median",        "targets_cpu_median")
+            .put(METRICS_PREFIX + ".targets.load1m",            "targets_load1m")
+            .put(METRICS_PREFIX + ".targets.load5m",            "targets_load5m")
+            .put(METRICS_PREFIX + ".targets.load15m",           "targets_load15m").build();
+
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private final TypeReference<ArrayList<HashMap<String,Object>>> typeRef = new TypeReference<ArrayList<HashMap<String,Object>>>() {};
 
     @Override
-    public ArrayList<HashMap<String, Object>> makeReport(Test test) {
+    public Map<String, String> metricsNameConverted() {
+        return metricsNameConvertedMap;
+    }
 
-        String[] metrics = {
-                "grou.response.status.count",
-                "grou.response.completed.median",
-                "grou.response.completed.upper",
-                "grou.response.completed.p95",
-                "grou.response.size.sum",
-                "grou.loaders.cpu.mean",
-                "grou.loaders.conns.mean",
-                "grou.loaders.memFree.mean",
-                "grou.targets.conns.mean",
-                "grou.targets.memFree.p95",
-                "grou.targets.memBuffers.p95",
-                "grou.targets.memCached.p95",
-                "grou.targets.cpu.median",
-                "grou.targets.load1m",
-                "grou.targets.load5m",
-                "grou.targets.load15m"
-        };
+    @Override
+    public ArrayList<HashMap<String, Object>> makeReport(Test test) {
 
         long testCreated = TimeUnit.MILLISECONDS.toSeconds(test.getCreatedDate().getTime());
         long testLastModified = TimeUnit.MILLISECONDS.toSeconds(test.getLastModifiedDate().getTime());
-        List<Query> queries = Arrays.stream(metrics).map(m -> {
+        List<Query> queries = metricsNameConvertedMap.entrySet().stream().map(Map.Entry::getKey).map(m -> {
                                     long downsampleInterval = (testLastModified - testCreated) / 2;
                                     String downsampleSuffix = "s-p95";
                                     String aggregator = "avg";

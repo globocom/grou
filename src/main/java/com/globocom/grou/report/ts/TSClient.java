@@ -21,6 +21,7 @@ import com.globocom.grou.report.ts.opentsdb.OpenTSDBClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public interface TSClient {
 
@@ -33,6 +34,8 @@ public interface TSClient {
             this.INSTANCE = tsClient;
         }
     }
+
+    Map<String, String> metricsNameConverted();
 
     ArrayList<HashMap<String, Object>> makeReport(Test test);
 }
