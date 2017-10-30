@@ -16,7 +16,9 @@
 
 package com.globocom.grou.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.globocom.grou.SystemEnv;
+import com.globocom.grou.report.ReportService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -85,6 +87,7 @@ public class Test implements Serializable {
     @Indexed
     private Status status = Status.SCHEDULED;
 
+    @JsonSerialize(contentUsing = ReportService.DoubleSerializer.class)
     private HashMap<String, Double> result = null;
 
     private Set<String> notify = new HashSet<>();

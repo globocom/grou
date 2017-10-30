@@ -16,9 +16,13 @@
 
 package com.globocom.grou.report;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.repositories.TestRepository;
@@ -38,6 +42,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,7 +71,9 @@ public class ReportService {
     private static final String   MAIL_FROM = SystemEnv.REPORT_MAIL_FROM.getValue();
 
     private final TSClient tsClient = TSClient.Type.valueOf("OPENTSDB").INSTANCE;
-    private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private final ObjectMapper mapper = new ObjectMapper()
+                                        .registerModule(new SimpleModule().addSerializer(Double.class, new DoubleSerializer()))
+                                        .enable(SerializationFeature.INDENT_OUTPUT);
 
     private final JavaMailSender emailSender;
     private final TestRepository testRepository;
@@ -145,5 +152,13 @@ public class ReportService {
 
     private String getSubject(Test test) {
         return "Test " + test.getProject() + "." + test.getName() + " finished with status " + test.getStatus();
+    }
+
+    public static class DoubleSerializer extends JsonSerializer<Double> {
+        @Override
+        public void serialize(Double aDouble, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            BigDecimal d = new BigDecimal(aDouble);
+            jsonGenerator.writeNumber(d.toPlainString());
+        }
     }
 }
