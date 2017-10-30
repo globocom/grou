@@ -48,7 +48,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -108,30 +107,16 @@ public class ReportService {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private String getReport(Test test) {
-        ArrayList<HashMap<String, Object>> result = tsClient.makeReport(test);
-        if (result != null) {
-            try {
-                final TreeMap<String, Double> mapOfResult = new TreeMap<>();
-                result.forEach(m -> {
-                    String metric = (String) m.get("metric");
-                    String key = tsClient.metricsNameConverted().get(metric);
-                    if (key != null) {
-                        double value = ((Map<String, Double>) m.get("dps")).entrySet().stream().mapToDouble(Map.Entry::getValue).average().orElse(-1.0);
-                        mapOfResult.put(key, value);
-                    }
-                });
-                test.setResult(new HashMap<>(mapOfResult));
-                testRepository.save(test);
-                return mapper.writeValueAsString(mapOfResult);
-            } catch (JsonProcessingException e) {
-                LOGGER.error(e.getMessage(), e);
-                return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
-            }
+        final Map<String, Double> result = tsClient.makeReport(test);
+        try {
+            test.setResult(new HashMap<>(result));
+            testRepository.save(test);
+            return mapper.writeValueAsString(result);
+        } catch (JsonProcessingException e) {
+            LOGGER.error(e.getMessage(), e);
+            return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
         }
-        LOGGER.error("Test {}.{}: makeReport return NULL", test.getProject(), test.getName());
-        return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
     }
 
     private void notifyByHttp(Test test, String url, String report) throws IOException {
