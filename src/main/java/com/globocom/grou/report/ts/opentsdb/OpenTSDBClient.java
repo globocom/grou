@@ -106,11 +106,10 @@ public class OpenTSDBClient implements TSClient {
     }
 
     private ArrayList<HashMap<String, Object>> requestMetrics(Test test) {
-
         long testCreated = TimeUnit.MILLISECONDS.toSeconds(test.getCreatedDate().getTime());
         long testLastModified = TimeUnit.MILLISECONDS.toSeconds(test.getLastModifiedDate().getTime());
         final List<Query> queries = prepareQueries(test, testCreated, testLastModified);
-        final ArrayList<HashMap<String, Object>> listOfResult = requestResults(testCreated, testLastModified, queries);
+        final ArrayList<HashMap<String, Object>> listOfResult = doHttpPost(testCreated, testLastModified, queries);
 
         try {
             if (listOfResult.isEmpty()) {
@@ -124,7 +123,7 @@ public class OpenTSDBClient implements TSClient {
         return null;
     }
 
-    private ArrayList<HashMap<String, Object>> requestResults(long testCreated, long testLastModified, List<Query> queries) {
+    private ArrayList<HashMap<String, Object>> doHttpPost(long testCreated, long testLastModified, List<Query> queries) {
         final ArrayList<HashMap<String, Object>> listOfResult = new ArrayList<>();
         queries.forEach(q -> {
             ObjectNode jBody = JsonNodeFactory.instance.objectNode();
@@ -173,9 +172,9 @@ public class OpenTSDBClient implements TSClient {
     @Override
     public Map<String, Double> makeReport(Test test) {
         final TreeMap<String, Double> mapOfResult = new TreeMap<>();
-        ArrayList<HashMap<String, Object>> requestMetrics = requestMetrics(test);
-        if (requestMetrics != null) {
-            requestMetrics.forEach(m -> {
+        ArrayList<HashMap<String, Object>> metrics = requestMetrics(test);
+        if (metrics != null) {
+            metrics.forEach(m -> {
                 String key = (String) m.get("metric");
                 if (key != null) {
                     Map<String, Double> dps = (Map<String, Double>) m.get("dps");
