@@ -144,6 +144,16 @@ public enum SystemEnv {
     REPORT_MAIL_FROM("REPORT_MAIL_FROM", "mailto:root@localhost"),
 
     /**
+     * TimeSeries DB type
+     */
+    TS_TYPE("TS_TYPE", "OPENTSDB"),
+
+    /**
+     * TimeSeries metrics prefix
+     */
+    TS_METRIC_PREFIX("TS_METRIC_PREFIX", "grou"),
+
+    /**
      * DDOS protection. API requests limit (interval mandatory minimum between requests per project).
      */
     REQUESTS_LIMIT("REQUESTS_LIMIT", -1);
