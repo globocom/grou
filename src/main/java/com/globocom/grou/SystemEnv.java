@@ -21,7 +21,6 @@ import java.util.Optional;
 /**
  * The enum System environments.
  */
-@SuppressWarnings("unused")
 public enum SystemEnv {
 
     /**
@@ -63,6 +62,11 @@ public enum SystemEnv {
      * Mongo pass.
      */
     MONGO_PASS  ("MONGO_PASS", ""),
+
+    /**
+     * MongoDB TimeZone ID
+     */
+    MONGO_TIMEZONE("MONGO_TIMEZONE", "Z"),
 
     /**
      * Redis hostname.

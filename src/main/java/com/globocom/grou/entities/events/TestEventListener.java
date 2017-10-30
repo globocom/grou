@@ -47,6 +47,7 @@ import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -56,8 +57,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Component
 public class TestEventListener extends AbstractMongoEventListener<Test> {
@@ -88,13 +87,21 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     @Override
     public void onBeforeSave(BeforeSaveEvent<Test> event) {
-        int limitRateSeconds;
-        if ((limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue())) > 0) {
-            String project = event.getSource().getProject();
-            Page<Test> pageTest = testRepository.findByProjectAndCreatedDateAfter(project,
-                    Instant.now().minus(limitRateSeconds, SECONDS), allPages);
-            if (pageTest.hasContent()) {
-                throw new ForbiddenException("Project " + project + ": requests limit exceeded. Try again in " + limitRateSeconds + " seconds.");
+        Test test = event.getSource();
+        if (test.getStatus() == Test.Status.SCHEDULED) {
+            int limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue());
+            LOGGER.info("Checking request limit (minimum interval beetwen tests to project {} is {} seconds)", test.getProject(), limitRateSeconds);
+            if (limitRateSeconds > 0) {
+                String project = test.getProject();
+                String timeZone = SystemEnv.MONGO_TIMEZONE.getValue();
+                int offset = ZoneId.of(timeZone).getRules().getOffset(Instant.now()).getTotalSeconds() - limitRateSeconds;
+                Instant instantOffset = Instant.now().plusSeconds(offset);
+                Page<Test> pageTest = testRepository.findByProjectAndCreatedDateAfter(project, instantOffset, allPages);
+                if (pageTest.hasContent()) {
+                    LOGGER.warn("Test {}.{} ignored. requests limit exceeded (minimum allowed interval between requests is {} seconds).",
+                            test.getProject(), test.getName(), limitRateSeconds);
+                    throw new ForbiddenException("Requests limit exceeded. Try again in " + limitRateSeconds + " seconds.");
+                }
             }
         }
     }
