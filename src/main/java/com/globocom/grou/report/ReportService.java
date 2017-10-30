@@ -41,8 +41,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportService {
@@ -75,16 +78,24 @@ public class ReportService {
     }
 
     public void send(Test test) throws Exception {
-        String notify = (String) test.getProperties().get("notify");
-        if (notify != null) {
-            String report = getReport(test);
-            if (VALID_EMAIL_ADDRESS_REGEX.matcher(notify).matches()) {
-                notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""), report);
-            } else if (VALID_HTTP_ADDRESS_REGEX.matcher(notify).matches()) {
-                notifyByHttp(test, notify, report);
-            } else {
-                throw new UnsupportedOperationException("notify destination unsupported: " + notify);
+        final AtomicReference<List<Throwable>> exceptions = new AtomicReference<>(new ArrayList<>());
+        final String report = getReport(test);
+        test.getNotify().forEach(notify -> {
+            try {
+                if (VALID_EMAIL_ADDRESS_REGEX.matcher(notify).matches()) {
+                    notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""), report);
+                } else if (VALID_HTTP_ADDRESS_REGEX.matcher(notify).matches()) {
+                    notifyByHttp(test, notify, report);
+                } else {
+                    throw new UnsupportedOperationException("notify destination unsupported: " + notify);
+                }
+            } catch (Exception e) {
+                exceptions.get().add(e);
             }
+        });
+        String exceptionsStr = exceptions.get().stream().map(Throwable::getMessage).collect(Collectors.joining(" "));
+        if (!exceptionsStr.isEmpty()) {
+            throw new IllegalStateException(exceptionsStr);
         }
     }
 

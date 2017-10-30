@@ -87,6 +87,8 @@ public class Test implements Serializable {
 
     private HashMap<String, Double> result = null;
 
+    private Set<String> notify = new HashSet<>();
+
     @Transient
     private String dashboard;
 
@@ -160,6 +162,14 @@ public class Test implements Serializable {
 
     public void setResult(HashMap<String, Double> result) {
         this.result = result;
+    }
+
+    public Set<String> getNotify() {
+        return notify;
+    }
+
+    public void setNotify(Set<String> notify) {
+        if (notify != null) this.notify = new HashSet<>(notify);
     }
 
     public String getDashboard() {
