@@ -90,7 +90,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         Test test = event.getSource();
         if (test.getStatus() == Test.Status.SCHEDULED) {
             int limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue());
-            LOGGER.info("Checking request limit (minimum interval beetwen tests to project {} is {} seconds)", test.getProject(), limitRateSeconds);
+            LOGGER.info("Checking request limit (minimum interval between tests to project {} is {} seconds)", test.getProject(), limitRateSeconds);
             if (limitRateSeconds > 0) {
                 String project = test.getProject();
                 String timeZone = SystemEnv.MONGO_TIMEZONE.getValue();
