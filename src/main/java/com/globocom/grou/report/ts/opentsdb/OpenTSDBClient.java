@@ -18,6 +18,7 @@ package com.globocom.grou.report.ts.opentsdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.globocom.grou.entities.Test;
@@ -33,9 +34,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
@@ -60,7 +63,7 @@ public class OpenTSDBClient implements TSClient {
 
     private static final String OPENTSDB_URL = ResourceEnv.OPENTSDB_URL.getValue();
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private final TypeReference<ArrayList<HashMap<String,Object>>> typeRef = new TypeReference<ArrayList<HashMap<String,Object>>>() {};
 
     @Override
@@ -85,37 +88,48 @@ public class OpenTSDBClient implements TSClient {
                 "grou.targets.load15m"
         };
 
-        long testCreated = test.getCreatedDate().getTime();
-        long testLastModified = test.getLastModifiedDate().getTime();
-        ObjectNode jBody = JsonNodeFactory.instance.objectNode();
-        List<Query> queries = Arrays.stream(metrics)
-                .map(m -> new Query(test, m, "avg", ((testLastModified - testCreated) / 2000) + "s-p95"))
-                .collect(Collectors.toList());
-        jBody.set("queries", mapper.valueToTree(queries));
-        jBody.put("start", testCreated);
-        jBody.put("end", testLastModified);
+        long testCreated = TimeUnit.MILLISECONDS.toSeconds(test.getCreatedDate().getTime());
+        long testLastModified = TimeUnit.MILLISECONDS.toSeconds(test.getLastModifiedDate().getTime());
+        List<Query> queries = Arrays.stream(metrics).map(m -> {
+                                    long downsampleInterval = (testLastModified - testCreated) / 2;
+                                    String downsampleSuffix = "s-p95";
+                                    String aggregator = "avg";
+                                    return new Query(test, m, aggregator, downsampleInterval + downsampleSuffix);
+                                }).collect(Collectors.toList());
 
-        String bodyRequest = jBody.toString();
-        Request requestQuery = HTTP_CLIENT.preparePost(OPENTSDB_URL + "/api/query")
-                .setBody(bodyRequest)
-                .setHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
-                .build();
+        final ArrayList<HashMap<String, Object>> listOfResult = new ArrayList<>();
+        queries.forEach(q -> {
+            ObjectNode jBody = JsonNodeFactory.instance.objectNode();
+            jBody.set("queries", mapper.valueToTree(Collections.singleton(q)));
+            jBody.put("start", testCreated);
+            jBody.put("end", testLastModified);
 
-        String result;
+            String bodyRequest = jBody.toString();
+            Request requestQuery = HTTP_CLIENT.preparePost(OPENTSDB_URL + "/api/query")
+                    .setBody(bodyRequest)
+                    .setHeader(CONTENT_TYPE, APPLICATION_JSON.toString())
+                    .build();
+
+            try {
+                Response response = HTTP_CLIENT.executeRequest(requestQuery).get();
+                String body = response.getResponseBody();
+                ArrayList<HashMap<String, Object>> resultMap = mapper.readValue(body, typeRef);
+                listOfResult.add(resultMap.stream().findAny().orElse(new HashMap<>()));
+            } catch (InterruptedException | ExecutionException | IOException e) {
+                if (LOGGER.isDebugEnabled()) LOGGER.error(e.getMessage(), e);
+            }
+        });
+
         try {
-            Response response = HTTP_CLIENT.executeRequest(requestQuery).get();
-            result = response.getResponseBody();
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            result = "[{\"error\":\"" + e.getMessage() + "\"}]";
-        }
-
-        try {
-            return mapper.readValue(result, typeRef);
+            if (listOfResult.isEmpty()) {
+                return mapper.readValue("[{\"error\":\" OpenTSDB result is EMPTY \"}]", typeRef);
+            } else {
+                return listOfResult;
+            }
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
-            return null;
         }
+        return null;
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
