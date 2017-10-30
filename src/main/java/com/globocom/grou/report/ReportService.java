@@ -37,9 +37,13 @@ import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -48,6 +52,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -78,11 +83,13 @@ public class ReportService {
 
     private final JavaMailSender emailSender;
     private final TestRepository testRepository;
+    private final TemplateEngine templateEngine;
 
     @Autowired
-    public ReportService(JavaMailSender emailSender, TestRepository testRepository) {
+    public ReportService(JavaMailSender emailSender, TestRepository testRepository, TemplateEngine templateEngine) {
         this.emailSender = emailSender;
         this.testRepository = testRepository;
+        this.templateEngine = templateEngine;
     }
 
     public void send(Test test) throws Exception {
@@ -91,7 +98,7 @@ public class ReportService {
         test.getNotify().forEach(notify -> {
             try {
                 if (VALID_EMAIL_ADDRESS_REGEX.matcher(notify).matches()) {
-                    notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""), report);
+                    notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""));
                 } else if (VALID_HTTP_ADDRESS_REGEX.matcher(notify).matches()) {
                     notifyByHttp(test, notify, report);
                 } else {
@@ -129,14 +136,27 @@ public class ReportService {
         }
     }
 
-    private void notifyByMail(Test test, String email, String report) throws Exception {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom(MAIL_FROM);
-        message.setSubject(getSubject(test));
-        message.setText(report);
-        emailSender.send(message);
-        LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to email " + email);
+    private void notifyByMail(Test test, String email) throws Exception {
+        MimeMessagePreparator messagePreparator = mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setTo(email);
+            messageHelper.setFrom(MAIL_FROM);
+            messageHelper.setSubject(getSubject(test));
+            Context context = new Context();
+            context.setVariable("project", test.getProject());
+            context.setVariable("name", test.getName());
+            String tags = test.getTags().stream().collect(Collectors.joining(","));
+            context.setVariable("tags", (tags.isEmpty() ? "UNDEF" : tags));
+            context.setVariable("metrics", new TreeMap<>(test.getResult()));
+            String content = templateEngine.process("reportEmail", context);
+            messageHelper.setText(content, true);
+        };
+        try {
+            emailSender.send(messagePreparator);
+            LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to email " + email);
+        } catch (MailException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     private String getSubject(Test test) {

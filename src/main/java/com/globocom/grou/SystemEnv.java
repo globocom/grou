@@ -141,7 +141,7 @@ public enum SystemEnv {
     /**
      * Mail From (when using ReportService)
      */
-    REPORT_MAIL_FROM("REPORT_MAIL_FROM", "mailto:root@localhost"),
+    REPORT_MAIL_FROM("REPORT_MAIL_FROM", "root@localhost"),
 
     /**
      * TimeSeries DB type

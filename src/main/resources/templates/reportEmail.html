@@ -1,0 +1,406 @@
+<!--
+  ~ Copyright (c) 2017-2017 Globo.com
+  ~ All rights reserved.
+  ~
+  ~ This source is subject to the Apache License, Version 2.0.
+  ~ Please see the LICENSE file for more information.
+  ~
+  ~ Authors: See AUTHORS file
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>GROU Report</title>
+    <style type="text/css" id="media-query">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        table, tr, td {
+            vertical-align: top;
+            border-collapse: collapse;
+        }
+
+        .ie-browser table, .mso-container table {
+            table-layout: fixed;
+        }
+
+        * {
+            line-height: inherit;
+        }
+
+        a[x-apple-data-detectors=true] {
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        [owa] .img-container div, [owa] .img-container button {
+            display: block !important;
+        }
+
+        [owa] .fullwidth button {
+            width: 100% !important;
+        }
+
+        [owa] .block-grid .col {
+            display: table-cell;
+            float: none !important;
+            vertical-align: top;
+        }
+
+        .ie-browser .num12, .ie-browser .block-grid, [owa] .num12, [owa] .block-grid {
+            width: 600px !important;
+        }
+
+        .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
+            line-height: 100%;
+        }
+
+        .ie-browser .mixed-two-up .num4, [owa] .mixed-two-up .num4 {
+            width: 200px !important;
+        }
+
+        .ie-browser .mixed-two-up .num8, [owa] .mixed-two-up .num8 {
+            width: 400px !important;
+        }
+
+        .ie-browser .block-grid.two-up .col, [owa] .block-grid.two-up .col {
+            width: 300px !important;
+        }
+
+        .ie-browser .block-grid.three-up .col, [owa] .block-grid.three-up .col {
+            width: 200px !important;
+        }
+
+        .ie-browser .block-grid.four-up .col, [owa] .block-grid.four-up .col {
+            width: 150px !important;
+        }
+
+        .ie-browser .block-grid.five-up .col, [owa] .block-grid.five-up .col {
+            width: 120px !important;
+        }
+
+        .ie-browser .block-grid.six-up .col, [owa] .block-grid.six-up .col {
+            width: 100px !important;
+        }
+
+        .ie-browser .block-grid.seven-up .col, [owa] .block-grid.seven-up .col {
+            width: 85px !important;
+        }
+
+        .ie-browser .block-grid.eight-up .col, [owa] .block-grid.eight-up .col {
+            width: 75px !important;
+        }
+
+        .ie-browser .block-grid.nine-up .col, [owa] .block-grid.nine-up .col {
+            width: 66px !important;
+        }
+
+        .ie-browser .block-grid.ten-up .col, [owa] .block-grid.ten-up .col {
+            width: 60px !important;
+        }
+
+        .ie-browser .block-grid.eleven-up .col, [owa] .block-grid.eleven-up .col {
+            width: 54px !important;
+        }
+
+        .ie-browser .block-grid.twelve-up .col, [owa] .block-grid.twelve-up .col {
+            width: 50px !important;
+        }
+
+        @media only screen and (min-width: 620px) {
+            .block-grid {
+                width: 600px !important;
+            }
+
+            .block-grid .col {
+                vertical-align: top;
+            }
+
+            .block-grid .col.num12 {
+                width: 600px !important;
+            }
+
+            .block-grid.mixed-two-up .col.num4 {
+                width: 200px !important;
+            }
+
+            .block-grid.mixed-two-up .col.num8 {
+                width: 400px !important;
+            }
+
+            .block-grid.two-up .col {
+                width: 300px !important;
+            }
+
+            .block-grid.three-up .col {
+                width: 200px !important;
+            }
+
+            .block-grid.four-up .col {
+                width: 150px !important;
+            }
+
+            .block-grid.five-up .col {
+                width: 120px !important;
+            }
+
+            .block-grid.six-up .col {
+                width: 100px !important;
+            }
+
+            .block-grid.seven-up .col {
+                width: 85px !important;
+            }
+
+            .block-grid.eight-up .col {
+                width: 75px !important;
+            }
+
+            .block-grid.nine-up .col {
+                width: 66px !important;
+            }
+
+            .block-grid.ten-up .col {
+                width: 60px !important;
+            }
+
+            .block-grid.eleven-up .col {
+                width: 54px !important;
+            }
+
+            .block-grid.twelve-up .col {
+                width: 50px !important;
+            }
+        }
+
+        @media (max-width: 620px) {
+            .block-grid, .col {
+                min-width: 320px !important;
+                max-width: 100% !important;
+                display: block !important;
+            }
+
+            .block-grid {
+                width: calc(100% - 40px) !important;
+            }
+
+            .col {
+                width: 100% !important;
+            }
+
+            .col > div {
+                margin: 0 auto;
+            }
+
+            img.fullwidth, img.fullwidthOnMobile {
+                max-width: 100% !important;
+            }
+        }
+
+    </style>
+</head>
+<body class="clean-body" style="margin: 0;padding: 0;-webkit-text-size-adjust: 100%;background-color: transparent">
+<style type="text/css" id="media-query-bodytag">
+    @media (max-width: 520px) {
+        .block-grid {
+            min-width: 320px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .col {
+            min-width: 320px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .col > div {
+            margin: 0 auto;
+        }
+
+        img.fullwidth {
+            max-width: 100% !important;
+        }
+    }
+</style>
+<table class="nl-container"
+       style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: transparent;width: 100%"
+       cellpadding="0" cellspacing="0">
+    <tbody>
+    <tr style="vertical-align: top">
+        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
+            <div style="background-color:transparent;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #FF6C6C;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:#FF6C6C;">
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="color:#FFFFFF;line-height:120%;font-family:Arial, &#39;Helvetica Neue&#39;, Helvetica, sans-serif; padding-right: 10px; padding-left: 20px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-size:12px;line-height:14px;font-family:Arial, &#39;Helvetica Neue&#39;, Helvetica, sans-serif;color:#FFFFFF;text-align:left;">
+                                        <p style="margin: 0;font-size: 14px;line-height: 17px"><strong><span
+                                                style="font-size: 28px; line-height: 33px;">GROU&nbsp;</span></strong>
+                                        </p>
+                                        <p style="margin: 0;font-size: 14px;line-height: 17px"><span
+                                                style="font-size: 12px; line-height: 14px;">The Performance Test as a Service</span>
+                                        </p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color:transparent;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #FFFFFF;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:#FFFFFF;">
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="padding-right: 0px; padding-left: 0px; padding-top: 0px; padding-bottom: 0px;">
+                                    <div align="center">
+                                        <div style="border-top: 3px dotted #EEEDED; width:100%; line-height:3px; height:3px; font-size:3px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color:transparent;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #FFFFFF;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:#FFFFFF;">
+
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="font-family:&#39;Montserrat&#39;, &#39;Trebuchet MS&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, &#39;Lucida Sans&#39;, Tahoma, sans-serif;line-height:120%;color:#FF6C6C; padding-right: 20px; padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
+                                    <div style="font-size:12px;line-height:14px;font-family:Montserrat, &#39;Trebuchet MS&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, &#39;Lucida Sans&#39;, Tahoma, sans-serif;color:#FF6C6C;text-align:left;">
+                                        <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: left"><span
+                                                style="font-size: 20px; line-height: 24px;"
+                                                th:text="'Summary Report - Project ' + ${project} + ' - Test ' + ${name}"></span>
+                                        </p></div>
+                                </div>
+                                <div style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div align="center">
+                                        <div style="border-top: 1px solid #BBBBBB; width:100%; line-height:1px; height:1px; font-size:1px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 16px;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif; text-align: center;">
+                                    <div class="our-class" style="padding: 0 10px;">
+                                        <table width="100%" style="font-size: 15px;" border="thin">
+                                            <tbody>
+                                            <tr th:each="element : ${metrics}">
+                                                <td th:text="${#strings.replace(element.getKey(), '_', ' ')}">key</td>
+                                                <td th:text="${#numbers.formatDecimal(element.getValue(), 1, 'NONE', 4, 'POINT')}">
+                                                    value
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;line-height:180%;color:#555555; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-size:12px;line-height:22px;color:#555555;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;text-align:left;">
+                                        <p style="margin: 0;font-size: 12px;line-height: 22px"
+                                           th:text="'tags: ' + ${tags}"></p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color:transparent;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:transparent;">
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div align="center">
+                                        <div style="border-top: 0px solid transparent; width:100%; line-height:0px; height:0px; font-size:0px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color:#F9F9F9;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:transparent;">
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;line-height:120%;color:#ff6c6c; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-size:12px;line-height:14px;color:#ff6c6c;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;text-align:left;">
+                                        <p style="margin: 0;font-size: 16px;line-height: 19px;text-align: center"><span
+                                                style="font-size: 16px; line-height: 19px; color: rgb(255, 108, 108);"><strong>GROU powered by <a
+                                                style="color:#ff6c6c;text-decoration: underline;" title="get source"
+                                                href="https://github.com/globocom/groot" target="_blank" rel="noopener">GROOT</a></strong></span>
+                                        </p></div>
+                                </div>
+                                <div style="padding-right: 0px; padding-left: 0px; padding-top: 0px; padding-bottom: 15px;">
+                                    <div align="center">
+                                        <div style="border-top: 1px solid #EEEDED; width:100%; line-height:1px; height:1px; font-size:1px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;line-height:120%;color:#555555; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div style="font-size:12px;line-height:14px;color:#555555;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;text-align:left;">
+                                        <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: center">
+                                            <strong th:text="'© ' + ${#dates.year(#dates.createNow())} + ' globo.com.'"></strong>
+                                            All rights reserved</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="background-color:#F9F9F9;">
+                <div style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;"
+                     class="block-grid ">
+                    <div style="border-collapse: collapse;display: table;width: 100%;background-color:transparent;">
+                        <div class="col num12"
+                             style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
+                            <div style="background-color: transparent; width: 100% !important;">
+                                <div style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                    <div align="center">
+                                        <div style="border-top: 0px solid transparent; width:100%; line-height:0px; height:0px; font-size:0px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
