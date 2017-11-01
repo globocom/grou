@@ -308,7 +308,7 @@
                                         <table width="100%" style="font-size: 15px;" border="thin">
                                             <tbody>
                                             <tr th:each="element : ${metrics}">
-                                                <td th:text="${#strings.replace(element.getKey(), '_', ' ')}">key</td>
+                                                <td th:text="${#strings.replace(element.getKey(), '-', ' ')}">key</td>
                                                 <td th:text="${#numbers.formatDecimal(element.getValue(), 1, 'NONE', 4, 'POINT')}">
                                                     value
                                                 </td>
