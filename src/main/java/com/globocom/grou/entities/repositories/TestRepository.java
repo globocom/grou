@@ -31,18 +31,13 @@ public interface TestRepository extends MongoRepository<Test, String> {
 
 
     @Override
-    @ApiOperation(value="Request a Test", notes = "A new test is created and sent to the queue. Header with keystone token is needed in order to perform this action.")
+    @ApiOperation(value="Request a Test", notes = "A new test is created and sent to the queue. Header with Keystone token is needed in order to perform this action." +
+            "Parameters name, project and properties (previously set on Keystone) are required.")
     @ApiResponses(
             @ApiResponse(
                     code = 200,
                     message = "Test was created and sent to load generator",
                     response = Test.class,
-                    responseHeaders =
-                    @ResponseHeader(
-                            name="X-Auth-Token",
-                            description="Keystone Token",
-                            response=String.class
-                    )
             )
     )
     Test save(Test test);
