@@ -307,11 +307,9 @@
                                     <div class="our-class" style="padding: 0 10px;">
                                         <table width="100%" style="font-size: 15px;" border="thin">
                                             <tbody>
-                                            <tr th:each="element : ${metrics}">
-                                                <td th:text="${#strings.replace(element.getKey(), '-', ' ')}">key</td>
-                                                <td th:text="${#numbers.formatDecimal(element.getValue(), 1, 'NONE', 4, 'POINT')}">
-                                                    value
-                                                </td>
+                                            <tr th:each="element : ${metrics}" th:inline="text">
+                                                <td>[[${element.getKey()}]]</td>
+                                                <td>[[${doubleConverter.stringify(element.getValue())}]]</td>
                                             </tr>
                                             </tbody>
                                         </table>

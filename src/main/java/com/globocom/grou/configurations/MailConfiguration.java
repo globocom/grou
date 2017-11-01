@@ -19,9 +19,11 @@ package com.globocom.grou.configurations;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.mail.Session;
+import java.math.BigDecimal;
 
 @Configuration
 public class MailConfiguration extends MailSenderAutoConfiguration {
@@ -30,4 +32,14 @@ public class MailConfiguration extends MailSenderAutoConfiguration {
         super(properties, session);
     }
 
+    @Bean
+    public DoubleConverter doubleConverter() {
+        return new DoubleConverter();
+    }
+
+    public class DoubleConverter {
+        public String stringify(Double aDouble) {
+            return new BigDecimal(aDouble).toPlainString();
+        }
+    }
 }

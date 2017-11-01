@@ -72,22 +72,22 @@ public class OpenTSDBClient implements TSClient {
     private static final String METRICS_PREFIX = SystemEnv.TS_METRIC_PREFIX.getValue();
 
     private final Map<String, Pair<String, Set<Filter>>> metricsMap = ImmutableMap.<String, Pair<String, Set<Filter>>>builder()
-        .put(METRICS_PREFIX + ".loaders.cpu.mean",          Pair.of("Loaders-cpu-used",        Collections.emptySet()))
-        .put(METRICS_PREFIX + ".loaders.conns.mean",        Pair.of("Loaders-conns",           Collections.emptySet()))
-        .put(METRICS_PREFIX + ".loaders.memFree.mean",      Pair.of("Loaders-memFree",         Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.median", Pair.of("Response-time-median",    Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.upper",  Pair.of("Response-time-upper",     Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.p95",    Pair.of("Response-time-p95",       Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.size.sum",         Pair.of("Response-throughput-BPS", Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.status.count",     Pair.of("Response-status-%s-RPS",  newWildcardFilter("status")))
-        .put(METRICS_PREFIX + ".targets.conns.mean",        Pair.of("Target-%s-conns",         newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memFree.p95",       Pair.of("Target-%s-memFree",       newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memBuffers.p95",    Pair.of("Target-%s-memBuffers",    newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memCached.p95",     Pair.of("Target-%s-memCached",     newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.cpu.median",        Pair.of("Target-%s-cpu-used",      newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load1m",            Pair.of("Target-%s-load1m",        newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load5m",            Pair.of("Target-%s-load5m",        newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load15m",           Pair.of("Target-%s-load15m",       newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".loaders.cpu.mean",          Pair.of("Loaders cpu used (%%)",        Collections.emptySet()))
+        .put(METRICS_PREFIX + ".loaders.conns.mean",        Pair.of("Loaders connections (avg)",           Collections.emptySet()))
+        .put(METRICS_PREFIX + ".loaders.memFree.mean",      Pair.of("Loaders memFree (bytes)",         Collections.emptySet()))
+        .put(METRICS_PREFIX + ".response.completed.median", Pair.of("Response time (ms) - median",    Collections.emptySet()))
+        .put(METRICS_PREFIX + ".response.completed.upper",  Pair.of("Response time (ms) - upper",     Collections.emptySet()))
+        .put(METRICS_PREFIX + ".response.completed.p95",    Pair.of("Response time (ms) - p95",       Collections.emptySet()))
+        .put(METRICS_PREFIX + ".response.size.sum",         Pair.of("Response throughput (byte/s)", Collections.emptySet()))
+        .put(METRICS_PREFIX + ".response.status.count",     Pair.of("Response status %s (req/s)",  newWildcardFilter("status")))
+        .put(METRICS_PREFIX + ".targets.conns.mean",        Pair.of("Target %s conns (avg)",         newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.memFree.p95",       Pair.of("Target %s memFree (bytes)",       newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.memBuffers.p95",    Pair.of("Target %s memBuffers (bytes)",    newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.memCached.p95",     Pair.of("Target %s memCached (bytes)",     newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.cpu.median",        Pair.of("Target %s cpu used (%%)",      newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.load1m",            Pair.of("Target %s load 1 min",        newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.load5m",            Pair.of("Target %s load 5 min",        newWildcardFilter("target")))
+        .put(METRICS_PREFIX + ".targets.load15m",           Pair.of("Target %s load 15 min",       newWildcardFilter("target")))
         .build();
 
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -105,11 +105,11 @@ public class OpenTSDBClient implements TSClient {
         return Collections.singleton(new Filter(tagName, "*", true, "wildcard"));
     }
 
-    private ArrayList<HashMap<String, Object>> requestMetrics(Test test) {
+    private ArrayList<HashMap<String, Object>> metrics(Test test) {
         long testCreated = TimeUnit.MILLISECONDS.toSeconds(test.getCreatedDate().getTime());
         long testLastModified = TimeUnit.MILLISECONDS.toSeconds(test.getLastModifiedDate().getTime());
         final List<Query> queries = prepareQueries(test, testCreated, testLastModified);
-        final ArrayList<HashMap<String, Object>> listOfResult = doHttpPost(testCreated, testLastModified, queries);
+        final ArrayList<HashMap<String, Object>> listOfResult = doRequest(testCreated, testLastModified, queries);
 
         try {
             if (listOfResult.isEmpty()) {
@@ -123,7 +123,7 @@ public class OpenTSDBClient implements TSClient {
         return null;
     }
 
-    private ArrayList<HashMap<String, Object>> doHttpPost(long testCreated, long testLastModified, List<Query> queries) {
+    private ArrayList<HashMap<String, Object>> doRequest(long testCreated, long testLastModified, List<Query> queries) {
         final ArrayList<HashMap<String, Object>> listOfResult = new ArrayList<>();
         queries.forEach(q -> {
             ObjectNode jBody = JsonNodeFactory.instance.objectNode();
@@ -172,7 +172,7 @@ public class OpenTSDBClient implements TSClient {
     @Override
     public Map<String, Double> makeReport(Test test) {
         final TreeMap<String, Double> mapOfResult = new TreeMap<>();
-        ArrayList<HashMap<String, Object>> metrics = requestMetrics(test);
+        ArrayList<HashMap<String, Object>> metrics = metrics(test);
         if (metrics != null) {
             metrics.forEach(m -> {
                 String key = (String) m.get("metric");

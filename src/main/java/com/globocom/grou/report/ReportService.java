@@ -47,12 +47,7 @@ import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -94,13 +89,16 @@ public class ReportService {
 
     public void send(Test test) throws Exception {
         final AtomicReference<List<Throwable>> exceptions = new AtomicReference<>(new ArrayList<>());
-        final String report = getReport(test);
+        final Map<String, Double> report = getReport(test);
+        final HashMap<String, Double> reportSanitized = sanitizeKeyName(report);
+        test.setResult(reportSanitized);
+        testRepository.save(test);
         test.getNotify().forEach(notify -> {
             try {
                 if (VALID_EMAIL_ADDRESS_REGEX.matcher(notify).matches()) {
-                    notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""));
+                    notifyByMail(test, notify.replaceAll("^mailto:[/]{0,2}", ""), report);
                 } else if (VALID_HTTP_ADDRESS_REGEX.matcher(notify).matches()) {
-                    notifyByHttp(test, notify, report);
+                    notifyByHttp(test, notify);
                 } else {
                     throw new UnsupportedOperationException("notify destination unsupported: " + notify);
                 }
@@ -114,29 +112,34 @@ public class ReportService {
         }
     }
 
-    private String getReport(Test test) {
-        final Map<String, Double> result = tsClient.makeReport(test);
-        try {
-            test.setResult(new HashMap<>(result));
-            testRepository.save(test);
-            return mapper.writeValueAsString(result);
-        } catch (JsonProcessingException e) {
-            LOGGER.error(e.getMessage(), e);
-            return "{ \"error\": \"INTERNAL ERROR (See GROU Log)\"";
-        }
+    private HashMap<String, Double> sanitizeKeyName(Map<String, Double> report) {
+        HashMap<String, Double> reportSanitized = new HashMap<>();
+        report.forEach((key, value) -> reportSanitized.put(
+                key.replaceAll("[.\\s\\\\()%/:\\-]", "_")
+                   .replaceAll("_{2,}", "_")
+                   .replaceAll("_$", "").toLowerCase(), value));
+        return reportSanitized;
     }
 
-    private void notifyByHttp(Test test, String url, String report) throws IOException {
+    private Map<String, Double> getReport(Test test) throws Exception {
+        final Map<String, Double> result = tsClient.makeReport(test);
+        if (result != null && !result.isEmpty()) return result;
+        String errorMsg = "INTERNAL ERROR (See GROU Log)";
+        LOGGER.error(errorMsg);
+        throw new RuntimeException(errorMsg);
+    }
+
+    private void notifyByHttp(Test test, String url) throws IOException {
         try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost(url);
-            httpPost.setEntity(new StringEntity(report));
+            httpPost.setEntity(new StringEntity(mapper.writeValueAsString(test.getResult())));
             Arrays.stream(HEADERS).forEach(httpPost::setHeader);
             CloseableHttpResponse response = httpClient.execute(httpPost);
             LOGGER.info("Test " + test.getProject() + "." + test.getName() + ": sent notification to " + url + " [response status=" + response.getStatusLine().getStatusCode() + "]");
         }
     }
 
-    private void notifyByMail(Test test, String email) throws Exception {
+    private void notifyByMail(Test test, String email, Map<String, Double> result) throws Exception {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setTo(email);
@@ -147,7 +150,7 @@ public class ReportService {
             context.setVariable("name", test.getName());
             String tags = test.getTags().stream().collect(Collectors.joining(","));
             context.setVariable("tags", (tags.isEmpty() ? "UNDEF" : tags));
-            context.setVariable("metrics", new TreeMap<>(test.getResult()));
+            context.setVariable("metrics", new TreeMap<>(result));
             String content = templateEngine.process("reportEmail", context);
             messageHelper.setText(content, true);
         };
@@ -166,8 +169,7 @@ public class ReportService {
     public static class DoubleSerializer extends JsonSerializer<Double> {
         @Override
         public void serialize(Double aDouble, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            BigDecimal d = new BigDecimal(aDouble);
-            jsonGenerator.writeNumber(d.toPlainString());
+            jsonGenerator.writeNumber(new BigDecimal(aDouble).toPlainString());
         }
     }
 }
