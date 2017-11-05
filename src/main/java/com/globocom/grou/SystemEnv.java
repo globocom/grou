@@ -156,7 +156,37 @@ public enum SystemEnv {
     /**
      * DDOS protection. API requests limit (interval mandatory minimum between requests per project).
      */
-    REQUESTS_LIMIT("REQUESTS_LIMIT", -1);
+    REQUESTS_LIMIT("REQUESTS_LIMIT", -1),
+
+    /**
+     * Mail host. Example: smtp.gmail.com
+     */
+    MAIL_HOST("MAIL_HOST", ""),
+
+    /**
+     * Mail service port. Example: 587
+     */
+    MAIL_PORT("MAIL_PORT", 25),
+
+    /**
+     * Mail transport. Default "smtp".
+     */
+    MAIL_TRANSPORT("MAIL_TRANSPORT", "smtp"),
+
+    /**
+     * Mail enable TLS support
+     */
+    MAIL_TLS("MAIL_TLS", "false"),
+
+    /**
+     * Mail login user.
+     */
+    MAIL_USER("MAIL_USER", ""),
+
+    /**
+     * Mail password.
+     */
+    MAIL_PASS("MAIL_PASS", "");
 
     /**
      * Gets SystemEnv value.
