@@ -16,8 +16,10 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="utf-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width"/>
+    <meta name="format-detection" content="telephone=no"/>
     <title>GROU Report</title>
     <style type="text/css" id="media-query">
         body {
@@ -289,14 +291,25 @@
                         <div class="col num12"
                              style="min-width: 320px;max-width: 600px;display: table-cell;vertical-align: top;">
                             <div style="background-color: transparent; width: 100% !important;">
-                                <div style="font-family:&#39;Montserrat&#39;, &#39;Trebuchet MS&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, &#39;Lucida Sans&#39;, Tahoma, sans-serif;line-height:120%;color:#FF6C6C; padding-right: 20px; padding-left: 20px; padding-top: 5px; padding-bottom: 5px;">
+                                <div style="font-family:&#39;Montserrat&#39;, &#39;Trebuchet MS&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, &#39;Lucida Sans&#39;, Tahoma, sans-serif;line-height:120%;color:#FF6C6C; padding: 5px 20px 10px;">
                                     <div style="font-size:12px;line-height:14px;font-family:Montserrat, &#39;Trebuchet MS&#39;, &#39;Lucida Grande&#39;, &#39;Lucida Sans Unicode&#39;, &#39;Lucida Sans&#39;, Tahoma, sans-serif;color:#FF6C6C;text-align:left;">
-                                        <p style="margin: 0;font-size: 14px;line-height: 17px;text-align: left"><span
-                                                style="font-size: 20px; line-height: 24px;"
-                                                th:text="'Summary Report - Project ' + ${project} + ' - Test ' + ${name}"></span>
-                                        </p></div>
+                                        <p style="margin: 0;font-size: 20px; line-height: 24px;text-align: left">Summary Report</p>
+                                    </div>
                                 </div>
-                                <div style="padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
+                                <div style="padding-left: 10px; padding-right: 10px;">
+                                    <div style="padding: 5px 10px 5px 10px;border: 1px solid #BBBBBB;color:#FF6C6C;font-size: 15px;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif; text-align: left;">
+                                        <table width="100%">
+                                            <tbody>
+                                                <tr><td width="80px">Project:</td><td style="color: #BBBBBB;"><span th:text="${project}"></span></td></tr>
+                                                <tr><td width="80px">Test:</td><td style="color: #BBBBBB;"><span th:text="${name}"></span></td></tr>
+                                                <tr><td width="80px">Tags:</td><td style="color: #BBBBBB;">
+                                                    <ul style="padding: 0; margin: 0;"><li th:each="tag : ${tags}"><span th:text="${tag}"></span></li></ul>
+                                                </td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px;">
                                     <div align="center">
                                         <div style="border-top: 1px solid #BBBBBB; width:100%; line-height:1px; height:1px; font-size:1px;">
                                             &nbsp;
@@ -307,18 +320,58 @@
                                     <div class="our-class" style="padding: 0 10px;">
                                         <table width="100%" style="font-size: 15px;" border="thin">
                                             <tbody>
-                                            <tr th:each="element : ${metrics}" th:inline="text">
-                                                <td>[[${element.getKey()}]]</td>
-                                                <td>[[${doubleConverter.stringify(element.getValue())}]]</td>
-                                            </tr>
+                                                <tr><td colspan="2">
+                                                    <p style="padding: 10px;margin: 0;font-size: 15px;line-height: 17px;text-align: left"><strong>Response stats:</strong></p>
+                                                </td></tr>
+                                                <th:block th:each="element : ${metrics}" th:inline="text" th:if="${element.getKey().startsWith('Response')}">
+                                                <tr>
+                                                    <td>[[${element.getKey().replaceAll('^Response ', '')}]]</td>
+                                                    <td>[[${T(java.math.BigDecimal).valueOf(element.getValue()).toPlainString()}]]</td>
+                                                </tr>
+                                                </th:block>
+                                                <tr><td colspan="2">
+                                                    <p style="padding: 10px;margin: 0;font-size: 15px;line-height: 17px;text-align: left"><strong>Loaders stats:</strong></p>
+                                                </td></tr>
+                                                <th:block th:each="element : ${metrics}" th:inline="text" th:if="${element.getKey().startsWith('Loaders')}">
+                                                    <tr>
+                                                        <td>[[${element.getKey().replaceAll('^Loaders ', '')}]]</td>
+                                                        <td>[[${T(java.math.BigDecimal).valueOf(element.getValue()).toPlainString()}]]</td>
+                                                    </tr>
+                                                </th:block>
+                                                <tr><td colspan="2">
+                                                    <p style="padding: 10px;margin: 0;font-size: 15px;line-height: 17px;text-align: left"><strong>Targets stats:</strong></p>
+                                                </td></tr>
+                                                <th:block th:each="element : ${metrics}" th:inline="text" th:if="${element.getKey().startsWith('Target')}">
+                                                    <tr>
+                                                        <td>[[${element.getKey().replaceAll('^Target ', '')}]]</td>
+                                                        <td>[[${T(java.math.BigDecimal).valueOf(element.getValue()).toPlainString()}]]</td>
+                                                    </tr>
+                                                </th:block>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                <div style="font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;line-height:180%;color:#555555; padding-right: 10px; padding-left: 10px; padding-top: 10px; padding-bottom: 10px;">
-                                    <div style="font-size:12px;line-height:22px;color:#555555;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;text-align:left;">
-                                        <p style="margin: 0;font-size: 12px;line-height: 22px"
-                                           th:text="'tags: ' + ${tags}"></p></div>
+                                <div style="padding: 10px;">
+                                    <div align="center">
+                                        <div style="border-top: 1px solid #BBBBBB; width:100%; line-height:1px; height:1px; font-size:1px;">
+                                            &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="text-align:left;padding: 10px;">
+                                    <table width="100%" border="thin">
+                                        <tbody>
+                                        <tr><td style="font-size: 14px;font-family:&#39;Lato&#39;, Tahoma, Verdana, Segoe, sans-serif;">
+                                            <p style="padding: 10px;margin: 0;font-size: 15px;line-height: 17px;text-align: left"><strong>Test context:</strong></p>
+                                        </td></tr>
+                                        <tr><td style="font-family:monospace;color:#555555; padding: 10px;font-size:10px;">
+                                            <th:block th:each="contextLine : ${testContext}">
+                                                <pre style="padding-top: 0" th:text="${contextLine}"></pre>
+                                            </th:block>
+                                        </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>

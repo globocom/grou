@@ -17,13 +17,13 @@
 package com.globocom.grou.report;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.globocom.grou.SystemEnv;
+import com.globocom.grou.entities.Loader;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.entities.repositories.TestRepository;
 import com.globocom.grou.report.ts.TSClient;
@@ -148,8 +148,14 @@ public class ReportService {
             Context context = new Context();
             context.setVariable("project", test.getProject());
             context.setVariable("name", test.getName());
-            String tags = test.getTags().stream().collect(Collectors.joining(","));
-            context.setVariable("tags", (tags.isEmpty() ? "UNDEF" : tags));
+            HashMap<String, Object> testContext = new HashMap<>();
+            testContext.put("dashboard", test.getDashboard());
+            testContext.put("loaders", test.getLoaders().stream().map(Loader::getName).collect(Collectors.toSet()));
+            testContext.put("properties", test.getProperties());
+            testContext.put("id", test.getId());
+            context.setVariable("testContext", mapper.writeValueAsString(testContext).split("\\R"));
+            Set<String> tags = test.getTags();
+            context.setVariable("tags", tags);
             context.setVariable("metrics", new TreeMap<>(result));
             String content = templateEngine.process("reportEmail", context);
             messageHelper.setText(content, true);
@@ -169,7 +175,7 @@ public class ReportService {
     public static class DoubleSerializer extends JsonSerializer<Double> {
         @Override
         public void serialize(Double aDouble, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeNumber(new BigDecimal(aDouble).toPlainString());
+            jsonGenerator.writeNumber(BigDecimal.valueOf(aDouble).toPlainString());
         }
     }
 }
