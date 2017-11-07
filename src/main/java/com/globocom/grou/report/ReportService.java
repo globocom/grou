@@ -153,6 +153,8 @@ public class ReportService {
             testContext.put("loaders", test.getLoaders().stream().map(Loader::getName).collect(Collectors.toSet()));
             testContext.put("properties", test.getProperties());
             testContext.put("id", test.getId());
+            testContext.put("created", test.getCreatedDate().toString());
+            testContext.put("lastModified", test.getLastModifiedDate().toString());
             context.setVariable("testContext", mapper.writeValueAsString(testContext).split("\\R"));
             Set<String> tags = test.getTags();
             context.setVariable("tags", tags);

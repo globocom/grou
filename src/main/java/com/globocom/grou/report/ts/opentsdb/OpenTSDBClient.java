@@ -24,17 +24,18 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.globocom.grou.SystemEnv;
 import com.globocom.grou.entities.Test;
 import com.globocom.grou.report.ts.TSClient;
-import com.google.common.collect.ImmutableMap;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Pair;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,34 +72,37 @@ public class OpenTSDBClient implements TSClient {
 
     private static final String METRICS_PREFIX = SystemEnv.TS_METRIC_PREFIX.getValue();
 
-    private final Map<String, Pair<String, Set<Filter>>> metricsMap = ImmutableMap.<String, Pair<String, Set<Filter>>>builder()
-        .put(METRICS_PREFIX + ".loaders.cpu.mean",          Pair.of("Loaders cpu used (%%)",        Collections.emptySet()))
-        .put(METRICS_PREFIX + ".loaders.conns.mean",        Pair.of("Loaders connections (avg)",    Collections.emptySet()))
-        .put(METRICS_PREFIX + ".loaders.memFree.mean",      Pair.of("Loaders memFree (bytes)",      Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.median", Pair.of("Response time (ms) - median",  Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.upper",  Pair.of("Response time (ms) - upper",   Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.completed.p95",    Pair.of("Response time (ms) - p95",     Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.size.sum",         Pair.of("Response throughput (byte/s)", Collections.emptySet()))
-        .put(METRICS_PREFIX + ".response.status.count",     Pair.of("Response status %s (req/s)",   newWildcardFilter("status")))
-        .put(METRICS_PREFIX + ".targets.conns.mean",        Pair.of("Target %s conns (avg)",        newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memFree.p95",       Pair.of("Target %s memFree (bytes)",    newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memBuffers.p95",    Pair.of("Target %s memBuffers (bytes)", newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.memCached.p95",     Pair.of("Target %s memCached (bytes)",  newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.cpu.median",        Pair.of("Target %s cpu used (%%)",      newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load1m",            Pair.of("Target %s load 1 min",         newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load5m",            Pair.of("Target %s load 5 min",         newWildcardFilter("target")))
-        .put(METRICS_PREFIX + ".targets.load15m",           Pair.of("Target %s load 15 min",        newWildcardFilter("target")))
-        .build();
+    private final List<Object[]> metricsMap = Arrays.asList(
+                    // metric name (opentsdb)                      // metric name for humans       // aggr // ds  // group by
+        new Object[]{ METRICS_PREFIX + ".loaders.cpu.mean",          "Loaders %s cpu used (%%)",     "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".loaders.conns.mean",        "Loaders %s connections",       "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".loaders.memFree.mean",      "Loaders %s memFree (bytes)",   "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".response.completed.median", "Response time (ms) - median",  "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.completed.upper",  "Response time (ms) - upper",   "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.completed.p95",    "Response time (ms) - p95",     "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.size.sum",         "Response throughput (byte/s)", "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.status.count",     "Response %s (tps)",            "sum", "avg", newWildcardFilter("status")},
+        new Object[]{ METRICS_PREFIX + ".response.status.count",     "Response %s (total)",          "sum", "sum", newWildcardFilter("status")},
+        new Object[]{ METRICS_PREFIX + ".targets.conns.mean",        "Target %s conns (avg)",        "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memFree.p95",       "Target %s memFree (bytes)",    "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memBuffers.p95",    "Target %s memBuffers (bytes)", "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memCached.p95",     "Target %s memCached (bytes)",  "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.cpu.median",        "Target %s cpu used (%%)",      "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load1m",            "Target %s load 1 min",         "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load5m",            "Target %s load 5 min",         "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load15m",           "Target %s load 15 min",        "p95", "p95", newWildcardFilter("target")}
+        );
 
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     private final TypeReference<ArrayList<HashMap<String,Object>>> typeRef = new TypeReference<ArrayList<HashMap<String,Object>>>() {};
 
-    private String newMetricNameFrom(String metricName, String keyGroup) {
-        return String.format(metricsMap.get(metricName).getFirst(), keyGroup);
-    }
-
-    private Set<Filter> getFilters(String metricName) {
-        return metricsMap.get(metricName).getSecond();
+    @SuppressWarnings("ConstantConditions")
+    private String metricHumanName(String metricName, String keyGroup, String aggr, String ds) {
+        String humanNameWithPattern = metricsMap.stream()
+                                        .filter(e -> metricName.equals(e[0]) && aggr.equals(e[2]) && ds.endsWith((String) e[3]))
+                                        .map(e -> (String) e[1])
+                                        .findAny().orElse("METRIC_NOT_FOUND");
+        return String.format(humanNameWithPattern, keyGroup);
     }
 
     private Set<Filter> newWildcardFilter(String tagName) {
@@ -125,9 +129,11 @@ public class OpenTSDBClient implements TSClient {
 
     private ArrayList<HashMap<String, Object>> doRequest(long testCreated, long testLastModified, List<Query> queries) {
         final ArrayList<HashMap<String, Object>> listOfResult = new ArrayList<>();
-        queries.forEach(q -> {
+        queries.forEach(query -> {
+            String aggr = query.aggregator;
+            String ds = query.downsample;
             ObjectNode jBody = JsonNodeFactory.instance.objectNode();
-            jBody.set("queries", mapper.valueToTree(Collections.singleton(q)));
+            jBody.set("queries", mapper.valueToTree(Collections.singleton(query)));
             jBody.put("start", testCreated);
             jBody.put("end", testLastModified);
 
@@ -141,7 +147,8 @@ public class OpenTSDBClient implements TSClient {
                 Response response = HTTP_CLIENT.executeRequest(requestQuery).get();
                 String body = response.getResponseBody();
                 ArrayList<HashMap<String, Object>> resultMap = mapper.readValue(body, typeRef);
-                resultMap.forEach(h -> listOfResult.add(renameMetricKey(h)));
+                for (HashMap<String, Object> result : resultMap) result.put("downsample", ds);
+                resultMap.forEach(h -> listOfResult.add(renameMetricKey(h, aggr, ds)));
             } catch (InterruptedException | ExecutionException | IOException e) {
                 if (LOGGER.isDebugEnabled()) LOGGER.error(e.getMessage(), e);
             }
@@ -150,22 +157,30 @@ public class OpenTSDBClient implements TSClient {
     }
 
     @SuppressWarnings("unchecked")
-    private HashMap<String, Object> renameMetricKey(HashMap<String, Object> h) {
-        String status = ((Map<String, String>) h.get("tags")).get("status");
-        String target = ((Map<String, String>) h.get("tags")).get("target");
-        String keyGroup = status != null ? status : (target != null ? target : "");
-        HashMap<String, Object> newHashMap = new HashMap<>(h);
-        newHashMap.put("metric", newMetricNameFrom((String) h.get("metric"), keyGroup));
+    private HashMap<String, Object> renameMetricKey(HashMap<String, Object> resultMap, String aggr, String ds) {
+        String status = ((Map<String, String>) resultMap.get("tags")).get("status");
+        String target = ((Map<String, String>) resultMap.get("tags")).get("target");
+        String loader = ((Map<String, String>) resultMap.get("tags")).get("loader");
+        String keyGroup = status != null ? status : (target != null ? target : (loader != null ? loader : ""));
+        HashMap<String, Object> newHashMap = new HashMap<>(resultMap);
+        newHashMap.put("metric", metricHumanName((String) resultMap.get("metric"), keyGroup, aggr, ds));
         return newHashMap;
     }
 
+    @SuppressWarnings("unchecked")
     private List<Query> prepareQueries(Test test, long testCreated, long testLastModified) {
-        return metricsMap.entrySet().stream().map(Map.Entry::getKey).map(m -> {
-                                        long downsampleInterval = (testLastModified - testCreated) / 2;
-                                        String downsampleSuffix = "s-p95";
-                                        String aggregator = "p95";
-                                        return new Query(test, m, aggregator, downsampleInterval + downsampleSuffix, getFilters(m));
-                                    }).collect(Collectors.toList());
+        return metricsMap.stream().map(m ->
+        {
+            long downsampleInterval = Math.max(1, (testLastModified - testCreated) / 10);
+            String metric = (String) m[0];
+            String aggregator = (String) m[2];
+            String downsampleAlgorithm = (String) m[3];
+            String secondSuffix = "s";
+            String downsampleSuffix = secondSuffix + "-" + downsampleAlgorithm;
+            String downsample = downsampleInterval + downsampleSuffix;
+            Set<Filter> otherFilters = (Set<Filter>) m[4];
+            return new Query(test, metric, aggregator, downsample, otherFilters);
+        }).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -174,13 +189,16 @@ public class OpenTSDBClient implements TSClient {
         final TreeMap<String, Double> mapOfResult = new TreeMap<>();
         ArrayList<HashMap<String, Object>> metrics = metrics(test);
         if (metrics != null) {
-            metrics.forEach(m -> {
-                String key = (String) m.get("metric");
+            metrics.forEach(metric -> {
+                String key = (String) metric.get("metric");
+                String downsample = (String) metric.get("downsample");
+                double durationTimeMillis = getDurationTimeMillis(test);
                 if (key != null) {
-                    Map<String, Double> dps = (Map<String, Double>) m.get("dps");
+                    Map<String, Double> dps = (Map<String, Double>) metric.get("dps");
                     if (dps != null) {
-                        double value = dps.entrySet().stream().mapToDouble(Map.Entry::getValue).average().orElse(-1.0);
-                        mapOfResult.put(key, value);
+                        double value = dps.entrySet().stream().mapToDouble(Map.Entry::getValue).sum();
+                        if (downsample != null && downsample.contains("avg")) value = value / (durationTimeMillis * 1000);
+                        mapOfResult.put(key, BigDecimal.valueOf(value).round(new MathContext(2, RoundingMode.HALF_UP)).doubleValue());
                     }
                 }
             });
@@ -188,6 +206,12 @@ public class OpenTSDBClient implements TSClient {
         }
         LOGGER.error("Test {}.{}: makeReport return NULL", test.getProject(), test.getName());
         return Collections.emptyMap();
+    }
+
+    private double getDurationTimeMillis(Test test) {
+        // TODO: Move durationTimeMillis from test properties to test global attribute
+        Object durationTimeMillisObj = test.getProperties().get("durationTimeMillis");
+        return (double) (durationTimeMillisObj != null ? (Integer) durationTimeMillisObj : 1);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})
