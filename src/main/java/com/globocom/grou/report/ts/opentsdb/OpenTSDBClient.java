@@ -197,7 +197,7 @@ public class OpenTSDBClient implements TSClient {
                     Map<String, Double> dps = (Map<String, Double>) metric.get("dps");
                     if (dps != null) {
                         double value = dps.entrySet().stream().mapToDouble(Map.Entry::getValue).sum();
-                        if (downsample != null && downsample.contains("avg")) value = value / (durationTimeMillis / 1000);
+                        if (downsample != null && !downsample.contains("sum")) value = value / (durationTimeMillis / 1000);
                         mapOfResult.put(key, BigDecimal.valueOf(value).round(new MathContext(2, RoundingMode.HALF_UP)).doubleValue());
                     }
                 }
