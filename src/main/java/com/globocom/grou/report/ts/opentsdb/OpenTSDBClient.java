@@ -47,6 +47,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -147,7 +148,10 @@ public class OpenTSDBClient implements TSClient {
                 Response response = HTTP_CLIENT.executeRequest(requestQuery).get();
                 String body = response.getResponseBody();
                 ArrayList<HashMap<String, Object>> resultMap = mapper.readValue(body, typeRef);
-                for (HashMap<String, Object> result : resultMap) result.put("downsample", ds);
+                for (HashMap<String, Object> result : resultMap) {
+                    result.put("downsample", ds);
+                    result.put("aggr", aggr);
+                }
                 resultMap.forEach(h -> listOfResult.add(renameMetricKey(h, aggr, ds)));
             } catch (InterruptedException | ExecutionException | IOException e) {
                 if (LOGGER.isDebugEnabled()) LOGGER.error(e.getMessage(), e);
@@ -192,12 +196,19 @@ public class OpenTSDBClient implements TSClient {
             metrics.forEach(metric -> {
                 String key = (String) metric.get("metric");
                 String downsample = (String) metric.get("downsample");
+                String aggr = (String) metric.get("aggr");
                 double durationTimeMillis = (double) test.getDurationTimeMillis();
                 if (key != null) {
                     Map<String, Double> dps = (Map<String, Double>) metric.get("dps");
                     if (dps != null) {
-                        double value = dps.entrySet().stream().mapToDouble(Map.Entry::getValue).sum();
-                        if (downsample != null && !downsample.contains("sum")) value = value / (durationTimeMillis / 1000);
+                        DoubleStream doubleStream = dps.entrySet().stream().mapToDouble(Map.Entry::getValue);
+                        double value;
+                        if (aggr.equals("sum")) {
+                            value = doubleStream.sum();
+                            if (downsample != null && !downsample.contains("sum")) value = value / (durationTimeMillis / 1000);
+                        } else {
+                            value = doubleStream.average().orElse(-1.0);
+                        }
                         mapOfResult.put(key, BigDecimal.valueOf(value).round(new MathContext(2, RoundingMode.HALF_UP)).doubleValue());
                     }
                 }
