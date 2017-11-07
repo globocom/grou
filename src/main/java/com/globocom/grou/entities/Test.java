@@ -95,6 +95,8 @@ public class Test implements Serializable {
     @Transient
     private String dashboard;
 
+    private int durationTimeMillis;
+
     public String getId() {
         return id;
     }
@@ -180,6 +182,14 @@ public class Test implements Serializable {
         String tagsCollection = sanitize(tags.stream().sorted().collect(Collectors.joining()), "");
         String allTags = "".equals(tagsCollection) ? "UNDEF" : tagsCollection;
         return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project, "_"), allTags);
+    }
+
+    public int getDurationTimeMillis() {
+        return durationTimeMillis;
+    }
+
+    public void setDurationTimeMillis(int durationTimeMillis) {
+        this.durationTimeMillis = durationTimeMillis;
     }
 
     private String sanitize(String key, String to) {

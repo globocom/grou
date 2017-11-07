@@ -192,12 +192,12 @@ public class OpenTSDBClient implements TSClient {
             metrics.forEach(metric -> {
                 String key = (String) metric.get("metric");
                 String downsample = (String) metric.get("downsample");
-                double durationTimeMillis = getDurationTimeMillis(test);
+                double durationTimeMillis = (double) test.getDurationTimeMillis();
                 if (key != null) {
                     Map<String, Double> dps = (Map<String, Double>) metric.get("dps");
                     if (dps != null) {
                         double value = dps.entrySet().stream().mapToDouble(Map.Entry::getValue).sum();
-                        if (downsample != null && downsample.contains("avg")) value = value / (durationTimeMillis * 1000);
+                        if (downsample != null && downsample.contains("avg")) value = value / (durationTimeMillis / 1000);
                         mapOfResult.put(key, BigDecimal.valueOf(value).round(new MathContext(2, RoundingMode.HALF_UP)).doubleValue());
                     }
                 }
@@ -206,12 +206,6 @@ public class OpenTSDBClient implements TSClient {
         }
         LOGGER.error("Test {}.{}: makeReport return NULL", test.getProject(), test.getName());
         return Collections.emptyMap();
-    }
-
-    private double getDurationTimeMillis(Test test) {
-        // TODO: Move durationTimeMillis from test properties to test global attribute
-        Object durationTimeMillisObj = test.getProperties().get("durationTimeMillis");
-        return (double) (durationTimeMillisObj != null ? (Integer) durationTimeMillisObj : 1);
     }
 
     @SuppressWarnings({"unused", "WeakerAccess"})

@@ -155,6 +155,7 @@ public class ReportService {
             testContext.put("id", test.getId());
             testContext.put("created", test.getCreatedDate().toString());
             testContext.put("lastModified", test.getLastModifiedDate().toString());
+            testContext.put("durationTimeMillis", test.getDurationTimeMillis());
             context.setVariable("testContext", mapper.writeValueAsString(testContext).split("\\R"));
             Set<String> tags = test.getTags();
             context.setVariable("tags", tags);
