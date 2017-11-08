@@ -53,15 +53,3 @@ services:
       links:
           - opentsdb:opentsdb.local
 
-#  grou:
-#      build: .
-#      environment:
-#        - MONGO_HOST=mongo.local
-#        - KEYSTONE_URL=http://k1.local:5000/v3
-#        - KEYSTONE_DOMAIN_CONTEXT=grou
-#      ports:
-#        - "8080:8080"
-#      links:
-#        - mongo:mongo.local
-#        - keystone:k1.local
-#        - redis:redis
