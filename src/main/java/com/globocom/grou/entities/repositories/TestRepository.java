@@ -16,7 +16,9 @@
 
 package com.globocom.grou.entities.repositories;
 import com.globocom.grou.entities.Test;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -24,11 +26,9 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import javax.websocket.server.PathParam;
 import java.time.Instant;
 
 public interface TestRepository extends MongoRepository<Test, String> {
-
 
     @Override
     @ApiOperation(value="Request a Test", notes = "A new test is created and sent to the queue. Header with Keystone token is needed in order to perform this action." +
@@ -37,7 +37,7 @@ public interface TestRepository extends MongoRepository<Test, String> {
             @ApiResponse(
                     code = 200,
                     message = "Test was created and sent to load generator",
-                    response = Test.class,
+                    response = Test.class
             )
     )
     Test save(Test test);
