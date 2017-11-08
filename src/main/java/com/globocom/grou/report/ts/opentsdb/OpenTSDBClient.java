@@ -216,7 +216,7 @@ public class OpenTSDBClient implements TSClient {
                     double avg = value / (double) durationTimeSecs;
                     mapOfResult.put(key + " (total)", formatValue(value));
                     mapOfResult.put(key + " (avg tps)", formatValue(avg));
-                    mapOfResult.put(key + " (max tps)", formatValue(max / Math.min(1.0, (double) durationTimeSecs / (double) NUM_SAMPLES)));
+                    mapOfResult.put(key + " (max tps)", formatValue(max / Math.max(1.0, (double) durationTimeSecs / (double) NUM_SAMPLES)));
                 } else {
                     value = value / (double) dps.size();
                     mapOfResult.put(key, formatValue(value));
