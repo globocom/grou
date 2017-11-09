@@ -79,23 +79,23 @@ public class OpenTSDBClient implements TSClient {
     private static final String METRICS_PREFIX = SystemEnv.TS_METRIC_PREFIX.getValue();
 
     private final List<Object[]> metricsMap = Arrays.asList(
-                    // metric name (opentsdb)                      // metric name for humans       // aggr // ds  // group by
-        new Object[]{ METRICS_PREFIX + ".loaders.cpu.mean",          "Loaders %s cpu used (%%)",     "p95", "p95", newWildcardFilter("loader")},
-        new Object[]{ METRICS_PREFIX + ".loaders.conns.mean",        "Loaders %s connections",       "p95", "p95", newWildcardFilter("loader")},
-        new Object[]{ METRICS_PREFIX + ".loaders.memFree.mean",      "Loaders %s memFree (bytes)",   "p95", "p95", newWildcardFilter("loader")},
-        new Object[]{ METRICS_PREFIX + ".response.completed.median", "Response time (ms) - median",  "p95", "p95", Collections.emptySet()},
-        new Object[]{ METRICS_PREFIX + ".response.completed.upper",  "Response time (ms) - upper",   "p95", "p95", Collections.emptySet()},
-        new Object[]{ METRICS_PREFIX + ".response.completed.p95",    "Response time (ms) - p95",     "p95", "p95", Collections.emptySet()},
-        new Object[]{ METRICS_PREFIX + ".response.size.sum",         "Response throughput (byte/s)", "p95", "p95", Collections.emptySet()},
-        new Object[]{ METRICS_PREFIX + ".response.status.count",     "Response %s",                  "sum", "sum", newWildcardFilter("status")},
-        new Object[]{ METRICS_PREFIX + ".targets.conns.mean",        "Target %s conns (avg)",        "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.memFree.p95",       "Target %s memFree (bytes)",    "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.memBuffers.p95",    "Target %s memBuffers (bytes)", "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.memCached.p95",     "Target %s memCached (bytes)",  "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.cpu.median",        "Target %s cpu used (%%)",      "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.load1m",            "Target %s load 1 min",         "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.load5m",            "Target %s load 5 min",         "p95", "p95", newWildcardFilter("target")},
-        new Object[]{ METRICS_PREFIX + ".targets.load15m",           "Target %s load 15 min",        "p95", "p95", newWildcardFilter("target")}
+                    // metric name (opentsdb)                      // metric name for humans        // aggr // ds  // group by
+        new Object[]{ METRICS_PREFIX + ".loaders.cpu.mean",          "Loaders %s cpu used (%%)",      "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".loaders.conns.mean",        "Loaders %s connections",        "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".loaders.memFree.mean",      "Loaders %s memFree (Mbytes)",   "p95", "p95", newWildcardFilter("loader")},
+        new Object[]{ METRICS_PREFIX + ".response.completed.median", "Response time (ms) - median",   "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.completed.upper",  "Response time (ms) - upper",    "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.completed.p95",    "Response time (ms) - p95",      "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.size.sum",         "Response throughput (Kbyte/s)", "p95", "p95", Collections.emptySet()},
+        new Object[]{ METRICS_PREFIX + ".response.status.count",     "Response %s",                   "sum", "sum", newWildcardFilter("status")},
+        new Object[]{ METRICS_PREFIX + ".targets.conns.mean",        "Target %s conns (avg)",         "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memFree.p95",       "Target %s memFree (Mbytes)",    "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memBuffers.p95",    "Target %s memBuffers (Mbytes)", "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.memCached.p95",     "Target %s memCached (Mbytes)",  "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.cpu.median",        "Target %s cpu used (%%)",       "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load1m",            "Target %s load 1 min",          "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load5m",            "Target %s load 5 min",          "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.load15m",           "Target %s load 15 min",         "p95", "p95", newWildcardFilter("target")}
         );
 
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -189,7 +189,7 @@ public class OpenTSDBClient implements TSClient {
     }
 
     private double formatValue(double value) {
-        return BigDecimal.valueOf(value).round(new MathContext(100, RoundingMode.HALF_UP)).doubleValue();
+        return BigDecimal.valueOf(value).round(new MathContext(4, RoundingMode.HALF_UP)).doubleValue();
     }
 
     @SuppressWarnings("unchecked")
