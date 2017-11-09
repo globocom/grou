@@ -1,8 +1,8 @@
 # Grou Makefile
-GROU_VERSION ?= 0.0.1
+GROU_VERSION ?= 1.0.1
 VERSION=${GROU_VERSION}
 RPM_VER=${GROU_VERSION}
-RELEASE=14
+RELEASE=1
 
 .PHONY: all test clean run
 
