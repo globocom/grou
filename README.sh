@@ -71,13 +71,39 @@ curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
     "requests": [
       {
         "order": 1,
-        "uri":"https://www.bing.com"
+        "uri": "https://www.bing.com"
+      },
+      {
+        "order": 2,
+        "uri": "https://httpbin.org/post",
+        "method": "POST",
+        "headers": [{ \"content-type\: \"application/json\" }],
+        "body": "{ \"id\": \"test\" }"
+      },
+      {
+        "order": 3,
+        "uri": "https://httpbin.org/post",
+        "method": "POST",
+        "headers": [{ \"content-type\: \"application/json\" }],
+        "body": "{ \"id\": \"test\" }",
+        "auth": [
+          { \"credentials\": \"admin:password\" },
+          { \"preemptive\": \"true\" }
+        ]
+      },
+      {
+        "order": 4,
+        "uri": "https://httpbin.org/post",
+        "method": "POST",
+        "headers": [{ \"content-type\: \"application/x-www-form-urlencoded\" }],
+        "body": "login=admin&pass=password",
+        "saveCookies": true
       }
     ],
     "numConn": 1000,
-    "parallelLoaders":1,
+    "parallelLoaders": 1,
     "followRedirect": true,
-    "monitTargets": "zero://target1,zero://target2,zero://target3"
+    "monitTargets": "zero://target1,zero://target2"
   }
 }' http://127.0.0.1:8080/tests
 
