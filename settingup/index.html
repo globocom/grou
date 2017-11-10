@@ -18,8 +18,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Getting Started";
-    var mkdocs_page_input_path = "gettingstarted.md";
-    var mkdocs_page_url = "/gettingstarted/";
+    var mkdocs_page_input_path = "settingup.md";
+    var mkdocs_page_url = "/settingup/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -57,7 +57,7 @@
     <a class="current" href="./">Getting Started</a>
     <ul class="subnav">
             
-    <li class="toctree-l2"><a href="#getting-started">Getting Started</a></li>
+    <li class="toctree-l2"><a href="#setting-up">Setting Up</a></li>
     
         <ul>
         
@@ -67,11 +67,13 @@
         
             <li><a class="toctree-l3" href="#openstack-keystone-create-domain-project-and-user">OpenStack Keystone: Create domain, project and user</a></li>
         
+            <li><a class="toctree-l3" href="#define-necessary-var-envs">Define necessary var envs</a></li>
+        
+            <li><a class="toctree-l3" href="#if-you-want-to-use-email-notifications">If you want to use email notifications</a></li>
+        
+            <li><a class="toctree-l3" href="#build-and-run-grou">Build and run GROU</a></li>
+        
             <li><a class="toctree-l3" href="#get-keystone-token">Get Keystone Token</a></li>
-        
-            <li><a class="toctree-l3" href="#create-new-test">Create new test</a></li>
-        
-            <li><a class="toctree-l3" href="#list-projects-and-tests">List projects and tests</a></li>
         
         </ul>
     
@@ -87,11 +89,6 @@
             <li class="toctree-l1">
 		
     <a class="" href="../testing/">Testing</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../results/">Test Results</a>
 	    </li>
           
         </ul>
@@ -126,7 +123,7 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="getting-started">Getting Started</h1>
+                <h1 id="setting-up">Setting Up</h1>
 <h2 id="requirements">Requirements</h2>
 <ul>
 <li>docker</li>
@@ -154,7 +151,7 @@ openstack role assignment list &gt; /dev/null
 EOF
 </code></pre>
 
-<h2 id="get-keystone-token">Get Keystone Token</h2>
+<h2 id="define-necessary-var-envs">Define necessary var envs</h2>
 <pre><code>$ export OS_USER_DOMAIN_NAME=grou
 $ export OS_IMAGE_API_VERSION=2
 $ export OS_PROJECT_NAME=grou
@@ -164,18 +161,29 @@ $ export OS_AUTH_URL=http://k1:5000/v3
 $ export OS_USERNAME=grouadmin
 $ export OS_PROJECT_DOMAIN_NAME=grou
 
-$ export TOKEN=&quot;$(openstack token issue -f value -c id)&quot;
+$ export REQUESTS_LIMIT=10
 
 </code></pre>
 
-<h2 id="create-new-test">Create new test</h2>
-<pre><code>$ curl -v -H'content-type:application/json' -H&quot;x-auth-token:${TOKEN}&quot; \
- -d'{&quot;name&quot;:&quot;test1&quot;, &quot;project&quot;:&quot;grou&quot;}' http://127.0.0.1:8080/tests
+<h2 id="if-you-want-to-use-email-notifications">If you want to use email notifications</h2>
+<pre><code>$ export MAIL_HOST=&quot;smtp.gmail.com&quot;
+$ export MAIL_PORT=587
+$ export MAIL_TLS=&quot;true&quot;
+$ export MAIL_USER=&quot;no-replay+avalidemail@gmail.com&quot;
+$ export MAIL_PASS=&quot;gmailpass&quot;
 </code></pre>
 
-<h2 id="list-projects-and-tests">List projects and tests</h2>
-<pre><code>$curl -v -H'content-type:application/json' -H&quot;x-auth-token:${TOKEN}&quot; \
- -H'x-project:grou' http://127.0.0.1:8080/tests
+<h2 id="build-and-run-grou">Build and run GROU</h2>
+<pre><code>$ nohup make grou run &gt; /tmp/out &lt; /dev/null 2&gt;&amp;1 &amp;
+$ while ! curl --connect-timeout 1 http://127.0.0.1:8080 &gt; /dev/null 2&gt; /dev/null; do echo &quot;Waiting 8080/tcp... (press CTRL+C to cancel)&quot;; sleep 5; done
+</code></pre>
+
+<h2 id="get-keystone-token">Get Keystone Token</h2>
+<pre><code>$ export TOKEN=&quot;$(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)&quot;
+</code></pre>
+
+<p>or</p>
+<pre><code>$ export TOKEN=&quot;$(openstack token issue -f value -c id)&quot;
 </code></pre>
               
             </div>

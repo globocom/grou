@@ -4,15 +4,15 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-10-30</lastmod>
+     <lastmod>2017-11-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
 
     
     <url>
-     <loc>/gettingstarted/</loc>
-     <lastmod>2017-10-30</lastmod>
+     <loc>/settingup/</loc>
+     <lastmod>2017-11-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -20,7 +20,7 @@
     
     <url>
      <loc>/authentication/</loc>
-     <lastmod>2017-10-30</lastmod>
+     <lastmod>2017-11-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -28,15 +28,7 @@
     
     <url>
      <loc>/testing/</loc>
-     <lastmod>2017-10-30</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    
-
-    
-    <url>
-     <loc>/results/</loc>
-     <lastmod>2017-10-30</lastmod>
+     <lastmod>2017-11-10</lastmod>
      <changefreq>daily</changefreq>
     </url>
     

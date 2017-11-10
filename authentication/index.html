@@ -54,7 +54,7 @@
           
             <li class="toctree-l1">
 		
-    <a class="" href="../gettingstarted/">Getting Started</a>
+    <a class="" href="../settingup/">Getting Started</a>
 	    </li>
           
             <li class="toctree-l1 current">
@@ -66,7 +66,7 @@
     
         <ul>
         
-            <li><a class="toctree-l3" href="#alternative-way-of-getting-access-token-using-openstack-client">Alternative way of getting access token (using openstack-client)</a></li>
+            <li><a class="toctree-l3" href="#get-keystone-token">Get Keystone Token</a></li>
         
         </ul>
     
@@ -77,11 +77,6 @@
             <li class="toctree-l1">
 		
     <a class="" href="../testing/">Testing</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../results/">Test Results</a>
 	    </li>
           
         </ul>
@@ -119,31 +114,34 @@
                 <h1 id="authentication">Authentication</h1>
 <p>An OpenStack Keystone access token is needed for the routes that need authentication. In order to generate this token, a Keystone user and a project associated to this user are necessary.</p>
 <ol>
-<li>Create a project on Keystone.</li>
+<li>Create a project on Openstack Keystone.</li>
 <li>Associate project to a user or group.</li>
 <li>The token can be obtained in two ways:</li>
 </ol>
-<pre><code>$ TOKEN=$(curl --silent -I -XGET -u ${login}:${pass} grou.local:8080/token/${PROJECT} |\
-   grep '^x-auth-token:' | awk '{ print $2 }')
+<h2 id="get-keystone-token">Get Keystone Token</h2>
+<pre><code>$ export TOKEN=&quot;$(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)&quot;
 </code></pre>
 
 <p>or</p>
-<pre><code>$ TOKEN=$(curl --silent -u ${login}:${pass} grou.local:8080/token/${PROJECT} | jq -r .token)
+<pre><code>$ export TOKEN=&quot;$(openstack token issue -f value -c id)&quot;
+
+&gt; ${PROJECT} is the previously registered project on OpenStack Keystone.
+ ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.
+
+
+### Alternative way of getting access token (using openstack-client)
+
+In the following example, the access token is obtained through the [openstack-client](https://pypi.python.org/pypi/python-openstackclient).
+
 </code></pre>
 
-<blockquote>
-<p>${PROJECT} is the previously registered project on OpenStack Keystone.
- ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.</p>
-</blockquote>
-<h3 id="alternative-way-of-getting-access-token-using-openstack-client">Alternative way of getting access token (using openstack-client)</h3>
-<p>In the following example, the access token is obtained through the <a href="https://pypi.python.org/pypi/python-openstackclient">openstack-client</a>.</p>
-<pre><code>$ TOKEN=$(openstack --os-auth-url http://mykeystone.local:5000/v3 \
+<p>$ TOKEN=$(openstack --os-auth-url http://k1:5000/v3 \
   --os-username ${login} \
   --os-password ${pass} \
   --os-domain-name grou \
   --os-project-name ${PROJECT} \
   token issue -f value -c id)
-</code></pre>
+```</p>
               
             </div>
           </div>
@@ -154,7 +152,7 @@
         <a href="../testing/" class="btn btn-neutral float-right" title="Testing">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
-        <a href="../gettingstarted/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../settingup/" class="btn btn-neutral" title="Getting Started"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -180,7 +178,7 @@
     <span class="rst-current-version" data-toggle="rst-current-version">
       
       
-        <span><a href="../gettingstarted/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+        <span><a href="../settingup/" style="color: #fcfcfc;">&laquo; Previous</a></span>
       
       
         <span style="margin-left: 15px"><a href="../testing/" style="color: #fcfcfc">Next &raquo;</a></span>
