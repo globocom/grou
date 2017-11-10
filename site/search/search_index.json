@@ -1,0 +1,119 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "GROU is a manager platform for automated testing. It provides an API and a management mechanism of resources and the load generator GROOT.\n\n\nArchitecture", 
+            "title": "Grou Docs"
+        }, 
+        {
+            "location": "/#architecture", 
+            "text": "", 
+            "title": "Architecture"
+        }, 
+        {
+            "location": "/settingup/", 
+            "text": "Setting Up\n\n\nRequirements\n\n\n\n\ndocker\n\n\ndocker-compose\n\n\npython-openstackclient (pip install -r openstackclient-requirements.txt)\n\n\ncurl\n\n\n\n\nBuild and start all\n\n\n$ docker-compose up -d --build; sleep 5\n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080 \n /dev/null 2\n /dev/null; \\\n  do echo \nWaiting 8080/tcp... (press CTRL+C to cancel)\n; sleep 5; done\n\n\n\n\nOpenStack Keystone: Create domain, project and user\n\n\n$ while ! curl --connect-timeout 1 http://127.0.0.1:5000 \n /dev/null 2\n /dev/null; \\\n  do echo \nWaiting 5000/tcp... (press CTRL+C to cancel)\n; sleep 5; done\n$ cat \nEOF | docker exec -i k1.local bash -\nsource ~/openrc\nopenstack domain create grou \n /dev/null\nopenstack project create grou --domain grou \n /dev/null\nopenstack user create --domain grou --project grou --password grou grouadmin \n /dev/null\nopenstack role add --domain grou --project-domain grou-grou --user grouadmin admin \n /dev/null\nopenstack role add --project grou --project-domain grou --user grouadmin admin \n /dev/null\nopenstack role assignment list \n /dev/null\nEOF\n\n\n\n\nDefine necessary var envs\n\n\n$ export OS_USER_DOMAIN_NAME=grou\n$ export OS_IMAGE_API_VERSION=2\n$ export OS_PROJECT_NAME=grou\n$ export OS_IDENTITY_API_VERSION=3\n$ export OS_PASSWORD=grou\n$ export OS_AUTH_URL=http://k1:5000/v3\n$ export OS_USERNAME=grouadmin\n$ export OS_PROJECT_DOMAIN_NAME=grou\n\n$ export REQUESTS_LIMIT=10\n\n\n\n\n\nIf you want to use email notifications\n\n\n$ export MAIL_HOST=\nsmtp.gmail.com\n\n$ export MAIL_PORT=587\n$ export MAIL_TLS=\ntrue\n\n$ export MAIL_USER=\nno-replay+avalidemail@gmail.com\n\n$ export MAIL_PASS=\ngmailpass\n\n\n\n\n\nBuild and run GROU\n\n\n$ nohup make grou run \n /tmp/out \n /dev/null 2\n1 \n\n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080 \n /dev/null 2\n /dev/null; do echo \nWaiting 8080/tcp... (press CTRL+C to cancel)\n; sleep 5; done\n\n\n\n\nGet Keystone Token\n\n\n$ export TOKEN=\n$(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)\n\n\n\n\n\nor\n\n\n$ export TOKEN=\n$(openstack token issue -f value -c id)", 
+            "title": "Getting Started"
+        }, 
+        {
+            "location": "/settingup/#setting-up", 
+            "text": "", 
+            "title": "Setting Up"
+        }, 
+        {
+            "location": "/settingup/#requirements", 
+            "text": "docker  docker-compose  python-openstackclient (pip install -r openstackclient-requirements.txt)  curl", 
+            "title": "Requirements"
+        }, 
+        {
+            "location": "/settingup/#build-and-start-all", 
+            "text": "$ docker-compose up -d --build; sleep 5\n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080   /dev/null 2  /dev/null; \\\n  do echo  Waiting 8080/tcp... (press CTRL+C to cancel) ; sleep 5; done", 
+            "title": "Build and start all"
+        }, 
+        {
+            "location": "/settingup/#openstack-keystone-create-domain-project-and-user", 
+            "text": "$ while ! curl --connect-timeout 1 http://127.0.0.1:5000   /dev/null 2  /dev/null; \\\n  do echo  Waiting 5000/tcp... (press CTRL+C to cancel) ; sleep 5; done\n$ cat  EOF | docker exec -i k1.local bash -\nsource ~/openrc\nopenstack domain create grou   /dev/null\nopenstack project create grou --domain grou   /dev/null\nopenstack user create --domain grou --project grou --password grou grouadmin   /dev/null\nopenstack role add --domain grou --project-domain grou-grou --user grouadmin admin   /dev/null\nopenstack role add --project grou --project-domain grou --user grouadmin admin   /dev/null\nopenstack role assignment list   /dev/null\nEOF", 
+            "title": "OpenStack Keystone: Create domain, project and user"
+        }, 
+        {
+            "location": "/settingup/#define-necessary-var-envs", 
+            "text": "$ export OS_USER_DOMAIN_NAME=grou\n$ export OS_IMAGE_API_VERSION=2\n$ export OS_PROJECT_NAME=grou\n$ export OS_IDENTITY_API_VERSION=3\n$ export OS_PASSWORD=grou\n$ export OS_AUTH_URL=http://k1:5000/v3\n$ export OS_USERNAME=grouadmin\n$ export OS_PROJECT_DOMAIN_NAME=grou\n\n$ export REQUESTS_LIMIT=10", 
+            "title": "Define necessary var envs"
+        }, 
+        {
+            "location": "/settingup/#if-you-want-to-use-email-notifications", 
+            "text": "$ export MAIL_HOST= smtp.gmail.com \n$ export MAIL_PORT=587\n$ export MAIL_TLS= true \n$ export MAIL_USER= no-replay+avalidemail@gmail.com \n$ export MAIL_PASS= gmailpass", 
+            "title": "If you want to use email notifications"
+        }, 
+        {
+            "location": "/settingup/#build-and-run-grou", 
+            "text": "$ nohup make grou run   /tmp/out   /dev/null 2 1  \n$ while ! curl --connect-timeout 1 http://127.0.0.1:8080   /dev/null 2  /dev/null; do echo  Waiting 8080/tcp... (press CTRL+C to cancel) ; sleep 5; done", 
+            "title": "Build and run GROU"
+        }, 
+        {
+            "location": "/settingup/#get-keystone-token", 
+            "text": "$ export TOKEN= $(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)   or  $ export TOKEN= $(openstack token issue -f value -c id)", 
+            "title": "Get Keystone Token"
+        }, 
+        {
+            "location": "/authentication/", 
+            "text": "Authentication\n\n\nAn OpenStack Keystone access token is needed for the routes that need authentication. In order to generate this token, a Keystone user and a project associated to this user are necessary.\n\n\n\n\nCreate a project on Openstack Keystone.\n\n\nAssociate project to a user or group.\n\n\nThe token can be obtained in two ways:\n\n\n\n\nGet Keystone Token\n\n\n$ export TOKEN=\n$(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)\n\n\n\n\n\nor\n\n\n$ export TOKEN=\n$(openstack token issue -f value -c id)\n\n\n\n ${PROJECT} is the previously registered project on OpenStack Keystone.\n ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.\n\n\n### Alternative way of getting access token (using openstack-client)\n\nIn the following example, the access token is obtained through the [openstack-client](https://pypi.python.org/pypi/python-openstackclient).\n\n\n\n\n\n$ TOKEN=$(openstack --os-auth-url http://k1:5000/v3 \\\n  --os-username ${login} \\\n  --os-password ${pass} \\\n  --os-domain-name grou \\\n  --os-project-name ${PROJECT} \\\n  token issue -f value -c id)\n```", 
+            "title": "Authentication"
+        }, 
+        {
+            "location": "/authentication/#authentication", 
+            "text": "An OpenStack Keystone access token is needed for the routes that need authentication. In order to generate this token, a Keystone user and a project associated to this user are necessary.   Create a project on Openstack Keystone.  Associate project to a user or group.  The token can be obtained in two ways:", 
+            "title": "Authentication"
+        }, 
+        {
+            "location": "/authentication/#get-keystone-token", 
+            "text": "$ export TOKEN= $(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)   or  $ export TOKEN= $(openstack token issue -f value -c id)   ${PROJECT} is the previously registered project on OpenStack Keystone.\n ${TOKEN} is the temporary access token provided by OpenStack Keystone to the corresponding ${PROJECT}.\n\n\n### Alternative way of getting access token (using openstack-client)\n\nIn the following example, the access token is obtained through the [openstack-client](https://pypi.python.org/pypi/python-openstackclient).  $ TOKEN=$(openstack --os-auth-url http://k1:5000/v3 \\\n  --os-username ${login} \\\n  --os-password ${pass} \\\n  --os-domain-name grou \\\n  --os-project-name ${PROJECT} \\\n  token issue -f value -c id)\n```", 
+            "title": "Get Keystone Token"
+        }, 
+        {
+            "location": "/testing/", 
+            "text": "Testing\n\n\nTesting Lifecycle\n\n\n\n\nRequesting a test\n\n\nA test can be requested though curl.\n\n\n$ curl -v -H'content-type:application/json' -H\nx-auth-token:${TOKEN}\n -d'\n{\n    \nname\n: \nmytest\n,\n    \ndurationTimeMillis\n: 10000,\n    \nproject\n: \ngrouproject\n,\n    \ntags\n: [\ndsfdsfdsfds\n, \nsdfsdfds\n, \n23312 fsdfds\n, \nd3f434\n, \nrsdfsd\n, \nfdsdfsdfsd\n],\n    \nnotify\n: [\nmailto:root@localhost.localdomain\n, \nhttp://mywebhook.localhost.localdomain\n],\n    \nproperties\n: {\n        \nrequests\n: [{\n                \norder\n: 1,\n                \nuri\n: \nhttps://www.bing.com\n\n            },\n            {\n                \norder\n: 2,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/json\n\n                }],\n                \nbody\n: \n{ \\\nid\\\n: \\\ntest\\\n }\n\n            },\n            {\n                \norder\n: 3,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/json\n\n                }],\n                \nbody\n: \n{ \\\nid\\\n: \\\ntest\\\n }\n,\n                \nauth\n: [{\n                        \ncredentials\n: \nadmin:password\n\n                    },\n                    {\n                        \npreemptive\n: \ntrue\n\n                    }\n                ]\n            },\n            {\n                \norder\n: 4,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/x-www-form-urlencoded\n\n                }],\n                \nbody\n: \nlogin=admin\npass=password\n,\n                \nsaveCookies\n: true\n            }\n        ],\n        \nnumConn\n: 1000,\n        \nparallelLoaders\n: 1,\n        \nfollowRedirect\n: true,\n        \nmonitTargets\n: \nzero://target1,zero://target2\n\n    }\n}' http://127.0.0.1:8080/tests\n\n\n\n\nRequesting with a JSON files\n\n\nA JSON file can also be used for requesting a test.\n\n\nRequest\n\n\n$ curl -H'content-type:application/json' \\\n -H\nx-auth-token:${TOKEN}\n \\\n -d @file.json \\\n http://127.0.0.1:8000/tests\n\n\n\n\njson\nfile.json\n\n{\n    \nname\n: \nmytest\n,\n    \ndurationTimeMillis\n: 10000,\n    \nproject\n: \ngrouproject\n,\n    \ntags\n: [\ndsfdsfdsfds\n, \nsdfsdfds\n, \n23312 fsdfds\n, \nd3f434\n, \nrsdfsd\n, \nfdsdfsdfsd\n],\n    \nnotify\n: [\nmailto:root@localhost.localdomain\n, \nhttp://mywebhook.localhost.localdomain\n],\n    \nproperties\n: {\n        \nrequests\n: [{\n                \norder\n: 1,\n                \nuri\n: \nhttps://www.bing.com\n\n            },\n            {\n                \norder\n: 2,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/json\n\n                }],\n                \nbody\n: \n{ \\\nid\\\n: \\\ntest\\\n }\n\n            },\n            {\n                \norder\n: 3,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/json\n\n                }],\n                \nbody\n: \n{ \\\nid\\\n: \\\ntest\\\n }\n,\n                \nauth\n: [{\n                        \ncredentials\n: \nadmin:password\n\n                    },\n                    {\n                        \npreemptive\n: \ntrue\n\n                    }\n                ]\n            },\n            {\n                \norder\n: 4,\n                \nuri\n: \nhttps://httpbin.org/post\n,\n                \nmethod\n: \nPOST\n,\n                \nheaders\n: [{\n                    \ncontent-type\n: \napplication/x-www-form-urlencoded\n\n                }],\n                \nbody\n: \nlogin=admin\npass=password\n,\n                \nsaveCookies\n: true\n            }\n        ],\n        \nnumConn\n: 1000,\n        \nparallelLoaders\n: 1,\n        \nfollowRedirect\n: true,\n        \nmonitTargets\n: \nzero://target1,zero://target2\n\n    }\n}\n\n\n\n\nResponse\n\n\n{\n  \ncreatedBy\n : \ngrouadmin\n,\n  \ncreatedDate\n : \n2017-11-10T18:30:42.967+0000\n,\n  \nlastModifiedBy\n : \ngrouadmin\n,\n  \nlastModifiedDate\n : \n2017-11-10T18:30:42.982+0000\n,\n  \nname\n : \nmytest\n,\n  \nproject\n : \ngrouproject\n,\n  \nloaders\n : [ ],\n  \nproperties\n : {\n    \nrequests\n : [ {\n      \norder\n : 1,\n      \nuri\n : \nhttps://www.bing.com\n\n    }, {\n      \norder\n : 2,\n      \nuri\n : \nhttps://httpbin.org/post\n,\n      \nmethod\n : \nPOST\n,\n      \nheaders\n : [ {\n        \ncontent-type\n : \napplication/json\n\n      } ],\n      \nbody\n : \n{ \\\nid\\\n: \\\ntest\\\n }\n\n    }, {\n      \norder\n : 3,\n      \nuri\n : \nhttps://httpbin.org/post\n,\n      \nmethod\n : \nPOST\n,\n      \nheaders\n : [ {\n        \ncontent-type\n : \napplication/json\n\n      } ],\n      \nbody\n : \n{ \\\nid\\\n: \\\ntest\\\n }\n,\n      \nauth\n : [ {\n        \ncredentials\n : \nadmin:password\n\n      }, {\n        \npreemptive\n : \ntrue\n\n      } ]\n    }, {\n      \norder\n : 4,\n      \nuri\n : \nhttps://httpbin.org/post\n,\n      \nmethod\n : \nPOST\n,\n      \nheaders\n : [ {\n        \ncontent-type\n : \napplication/x-www-form-urlencoded\n\n      } ],\n      \nbody\n : \nlogin=admin\npass=password\n,\n      \nsaveCookies\n : true\n    } ],\n    \nnumConn\n : 1000,\n    \nparallelLoaders\n : 1,\n    \nfollowRedirect\n : true,\n    \nmonitTargets\n : \nzero://target1,zero://target2\n\n  },\n  \ntags\n : [ \nsdfsdfds\n, \nrsdfsd\n, \ndsfdsfdsfds\n, \nfdsdfsdfsd\n, \n23312 fsdfds\n, \nd3f434\n ],\n  \nstatus\n : \nENQUEUED\n,\n  \nresult\n : null,\n  \nnotify\n : [ \nhttp://mywebhook.localhost.localdomain\n, \nmailto:root@localhost.localdomain\n ],\n  \ndashboard\n : \nhttp://127.0.0.1:3000/dashboard/db/grou?refresh=5s\norgId=1\nvar-project=grouadminproject\nvar-alltags=23312fsdfdsd3f434dsfdsfdsfdsfdsdfsdfsdrsdfsdsdfsdfds\nfrom=now-2m\nto=now\n,\n  \ndurationTimeMillis\n : 10000,\n  \n_links\n : {\n    \nself\n : {\n      \nhref\n : \nhttp://127.0.0.1:8000/tests/5a05f0524e4e413d4833ccab\n\n    },\n    \ntest\n : {\n      \nhref\n : \nhttp://127.0.0.1:8000/tests/5a05f0524e4e413d4833ccab\n\n    }\n  }\n}\n\n\n\n\nResults with Grafana\n\n\nThe JSON response gives a url to a Grafana (usually running on port 3000) where the test metrics can followed.\n\n\nList projects and tests\n\n\n$ curl -v -H'content-type:application/json' http://127.0.0.1:8080/tests", 
+            "title": "Testing"
+        }, 
+        {
+            "location": "/testing/#testing", 
+            "text": "", 
+            "title": "Testing"
+        }, 
+        {
+            "location": "/testing/#testing-lifecycle", 
+            "text": "", 
+            "title": "Testing Lifecycle"
+        }, 
+        {
+            "location": "/testing/#requesting-a-test", 
+            "text": "A test can be requested though curl.  $ curl -v -H'content-type:application/json' -H x-auth-token:${TOKEN}  -d'\n{\n     name :  mytest ,\n     durationTimeMillis : 10000,\n     project :  grouproject ,\n     tags : [ dsfdsfdsfds ,  sdfsdfds ,  23312 fsdfds ,  d3f434 ,  rsdfsd ,  fdsdfsdfsd ],\n     notify : [ mailto:root@localhost.localdomain ,  http://mywebhook.localhost.localdomain ],\n     properties : {\n         requests : [{\n                 order : 1,\n                 uri :  https://www.bing.com \n            },\n            {\n                 order : 2,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/json \n                }],\n                 body :  { \\ id\\ : \\ test\\  } \n            },\n            {\n                 order : 3,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/json \n                }],\n                 body :  { \\ id\\ : \\ test\\  } ,\n                 auth : [{\n                         credentials :  admin:password \n                    },\n                    {\n                         preemptive :  true \n                    }\n                ]\n            },\n            {\n                 order : 4,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/x-www-form-urlencoded \n                }],\n                 body :  login=admin pass=password ,\n                 saveCookies : true\n            }\n        ],\n         numConn : 1000,\n         parallelLoaders : 1,\n         followRedirect : true,\n         monitTargets :  zero://target1,zero://target2 \n    }\n}' http://127.0.0.1:8080/tests", 
+            "title": "Requesting a test"
+        }, 
+        {
+            "location": "/testing/#requesting-with-a-json-files", 
+            "text": "A JSON file can also be used for requesting a test.", 
+            "title": "Requesting with a JSON files"
+        }, 
+        {
+            "location": "/testing/#request", 
+            "text": "$ curl -H'content-type:application/json' \\\n -H x-auth-token:${TOKEN}  \\\n -d @file.json \\\n http://127.0.0.1:8000/tests  json\nfile.json\n\n{\n     name :  mytest ,\n     durationTimeMillis : 10000,\n     project :  grouproject ,\n     tags : [ dsfdsfdsfds ,  sdfsdfds ,  23312 fsdfds ,  d3f434 ,  rsdfsd ,  fdsdfsdfsd ],\n     notify : [ mailto:root@localhost.localdomain ,  http://mywebhook.localhost.localdomain ],\n     properties : {\n         requests : [{\n                 order : 1,\n                 uri :  https://www.bing.com \n            },\n            {\n                 order : 2,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/json \n                }],\n                 body :  { \\ id\\ : \\ test\\  } \n            },\n            {\n                 order : 3,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/json \n                }],\n                 body :  { \\ id\\ : \\ test\\  } ,\n                 auth : [{\n                         credentials :  admin:password \n                    },\n                    {\n                         preemptive :  true \n                    }\n                ]\n            },\n            {\n                 order : 4,\n                 uri :  https://httpbin.org/post ,\n                 method :  POST ,\n                 headers : [{\n                     content-type :  application/x-www-form-urlencoded \n                }],\n                 body :  login=admin pass=password ,\n                 saveCookies : true\n            }\n        ],\n         numConn : 1000,\n         parallelLoaders : 1,\n         followRedirect : true,\n         monitTargets :  zero://target1,zero://target2 \n    }\n}", 
+            "title": "Request"
+        }, 
+        {
+            "location": "/testing/#response", 
+            "text": "{\n   createdBy  :  grouadmin ,\n   createdDate  :  2017-11-10T18:30:42.967+0000 ,\n   lastModifiedBy  :  grouadmin ,\n   lastModifiedDate  :  2017-11-10T18:30:42.982+0000 ,\n   name  :  mytest ,\n   project  :  grouproject ,\n   loaders  : [ ],\n   properties  : {\n     requests  : [ {\n       order  : 1,\n       uri  :  https://www.bing.com \n    }, {\n       order  : 2,\n       uri  :  https://httpbin.org/post ,\n       method  :  POST ,\n       headers  : [ {\n         content-type  :  application/json \n      } ],\n       body  :  { \\ id\\ : \\ test\\  } \n    }, {\n       order  : 3,\n       uri  :  https://httpbin.org/post ,\n       method  :  POST ,\n       headers  : [ {\n         content-type  :  application/json \n      } ],\n       body  :  { \\ id\\ : \\ test\\  } ,\n       auth  : [ {\n         credentials  :  admin:password \n      }, {\n         preemptive  :  true \n      } ]\n    }, {\n       order  : 4,\n       uri  :  https://httpbin.org/post ,\n       method  :  POST ,\n       headers  : [ {\n         content-type  :  application/x-www-form-urlencoded \n      } ],\n       body  :  login=admin pass=password ,\n       saveCookies  : true\n    } ],\n     numConn  : 1000,\n     parallelLoaders  : 1,\n     followRedirect  : true,\n     monitTargets  :  zero://target1,zero://target2 \n  },\n   tags  : [  sdfsdfds ,  rsdfsd ,  dsfdsfdsfds ,  fdsdfsdfsd ,  23312 fsdfds ,  d3f434  ],\n   status  :  ENQUEUED ,\n   result  : null,\n   notify  : [  http://mywebhook.localhost.localdomain ,  mailto:root@localhost.localdomain  ],\n   dashboard  :  http://127.0.0.1:3000/dashboard/db/grou?refresh=5s orgId=1 var-project=grouadminproject var-alltags=23312fsdfdsd3f434dsfdsfdsfdsfdsdfsdfsdrsdfsdsdfsdfds from=now-2m to=now ,\n   durationTimeMillis  : 10000,\n   _links  : {\n     self  : {\n       href  :  http://127.0.0.1:8000/tests/5a05f0524e4e413d4833ccab \n    },\n     test  : {\n       href  :  http://127.0.0.1:8000/tests/5a05f0524e4e413d4833ccab \n    }\n  }\n}", 
+            "title": "Response"
+        }, 
+        {
+            "location": "/testing/#results-with-grafana", 
+            "text": "The JSON response gives a url to a Grafana (usually running on port 3000) where the test metrics can followed.", 
+            "title": "Results with Grafana"
+        }, 
+        {
+            "location": "/testing/#list-projects-and-tests", 
+            "text": "$ curl -v -H'content-type:application/json' http://127.0.0.1:8080/tests", 
+            "title": "List projects and tests"
+        }
+    ]
+}

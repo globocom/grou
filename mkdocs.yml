@@ -1,0 +1,7 @@
+site_name: Grou Docs
+theme: readthedocs
+pages:
+  - Grou Docs: index.md
+  - Getting Started: settingup.md
+  - Authentication: authentication.md
+  - Testing: testing.md
