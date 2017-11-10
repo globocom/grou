@@ -108,7 +108,7 @@ public interface TestRepository extends MongoRepository<Test, String> {
     Page<Test> findByLastModifiedByAfterAndStatus(@Param("instant") Instant instant, @Param("status") Test.Status status, Pageable pageable);
 
     @Override
-    @ApiOperation(value="Delete test", notes="Deletes a test. Header with keystone token is needed in order to perform this action.")
+    @ApiOperation(value = "deleteTest", hidden = true)
     @RestResource(exported = false)
     void delete(Test test);
 }
