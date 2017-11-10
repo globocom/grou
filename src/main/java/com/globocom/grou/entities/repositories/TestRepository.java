@@ -17,6 +17,7 @@
 package com.globocom.grou.entities.repositories;
 import com.globocom.grou.entities.Test;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,9 @@ public interface TestRepository extends MongoRepository<Test, String> {
 
     @Override
     @ApiOperation(value="Request a Test", notes = "A new test is created and sent to the queue. Header with Keystone token is needed in order to perform this action." +
-            "Parameters name, project and properties (previously set on Keystone) are required.")
+            "Parameters name, project and properties (previously set on Keystone) are required.",
+            httpMethod = "POST"
+    )
     @ApiResponses(
             @ApiResponse(
                     code = 200,
@@ -108,7 +111,8 @@ public interface TestRepository extends MongoRepository<Test, String> {
     Page<Test> findByLastModifiedByAfterAndStatus(@Param("instant") Instant instant, @Param("status") Test.Status status, Pageable pageable);
 
     @Override
-    @ApiOperation(value="Delete test", notes="Deletes a test. Header with keystone token is needed in order to perform this action.")
     @RestResource(exported = false)
+    @ApiOperation(value = "", hidden = true)
     void delete(Test test);
+
 }
