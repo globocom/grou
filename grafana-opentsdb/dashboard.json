@@ -257,6 +257,7 @@
             }
           ],
           "thresholds": "100000,200000",
+          "timeShift": "10s",
           "title": "req/s",
           "transparent": false,
           "type": "singlestat",
@@ -840,7 +841,7 @@
           },
           "yaxes": [
             {
-              "format": "decbytes",
+              "format": "decmbytes",
               "label": null,
               "logBase": 1,
               "max": null,
@@ -1480,7 +1481,7 @@
           },
           "yaxes": [
             {
-              "format": "decbytes",
+              "format": "decmbytes",
               "label": null,
               "logBase": 1,
               "max": null,
@@ -1584,5 +1585,5 @@
   },
   "timezone": "",
   "title": "grou",
-  "version": 43
+  "version": 3
 }
