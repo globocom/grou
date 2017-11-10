@@ -1,7 +1,0 @@
-#!/bin/bash
-chmod 777 -R /opt/grou/logs || true
-mkdir -p /opt/logs/grou || true
-ln -sf /opt/grou/logs /opt/logs/grou
-ln -sf /opt/grou/lib/wrapper/bin/initscript /etc/init.d/grou
-useradd -d /opt/grou -s /bin/bash grou
-/usr/bin/systemctl enable grou || true
