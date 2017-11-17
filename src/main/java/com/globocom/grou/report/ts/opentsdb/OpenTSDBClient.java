@@ -93,6 +93,10 @@ public class OpenTSDBClient implements TSClient {
         new Object[]{ METRICS_PREFIX + ".targets.memBuffers.p95",    "Target %s memBuffers (Mbytes)", "p95", "p95", newWildcardFilter("target")},
         new Object[]{ METRICS_PREFIX + ".targets.memCached.p95",     "Target %s memCached (Mbytes)",  "p95", "p95", newWildcardFilter("target")},
         new Object[]{ METRICS_PREFIX + ".targets.cpu.median",        "Target %s cpu used (%%)",       "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.iowait.median",     "Target %s cpu iowait (%%)",     "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.steal.median",      "Target %s cpu steal (%%)",      "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.irq.median",        "Target %s cpu irq (%%)",        "p95", "p95", newWildcardFilter("target")},
+        new Object[]{ METRICS_PREFIX + ".targets.softirq.median",    "Target %s cpu softirq (%%)",    "p95", "p95", newWildcardFilter("target")},
         new Object[]{ METRICS_PREFIX + ".targets.load1m",            "Target %s load 1 min",          "p95", "p95", newWildcardFilter("target")},
         new Object[]{ METRICS_PREFIX + ".targets.load5m",            "Target %s load 5 min",          "p95", "p95", newWildcardFilter("target")},
         new Object[]{ METRICS_PREFIX + ".targets.load15m",           "Target %s load 15 min",         "p95", "p95", newWildcardFilter("target")}
