@@ -77,14 +77,14 @@ curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
         "order": 2,
         "uri": "https://httpbin.org/post",
         "method": "POST",
-        "headers": [{ \"content-type\": \"application/json\" }],
+        "headers": { \"content-type\": \"application/json\" },
         "body": "{ \"id\": \"test\" }"
       },
       {
         "order": 3,
         "uri": "https://httpbin.org/post",
         "method": "POST",
-        "headers": [{ "content-type": "application/json" }],
+        "headers": { "content-type": "application/json" },
         "body": "{ \"id\": \"test\" }",
         "auth": [
           { "credentials": "admin:password" },
