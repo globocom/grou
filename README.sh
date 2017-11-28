@@ -95,7 +95,7 @@ curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
         "order": 4,
         "uri": "https://httpbin.org/post",
         "method": "POST",
-        "headers": [{ "content-type": "application/x-www-form-urlencoded" }],
+        "headers": { "content-type": "application/x-www-form-urlencoded" },
         "body": "login=admin&pass=password",
         "saveCookies": true
       }
