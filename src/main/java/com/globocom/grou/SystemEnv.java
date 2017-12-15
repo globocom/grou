@@ -186,7 +186,12 @@ public enum SystemEnv {
     /**
      * Mail password.
      */
-    MAIL_PASS("MAIL_PASS", "");
+    MAIL_PASS("MAIL_PASS", ""),
+
+    /**
+     * Disable Auth
+     */
+    DISABLE_AUTH("DISABLE_AUTH", Boolean.FALSE);
 
     /**
      * Gets SystemEnv value.

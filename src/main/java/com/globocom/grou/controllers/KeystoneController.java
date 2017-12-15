@@ -50,11 +50,16 @@ public class KeystoneController {
             String password = credentials.getSecond();
 
             try {
-                String tokenId = OSFactory.builderV3()
-                                    .endpoint(KEYSTONE_URL.getValue())
-                                    .credentials(username, password, Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
-                                    .scopeToProject(Identifier.byName(project), Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
-                                    .authenticate().getToken().getId();
+                final String tokenId;
+                if (Boolean.parseBoolean(SystemEnv.DISABLE_AUTH.getValue())) {
+                    tokenId = "AUTH_DISABLED";
+                } else {
+                    tokenId = OSFactory.builderV3()
+                            .endpoint(KEYSTONE_URL.getValue())
+                            .credentials(username, password, Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
+                            .scopeToProject(Identifier.byName(project), Identifier.byName(KEYSTONE_DOMAIN_CONTEXT.getValue()))
+                            .authenticate().getToken().getId();
+                }
 
                 final HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set("x-auth-token", tokenId);
