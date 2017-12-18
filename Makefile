@@ -32,6 +32,7 @@ dist: grou
     cp -av ../dist/initscript lib/wrapper/bin/ && \
     fpm -s dir \
         -t rpm \
+        --rpm-rpmbuild-define '_binaries_in_noarch_packages_terminate_build 0' \
         -n "grou" \
         -v ${RPM_VER} \
         --iteration ${RELEASE}.el7 \
