@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         if (Boolean.parseBoolean(SystemEnv.DISABLE_AUTH.getValue())) {
-            
+            http.authorizeRequests().anyRequest().permitAll();
         } else {
             http.addFilterBefore(new KeystoneAuthFilter(), BasicAuthenticationFilter.class);
             http.addFilterBefore(new AuditFilter(), BasicAuthenticationFilter.class);
