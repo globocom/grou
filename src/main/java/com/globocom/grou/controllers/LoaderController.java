@@ -16,7 +16,7 @@
 
 package com.globocom.grou.controllers;
 
-import com.globocom.grou.entities.Loader;
+import com.globocom.grou.entities.GroupLoader;
 import com.globocom.grou.entities.services.LoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +35,7 @@ public class LoaderController {
     }
 
     @GetMapping("/loaders")
-    public List<Loader> loaders() {
+    public List<GroupLoader> loaders() {
         return loaderService.loaders();
     }
 }

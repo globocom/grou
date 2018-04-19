@@ -45,6 +45,8 @@ public class Loader implements Serializable {
 
     private String statusDetailed = "";
 
+    private String groupName = "";
+
     private String version = "";
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = StdDateFormat.DATE_FORMAT_STR_ISO8601)
@@ -73,6 +75,10 @@ public class Loader implements Serializable {
     public void setStatusDetailed(String statusDetailed) {
         this.statusDetailed = statusDetailed;
     }
+
+    public String getGroupName() { return groupName; }
+
+    public void setGroupName(String groupName) { this.groupName = groupName; }
 
     public String getVersion() {
         return version;
