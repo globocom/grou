@@ -130,7 +130,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         final Test test = mapper.readValue(testStr, Test.class);
         try {
             Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
-            String groupNameProperty = (String) test.getProperties().get("parallelLoaders");
+            String groupNameProperty = (String) test.getProperties().get("groupName");
             groupNameProperty = groupNameProperty == null ? "default" : groupNameProperty;
             Set<Loader> loadersIdle = getLoadersIdle(parallelLoadersProperty, groupNameProperty);
             if (loadersIdle.size() == parallelLoadersProperty) {
