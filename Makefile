@@ -31,6 +31,7 @@ dist: grou
     cp -v grou.jar lib/ && \
     cp -av ../dist/initscript lib/wrapper/bin/ && \
     fpm -s dir \
+        --rpm-rpmbuild-define '_binaries_in_noarch_packages_terminate_build 0' \
         -t rpm \
         -n "grou" \
         -v ${RPM_VER} \
