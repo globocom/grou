@@ -17,7 +17,6 @@
 package com.globocom.grou.entities.repositories;
 import com.globocom.grou.entities.Test;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.data.domain.Page;

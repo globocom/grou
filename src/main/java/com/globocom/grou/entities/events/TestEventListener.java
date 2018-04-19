@@ -130,7 +130,9 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         final Test test = mapper.readValue(testStr, Test.class);
         try {
             Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
-            Set<Loader> loadersIdle = getLoadersIdle(parallelLoadersProperty);
+            String groupNameProperty = (String) test.getProperties().get("parallelLoaders");
+            groupNameProperty = groupNameProperty == null ? "default" : groupNameProperty;
+            Set<Loader> loadersIdle = getLoadersIdle(parallelLoadersProperty, groupNameProperty);
             if (loadersIdle.size() == parallelLoadersProperty) {
                 test.setLoaders(new HashSet<>(loadersIdle));
                 testRepository.save(test);
@@ -171,8 +173,8 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
 
     }
 
-    private Set<Loader> getLoadersIdle(int parallelLoadersProperty) {
-        return redisTemplate.keys("grou:loader:*").stream()
+    private Set<Loader> getLoadersIdle(int parallelLoadersProperty, String groupNameProperty) {
+        return redisTemplate.keys("grou:loader:" + groupNameProperty + ":*").stream()
                 .map(redisKey -> {
                     try {
                         String jsonStr = redisTemplate.opsForValue().get(redisKey);

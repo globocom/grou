@@ -1,6 +1,7 @@
 package com.globocom.grou.entities.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.globocom.grou.entities.GroupLoader;
 import com.globocom.grou.entities.Loader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class LoaderService {
@@ -27,8 +26,10 @@ public class LoaderService {
         this.redisTemplate = redisTemplate;
     }
 
-    public List<Loader> loaders() {
-        return redisTemplate.keys("grou:loader:*").stream().map(k -> {
+    public List<GroupLoader> loaders() {
+
+        final Map<String, GroupLoader> groupLoaderMap = new HashMap<>();
+        redisTemplate.keys("grou:loader:*").forEach(k -> {
             try {
                 String loaderStr = redisTemplate.opsForValue().get(k);
                 final Loader loader = mapper.readValue(loaderStr, Loader.class);
@@ -36,12 +37,16 @@ public class LoaderService {
                     String statusDetailed = "Running test " + loader.getStatusDetailed();
                     loader.setStatusDetailed(statusDetailed);
                 }
-                return loader;
+                String groupName = loader.getGroupName();
+                groupName = groupName == null ? "default" : groupName;
+                GroupLoader groupLoader = groupLoaderMap.computeIfAbsent(groupName, gn -> new GroupLoader());
+                groupLoader.getLoaders().add(loader);
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
-                return null;
             }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        });
+
+        return new ArrayList<>(groupLoaderMap.values());
     }
 
 }

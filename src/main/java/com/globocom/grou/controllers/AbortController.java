@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @RestController
@@ -48,7 +49,9 @@ public class AbortController {
     public ResponseEntity<Void> receiveAbort(@RequestBody Test test) {
         String testName = test.getName();
         String projectName = test.getProject();
-        final List<Loader> loaders = loaderService.loaders();
+        final List<Loader> loaders = loaderService.loaders().stream()
+                .flatMap(groupLoader -> groupLoader.getLoaders().stream())
+                .collect(Collectors.toList());
         if (loaders.isEmpty()) {
             registerAbortKey(testName, projectName, "UNDEF");
         } else {

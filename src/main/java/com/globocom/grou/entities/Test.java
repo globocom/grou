@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"unused", "FieldCanBeLocal"})
+@SuppressWarnings({"unused", "FieldCanBeLocal", "Annotator"})
 @Document
 @CompoundIndexes({
     @CompoundIndex(name = "test_project", unique = true, def = "{'name': 1, 'project': 1}")
