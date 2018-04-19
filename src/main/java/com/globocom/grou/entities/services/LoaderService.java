@@ -39,7 +39,7 @@ public class LoaderService {
                 }
                 String groupName = loader.getGroupName();
                 groupName = groupName == null ? "default" : groupName;
-                GroupLoader groupLoader = groupLoaderMap.computeIfAbsent(groupName, gn -> new GroupLoader());
+                GroupLoader groupLoader = groupLoaderMap.computeIfAbsent(groupName, GroupLoader::new);
                 groupLoader.getLoaders().add(loader);
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
