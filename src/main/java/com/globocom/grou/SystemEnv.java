@@ -26,7 +26,7 @@ public enum SystemEnv {
     /**
      * Keystone url.
      */
-    KEYSTONE_URL ("OS_AUTH_URL", "http://controller:5000/v3"),
+    KEYSTONE_URL ("OS_AUTH_URL", "http://127.0.0.1:5000/v3"),
 
     /**
      * Keystone domain context.
