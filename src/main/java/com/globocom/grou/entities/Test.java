@@ -47,6 +47,8 @@ public class Test implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String DURATION_TIME_MILLIS_PROP = "durationTimeMillis";
+
     public enum Status {
         SCHEDULED,
         ENQUEUED,
@@ -184,10 +186,18 @@ public class Test implements Serializable {
         return String.format(link, SystemEnv.DASHBOARD_URL.getValue(), sanitize(project, "_"), allTags);
     }
 
+    /**
+     * @deprecated Replaced by properties.durationTimeMillis
+     */
+    @Deprecated
     public int getDurationTimeMillis() {
         return durationTimeMillis;
     }
 
+    /**
+     * @deprecated Replaced by properties.durationTimeMillis
+     */
+    @Deprecated
     public void setDurationTimeMillis(int durationTimeMillis) {
         this.durationTimeMillis = durationTimeMillis;
     }
