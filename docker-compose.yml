@@ -2,18 +2,21 @@ version: "2"
 services:
   mongo:
       image: mongo:3.4
+      restart: always
       container_name: mongo.local
       hostname: mongo.local
       ports:
         - "27017:27017"
 
   redis:
-      image: redis
+      image: redis:alpine
+      restart: always
       ports:
         - "6379:6379"
 
   keystone:
       image: tuxmonteiro/keystone
+      restart: always
       container_name: k1.local
       hostname: k1.local
       ports:
@@ -22,6 +25,7 @@ services:
 
   statsd:
       image: tuxmonteiro/statsite
+      restart: always
       ports:
         - "8125:8125/udp"
       environment:
@@ -35,6 +39,7 @@ services:
 
   opentsdb:
       image: tuxmonteiro/opentsdb
+      restart: always
       container_name: opentsdb.local
       hostname: opentsdb.local
       ports:
@@ -46,6 +51,7 @@ services:
 
   grafana:
       image: grafana/grafana
+      restart: always
       environment:
           - GF_SECURITY_ADMIN_PASSWORD=admin
       ports:

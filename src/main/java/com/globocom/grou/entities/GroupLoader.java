@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GroupLoader {
-    private String name = "default";
+    private String name;
     private List<Loader> loaders = new ArrayList<>();
+
+    public GroupLoader(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

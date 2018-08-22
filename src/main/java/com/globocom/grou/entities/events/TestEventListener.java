@@ -88,6 +88,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
     @Override
     public void onBeforeSave(BeforeSaveEvent<Test> event) {
         Test test = event.getSource();
+        addDurationTimeMillisPropIfAbsent(test);
         if (test.getStatus() == Test.Status.SCHEDULED) {
             int limitRateSeconds = Integer.parseInt(SystemEnv.REQUESTS_LIMIT.getValue());
             LOGGER.info("Checking request limit (minimum interval between tests to project {} is {} seconds)", test.getProject(), limitRateSeconds);
@@ -103,6 +104,14 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
                     throw new ForbiddenException("Requests limit exceeded. Try again in " + limitRateSeconds + " seconds.");
                 }
             }
+        }
+    }
+
+    // TODO: Deprecated (it will be removed)
+    private void addDurationTimeMillisPropIfAbsent(final Test test) {
+        if (!test.getProperties().containsKey(Test.DURATION_TIME_MILLIS_PROP)) {
+            //noinspection deprecation
+            test.getProperties().put(Test.DURATION_TIME_MILLIS_PROP, test.getDurationTimeMillis());
         }
     }
 
@@ -130,7 +139,7 @@ public class TestEventListener extends AbstractMongoEventListener<Test> {
         final Test test = mapper.readValue(testStr, Test.class);
         try {
             Integer parallelLoadersProperty = Math.max(1, (Integer) (Optional.ofNullable(test.getProperties().get("parallelLoaders")).orElse(1)));
-            String groupNameProperty = (String) test.getProperties().get("parallelLoaders");
+            String groupNameProperty = (String) test.getProperties().get("groupName");
             groupNameProperty = groupNameProperty == null ? "default" : groupNameProperty;
             Set<Loader> loadersIdle = getLoadersIdle(parallelLoadersProperty, groupNameProperty);
             if (loadersIdle.size() == parallelLoadersProperty) {

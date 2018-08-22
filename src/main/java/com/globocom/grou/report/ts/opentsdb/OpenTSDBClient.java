@@ -193,7 +193,11 @@ public class OpenTSDBClient implements TSClient {
     }
 
     private double formatValue(double value) {
-        return BigDecimal.valueOf(value).round(new MathContext(4, RoundingMode.HALF_UP)).doubleValue();
+        try {
+            return BigDecimal.valueOf(value).round(new MathContext(4, RoundingMode.HALF_UP)).doubleValue();
+        } catch (NumberFormatException ignore) {
+            return BigDecimal.valueOf(0d).round(new MathContext(4, RoundingMode.HALF_UP)).doubleValue();
+        }
     }
 
     @SuppressWarnings("unchecked")
