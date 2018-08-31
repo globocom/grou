@@ -1,5 +1,115 @@
 Java Service Wrapper Revision History.
 --------------------------------------
+3.5.35
+* Fix a bug where the icon of the hidden console allocated by wrapperw
+  reappeared in the taskbar whenever the Java application opened a full screen
+  window. If this would occur the icon will be quickly hidden, but a flicker
+  may be observed on the taskbar as the icon will still briefly show up.
+* Fix a bug introduced in 3.5.31 where setting wrapper.logfile to a blank value
+  was not disabling file logging. Instead the Wrapper was showing a warning and
+  fell back using the default log file in the working directory. This version
+  restores the ability to disable file logging with a blank value.
+* Handle the backend communication (via pipe or socket) from the native Wrapper
+  to the JVM in UTF-8. Before, the encoding of the current locale was used, but
+  some encodings could not support all characters when the Java side of the
+  Wrapper was reading the configuration.
+* Fix string conversion issues on the native library happening when the JVM was
+  using a default encoding that did not match the system encoding. This
+  resulted in unreadable JVM outputs.
+* Add the ability to parse any encoding specified in the JVM arguments (via
+  file.encoding, sun.stdout.encoding or sun.stderr.encoding) and read the JVM
+  output using the same encoding.
+* Deprecate wrapper.lang.encoding in favor of wrapper.lang.unix.encoding and
+  add wrapper.lang.<platform>.encoding to specify an encoding per platform.
+  While Unix systems often use the same syntax for encodings, Windows uses code
+  pages instead of names. The new created set of properties helps setting the
+  encoding used by the Wrapper in a cross-platform way. The specified value
+  will be both used to encode the JVM output and the Wrapper log output.
+* Improve portability of wrapper.lang.unix.encoding. If its value doesn't match
+  any encoding of the locales installed on the system, the Wrapper will search
+  for a match with a different notation of the same encoding (without case
+  sensitivity, dashes, etc.).
+* Add wrapper.jvm.encoding to control the default encoding of the JVM. Usage of
+  this property requires Java 8 and above, and should be limited to cases where
+  the encoding of the JVM has to be different from the Wrapper output encoding.
+  Otherwise wrapper.lang.[windows|unix].encoding is preferred.
+* Improve the way the encoding is passed to the JVM on the different platforms:
+  - On Windows, since version 3.5.8 (Professional and Standard Editions),
+    file.encoding was added to the JVM arguments to ensure that the Wrapper
+    always reads the JVM output using a suitable encoding for its own language
+    regardless of the OS language. However it forced the Java application to
+    use an encoding that may not be appropriate. From now on, the encoding is
+    passed to the JVM only if wrapper.lang.windows.encoding or
+    wrapper.jvm.encoding are set, or if the version of Java is older than 7
+    (recent versions of Java have their default encoding set to the default
+    ANSI Windows code page, like the Wrapper, but that was not always the case
+    on older versions of Java).
+  - On MacOSX, JVMs older than version 7 have their default encoding set to
+    "MacRoman" regardless the current locale. This caused some encoding issues
+    because the Wrapper uses the encoding of the locale to read the JVM output.
+    To correctly read the output of those JVMs, the Wrapper sets file.encoding
+    to the locale encoding (unless it is already present among the JVM
+    arguments).
+  - On all other UNIX platforms, the JVM encoding is automatically resolved
+    from the current locale, so it is only added to the JVM arguments if
+    wrapper.jvm.encoding specifies a different value.
+* On Windows, user.language and user.country will be set and passed to the JVM
+  whenever wrapper.lang differs from the language and country of the UI.
+  Previously only user.language was passed.
+* Make it possible to use wrapper.lang.folder, wrapper.lang.domain,
+  wrapper.lang.window.encoding and wrapper.lang.unix.encoding without setting
+  wrapper.lang. This can be useful if any of this configuration needs to be
+  changed while still using the default language of the OS. On Windows, if
+  wrapper.lang is set to 'DESKTOP' or 'DEFAULT', the encoding must be set to
+  'ANSI', 'OEM' or 'UTF-8' to ensure a correct encoding through the different
+  platforms.
+* Fix garbled messages when exceptions are raised from the native library on
+  UNIX.
+* Fix an issue where the Wrapper failed to load a language pack (*.mo) other
+  than those provided by default (German and Japanese).
+* Fix wrong exit code (0) returned in case the Wrapper would fail to launch a
+  JVM.
+* Allow wrapper.exit_code.error to be used at an earlier stage if the Wrapper
+  has to stop while loading the configuration (for example when duplicate
+  properties are found with #properties.on_overwrite.exit being set to TRUE).
+* Allow the CPU affinity of the Wrapper process to be changed when the
+  configuration is reloaded.
+* Add wrapper.java.version.min and wrapper.java.version.max to control the
+  versions of Java for which the Wrapper is allowed to run. Out of the
+  specified range, the Wrapper will stop.
+* Fix wrapper.console.title being ignored with wrapperw.exe and
+  wrapper.ntservice.console set to TRUE.
+* Add four customization options (properties-default, property-file-default,
+  properties-final, property-file-final) to include configuration properties
+  into the Wrapper binaries (Windows). The properties specified with the
+  'default' options can be overridden from the configuration file or the
+  command line, whereas those specified with the 'final' options are marked as
+  final and cannot be overridden.
+* Add a new property, wrapper.properties.dump.format, to print various kinds of
+  information when dumping configuration properties. Note that the default
+  formatting changes from 'NAME=VALUE' to 'SOURCE | FINAL | NAME | VALUE'.
+* Add a new property wrapper.test.no_jvm. By setting it to TRUE, the Wrapper
+  will run until it is about to launch a JVM and then will shutdown. This can
+  be useful to test a configuration, confirm the license status, check
+  properties or environment variables dumps, etc. without starting the Java
+  application.
+* If wrapper.timezone is set, -Duser.timezone will be added to the Java command
+  line to synchronize the time between the Java application and the Wrapper. It
+  is possible to pass a different timezone using one of the
+  wrapper.java.additional.<n> properties, in which case the Wrapper will not
+  add its own timezone to the Java command line.
+* Fix incorrect Linux distribution detection in the shell script resulting in a
+  daemon installation failure when update-rc.d was not present on the system.
+* No longer use IBM Advanced Toolchain when building the Wrapper for Linux
+  PPC-LE. Advanced Toolchain was introduced in v. 3.5.34, but since then some
+  users reported that the Wrapper binaries could not be executed on their
+  machine.
+* Fix a bug happening on Red Hat Enterprise Linux, CentOS, Amazon Linux AMI and
+  Fedora, where the logfile was not rolling if the ROLLNUM token was used
+  inside the value of wrapper.logfile.
+* Always make sure to process queued log messages before the Wrapper exits on
+  UNIX platforms (previously this was only done on Windows).
+
 3.5.34
 * Fix a memory access violation when the Wrapper uses localization files.
 * Fix minor memory leaks (after validating the certificate and when launching

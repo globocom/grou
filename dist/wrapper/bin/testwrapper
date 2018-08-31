@@ -1,7 +1,7 @@
 #! /bin/sh
 
 #
-# Copyright (c) 1999, 2017 Tanuki Software, Ltd.
+# Copyright (c) 1999, 2018 Tanuki Software, Ltd.
 # http://www.tanukisoftware.com
 # All rights reserved.
 #
@@ -16,7 +16,7 @@
 
 #-----------------------------------------------------------------------------
 # These settings can be modified to fit the needs of your application
-# Optimized for use with version 3.5.34 of the Wrapper.
+# Optimized for use with version 3.5.35 of the Wrapper.
 
 #********************************************************************
 # NOTE - This script has been modified to run the TestWrapper sample
@@ -1087,7 +1087,7 @@ launchinternal() {
         prepAdditionalParams "$@"
 
         # The string passed to eval must handles spaces in paths correctly.
-        COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" wrapper.daemonize=TRUE $APPNAMEPROP $ANCHORPROP $IGNOREPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.34 $ADDITIONAL_PARA"
+        COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" wrapper.daemonize=TRUE $APPNAMEPROP $ANCHORPROP $IGNOREPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.35 $ADDITIONAL_PARA"
         eval $COMMAND_LINE
     else
         eval echo `gettext '$APP_LONG_NAME is already running.'`
@@ -1110,7 +1110,7 @@ console() {
         prepAdditionalParams "$@"
 
         # The string passed to eval must handles spaces in paths correctly.
-        COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" $APPNAMEPROP $ANCHORPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.34 $ADDITIONAL_PARA"
+        COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" $APPNAMEPROP $ANCHORPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.35 $ADDITIONAL_PARA"
         eval $COMMAND_LINE
         COMMAND_EXIT_CODE=$?
         if [ $COMMAND_EXIT_CODE -ne 0 ] ; then
@@ -1555,7 +1555,7 @@ start() {
     prepAdditionalParams "$@"
 
     # The string passed to eval must handles spaces in paths correctly.
-    COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" wrapper.daemonize=TRUE $APPNAMEPROP $ANCHORPROP $IGNOREPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.34 $ADDITIONAL_PARA"
+    COMMAND_LINE="$CMDNICE \"$WRAPPER_CMD\" \"$WRAPPER_CONF\" wrapper.syslog.ident=\"$APP_NAME\" wrapper.pidfile=\"$PIDFILE\" wrapper.daemonize=TRUE $APPNAMEPROP $ANCHORPROP $IGNOREPROP $STATUSPROP $COMMANDPROP $LOCKPROP wrapper.script.version=3.5.35 $ADDITIONAL_PARA"
     eval $COMMAND_LINE
     
     startwait
@@ -1735,7 +1735,7 @@ checkInstalled() {
             else
                 installedStatus=0
             fi
-        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] ; then
+        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] && [ "X`command -v update-rc.d`" != "X" ] ; then
             if [ -f "/etc/init.d/$APP_NAME" -o -L "/etc/init.d/$APP_NAME" ] ; then
                 installedStatus=1
                 installedWith="init.d"
@@ -1904,7 +1904,7 @@ installdaemon() {
                 ln -s "$REALPATH" "/etc/init.d/$APP_NAME"
                 insserv "/etc/init.d/$APP_NAME"
             fi
-        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] ; then
+        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] && [ "X`command -v update-rc.d`" != "X" ] ; then
             eval echo `gettext 'Detected Ubuntu or Debian:'`
             if [ $installedStatus -gt 0 ] ; then
                 eval echo `gettext ' The $APP_LONG_NAME daemon is already installed with $installedWith.'`
@@ -2181,7 +2181,7 @@ removedaemon() {
                 eval echo `gettext ' The $APP_LONG_NAME daemon is not currently installed.'`
                 exit 1
             fi
-        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] ; then
+        elif [ -f /etc/lsb-release -o -f /etc/debian_version -o -f /etc/debian_release ] && [ "X`command -v update-rc.d`" != "X" ] ; then
             eval echo `gettext 'Detected Ubuntu or Debian:'`
             if [ $installedStatus -eq 1 ] ; then
                 stopit "0"
