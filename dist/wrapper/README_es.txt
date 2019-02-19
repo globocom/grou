@@ -1,6 +1,6 @@
 ﻿-----------------------------------------------------------------------------
-Java Service Wrapper Community Edition 3.5.34
-Copyright (C) 1999-2017 Tanuki Software, Ltd. All Rights Reserved.
+Java Service Wrapper Community Edition 3.5.35
+Copyright (C) 1999-2018 Tanuki Software, Ltd. All Rights Reserved.
 https://wrapper.tanukisoftware.com
 -----------------------------------------------------------------------------
 
@@ -173,4 +173,4 @@ encontrada en:
 
 
 -----------------------------------------------------------------------------
-Copyright (C) 1999-2017 Tanuki Software, Ltd. All Rights Reserved.
+Copyright (C) 1999-2018 Tanuki Software, Ltd. All Rights Reserved.
