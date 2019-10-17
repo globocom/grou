@@ -266,8 +266,8 @@ public class OpenTSDBClient implements TSClient {
             this.aggregator = aggregator;
             this.downsample = downsample;
             final ArrayList<Filter> allFilter = new ArrayList<>(Arrays.asList(
-                    new Filter("project", test.getProject()),
-                    new Filter("test", test.getName())));
+                    new Filter("project", test.getProject().toLowerCase()),
+                    new Filter("test", test.getName().toLowerCase())));
             allFilter.addAll(otherFilters);
             filters = allFilter.toArray(new Filter[allFilter.size()]);
         }

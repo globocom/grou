@@ -2,7 +2,7 @@
 setlocal
 
 rem
-rem Copyright (c) 1999, 2017 Tanuki Software, Ltd.
+rem Copyright (c) 1999, 2018 Tanuki Software, Ltd.
 rem http://www.tanukisoftware.com
 rem All rights reserved.
 rem
@@ -16,7 +16,7 @@ rem
 
 rem -----------------------------------------------------------------------------
 rem These settings can be modified to fit the needs of your application
-rem Optimized for use with version 3.5.34 of the Wrapper.
+rem Optimized for use with version 3.5.35 of the Wrapper.
 rem
 rem ********************************************************************
 rem  NOTE - This script has been modified to run the TestWrapper sample
