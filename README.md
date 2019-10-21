@@ -1,3 +1,6 @@
+## Getting Started
+
+```
 #!/bin/bash
 
 # GROU
@@ -110,3 +113,4 @@ curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
 ## List all tests
 
 curl -v -H'content-type:application/json' http://127.0.0.1:8080/tests
+```
