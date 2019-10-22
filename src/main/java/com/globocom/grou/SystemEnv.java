@@ -191,7 +191,7 @@ public enum SystemEnv {
     /**
      * Disable Auth
      */
-    DISABLE_AUTH("DISABLE_AUTH", Boolean.FALSE);
+    DISABLE_AUTH("DISABLE_AUTH", Boolean.TRUE);
 
     /**
      * Gets SystemEnv value.
