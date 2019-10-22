@@ -35,7 +35,7 @@
                 </property>
             </activation>
             <properties>
-                <grou.version>1.0.2-SNAPSHOT</grou.version>
+                <grou.version>env.GROU_VERSION</grou.version>
             </properties>
         </profile>
     </profiles>
