@@ -1,20 +1,18 @@
-#!/bin/bash
-
 # GROU
 
 ## Requirements
 
-### docker
-### docker-compose
-### python-openstackclient (pip install -r openstackclient-requirements.txt)
-### curl
+* docker
+* docker-compose
+*  python-openstackclient (pip install -r openstackclient-requirements.txt)
+* curl
 
 ## start all necessary services
-
+```
 docker-compose up -d
-
+```
 ## OpenStack Keystone: Create domain, project and user
-
+```
 while ! curl --connect-timeout 1 http://127.0.0.1:5000 > /dev/null 2> /dev/null; do echo "Waiting 5000/tcp... (press CTRL+C to cancel)"; sleep 5; done
 cat <<EOF | docker exec -i k1.local bash -
 source ~/openrc
@@ -27,9 +25,9 @@ openstack role add --project grou --project-domain grou --user grouadmin admin >
 openstack role add --project grouadmins --project-domain grou --user grouadmin admin > /dev/null
 openstack role assignment list > /dev/null
 EOF
-
-# Define necessary var envs
-
+```
+# Define necessary var env
+```
 export OS_USER_DOMAIN_NAME=grou
 export OS_IMAGE_API_VERSION=2
 export OS_PROJECT_NAME=grou
@@ -40,26 +38,30 @@ export OS_USERNAME=grouadmin
 export OS_PROJECT_DOMAIN_NAME=grou
 
 export REQUESTS_LIMIT=10
-
-# if use email notification....
+```
+# If use email notification
+```
 export MAIL_HOST="smtp.gmail.com"
 export MAIL_PORT=587
 export MAIL_TLS="true"
 export MAIL_USER="no-replay+anemailvalid@gmail.com"
 export MAIL_PASS="gmailpass"
-
+```
 ## Build and run GROU
-
+```
 nohup make grou run > /tmp/out < /dev/null 2>&1 &
 while ! curl --connect-timeout 1 http://127.0.0.1:8080 > /dev/null 2> /dev/null; do echo "Waiting 8080/tcp... (press CTRL+C to cancel)"; sleep 5; done
-
+```
 ## Get Keystone Token
-
+```
 export TOKEN="$(curl --silent -u grouadmin:grou 127.0.0.1:8080/token/grou | jq -r .token)"
-# OR using export TOKEN="$(openstack token issue -f value -c id)"
-
+```
+# OR using 
+```
+export TOKEN="$(openstack token issue -f value -c id)"
+```
 ## Create new test
-
+```
 curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
 {
   "name":"'$RANDOM'",
@@ -106,7 +108,8 @@ curl -v -H'content-type:application/json' -H"x-auth-token:${TOKEN}" -d'
     "monitTargets": "zero://target1,zero://target2"
   }
 }' http://127.0.0.1:8080/tests
-
+```
 ## List all tests
-
+```
 curl -v -H'content-type:application/json' http://127.0.0.1:8080/tests
+```
