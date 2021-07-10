@@ -110,8 +110,8 @@ public interface TestRepository extends MongoRepository<Test, String> {
     Page<Test> findByLastModifiedByAfterAndStatus(@Param("instant") Instant instant, @Param("status") Test.Status status, Pageable pageable);
 
     @Override
+    @ApiOperation(value = "deleteTest", hidden = true)
     @RestResource(exported = false)
-    @ApiOperation(value = "", hidden = true)
     void delete(Test test);
 
 }
